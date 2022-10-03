@@ -17,7 +17,6 @@ from gen3.submission import Gen3Submission
 
 from cdislogging import get_logger as get_gen3_logger
 import base64
-import hashlib
 
 log_fmt = "%(asctime)s %(name)s %(levelname)s : %(message)s"
 
@@ -75,23 +74,6 @@ def file_attributes(file_name):
             md5_hash.update(byte_block)
 
     return md5_hash.hexdigest(), os.lstat(file_name).st_size
-
-
-@cli.command()
-@click.option('--file_name', default=None, show_default=True,
-              help='file name to upload')
-@click.pass_context
-def index(ctx, file_name):
-    """index manifest url, update hashes and size."""
-    urls = ['s3://minio-ohsu.compbio.ohsu.edu/aced-ohsu/test.txt']
-    hashes = {'md5': '7b445c281def0c33d0bb3535f7525107'}
-    size = 499
-    file_name = 'test.txt'
-    authz = ['/programs/MyFirstProgram/projects/MyFirstProject']  #
-
-    result = ctx.obj['index_client'].create_record(hashes=hashes, urls=urls, size=size, file_name=file_name,
-                                                   authz=authz)
-    print("create_record", result)
 
 
 @cli.command()
@@ -172,6 +154,7 @@ def upload(ctx, bucket_name, project_path, program, project):
             result = index_client.update_record(guid=guid, version=rev, file_name=record['file_name'],
                                                 authz=authz, urls=urls,
                                                 metadata=metadata)
+            assert result   # TODO - better check
 
             record['object_id'] = guid
             updated_records.append(record)
@@ -192,36 +175,49 @@ def drs_download(ctx, did, file_name):
     """
     https://github.com/ga4gh/fasp-clients/blob/55dad8373637765bae43a1c670afc5f2b7b302b8/src/fasp/loc/gen3drsclient.py#L60
     """
-    # TODO
-    pass
-
-
-@cli.command()
-@click.option('--did', default=None, show_default=True,
-              help='GUID from indexd')
-@click.option('--file_name', default=None, show_default=True,
-              help='output path')
-@click.pass_context
-def download(ctx, did, file_name):
-    """Download file_name."""
     assert did, "Missing did (guid) parameter"
-    result = ctx.obj['file_client'].get_presigned_url(did)
-    assert 'url' in result, result
-    presigned_url = result['url']
-    if not file_name:
-        result = ctx.obj['index_client'].get_record(did)
-        file_name = result['file_name']
+    result = ctx.obj['index_client'].get_record(did)
 
-    # NOTE the stream=True parameter below
-    # see https://stackoverflow.com/questions/16694907/download-large-file-in-python-with-requests
-    with requests.get(presigned_url, allow_redirects=True, stream=True) as r:
-        r.raise_for_status()
-        with open(file_name, 'wb') as f:
-            for chunk in r.iter_content(chunk_size=8192):
-                # If you have chunk encoded response uncomment if
-                # and set chunk_size parameter to None.
-                #if chunk:
-                f.write(chunk)
+    assert 'hashes' in result, f'Expected "hashes" {result}'
+    assert 'md5' in result['hashes'], f'Expected "hashes.md5" {result}'
+    assert 'size' in result, f'Expected "size" {result}'
+
+    md5 = result['hashes']['md5']
+    size = result['size']
+    result = ctx.obj['file_client'].get_presigned_url(did)
+    assert 'url' in result, f'Expected "url" {result}'
+    presigned_url = result['url']
+    from download import download, DownloadURL
+    download_url = DownloadURL(url=presigned_url, md5=md5, size=size)
+    download(urls=[download_url])
+
+#
+# @cli.command()
+# @click.option('--did', default=None, show_default=True,
+#               help='GUID from indexd')
+# @click.option('--file_name', default=None, show_default=True,
+#               help='output path')
+# @click.pass_context
+# def download(ctx, did, file_name):
+#     """Download file_name."""
+#     assert did, "Missing did (guid) parameter"
+#     result = ctx.obj['file_client'].get_presigned_url(did)
+#     assert 'url' in result, result
+#     presigned_url = result['url']
+#     if not file_name:
+#         result = ctx.obj['index_client'].get_record(did)
+#         file_name = result['file_name']
+#
+#     # NOTE the stream=True parameter below
+#     # see https://stackoverflow.com/questions/16694907/download-large-file-in-python-with-requests
+#     with requests.get(presigned_url, allow_redirects=True, stream=True) as r:
+#         r.raise_for_status()
+#         with open(file_name, 'wb') as f:
+#             for chunk in r.iter_content(chunk_size=8192):
+#                 # If you have chunk encoded response uncomment if
+#                 # and set chunk_size parameter to None.
+#                 #if chunk:
+#                 f.write(chunk)
 
 
 if __name__ == '__main__':
