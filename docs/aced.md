@@ -465,8 +465,39 @@ revproxy-service:
 
 # Microservices Reference
 
-- Sheepdog: Handles the submitting and downloading of metadata to and from the GraphQL database.
-- Peregrine: Sends GraphQL queries to the PostgreSQL backend and returns results in JSON format.
-- Fence: Authenticates (AuthN) and authorizes (AuthZ) users. Generates tokens in `credentials.json`.
-- Indexd: Creates permanent ID's (GUID) for every newly submitted data object.
-- Windmill: Frontend for the exploration, submission, and downloading of data.
+- `Sheepdog`: Handles the submitting and downloading of metadata to and from the GraphQL database.
+- `Peregrine`: Sends GraphQL queries to the PostgreSQL backend and returns results in JSON format.
+- `Fence`: Authenticates (AuthN) and authorizes (AuthZ) users. Generates tokens in `credentials.json`.
+- `Indexd`: Creates permanent ID's (GUID) for every newly submitted data object.
+- `Windmill`: Frontend for the exploration, submission, and downloading of data.
+
+# Let's Encrypt Certification
+
+To obtain SSL certificates for the `aced-idp.org` domains we'll run the following `certbot` command:
+
+```sh
+sudo certbot certonly --server https://acme-v02.api.letsencrypt.org/directory --manual --preferred-challenges dns -d 'aced-idp.org,*.aced-idp.org'
+```
+
+`certbot` may ask that one or more `TXT` records be deployed by the DNS provider in order to verify domain ownership. Proceed with the deployments and if all goes well the certificate files will be created in the `/etc/letsencrypt/live/aced-idp.org/` directory.
+
+`docker-compose` expects these certificate files to be in the `Secrets/TLS` directory so we'll copy and change ownership to the `ubuntu` user:
+
+```sh
+cd compose-services-training
+sudo cp /etc/letsencrypt/live/aced-idp.org/privkey.pem Secrets/TLS/service.key
+sudo cp /etc/letsencrypt/live/aced-idp.org/fullchain.pem Secrets/TLS/service.crt
+sudo chown ubuntu:ubuntu Secrets/TLS/service.{crt,key}
+```
+
+We're ready to start the project with `docker-compose`:
+
+```sh
+docker-compose up -d
+```
+
+Once all services are running the SSL certificates should be inspected to verify the correct domains and information were used. 
+
+![Firefox SSL certificate](ssl-firefox.png)
+
+Make a note of the `Validity` value as a renewal will be required before that date to keep the HTTPS certification active for the domains. Unfortunately the manual configuration outlined above prevents us from using the automatic `certbot renew` command. Future work may focus on automating the `certbot` commands in a `cron` or `systemd` framework to allow for easier deployments.
