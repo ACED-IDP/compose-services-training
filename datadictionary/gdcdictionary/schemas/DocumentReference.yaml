@@ -25,6 +25,23 @@ namespace: http://hl7.org/fhir
 program: '*'
 project: '*'
 properties:
+
+
+  $ref: "_definitions.yaml#/data_file_properties"
+
+  data_category:
+    term:
+      $ref: "_terms.yaml#/data_category"
+    type: string
+  data_type:
+    term:
+      $ref: "_terms.yaml#/data_type"
+    type: string
+  data_format:
+    term:
+      $ref: "_terms.yaml#/data_format"
+    type: string
+
   author_display:
     description: Text alternative for the resource.
     type:
@@ -47,6 +64,21 @@ properties:
     - 'null'
   content_attachment_data:
     description: Data inline, base64ed.
+    type:
+    - string
+    - 'null'
+  content_attachment_md5:
+    description: ''
+    type:
+    - string
+    - 'null'
+  content_attachment_size:
+    description: Number of bytes of content (if url provided).
+    type:
+    - number
+    - 'null'
+  content_attachment_url:
+    description: Uri where the data can be found.
     type:
     - string
     - 'null'

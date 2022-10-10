@@ -38,7 +38,42 @@ properties:
     type:
     - string
     - 'null'
+  code_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  code_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  code_coding_0_system:
+    description: Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  code_coding_1_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  code_coding_1_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  code_coding_1_system:
+    description: Identity of the terminology system.
+    type:
+    - string
+    - 'null'
   code_coding_loinc_org:
+    description: Code defined by a terminology system.
+    type:
+    - string
+    - 'null'
+  code_coding_sct:
     description: Code defined by a terminology system.
     type:
     - string
@@ -47,6 +82,66 @@ properties:
     description: Plain text representation of the concept.
     type:
     - string
+    - 'null'
+  component_0_code_coding_loinc_org:
+    description: Code defined by a terminology system.
+    type:
+    - string
+    - 'null'
+  component_0_code_text:
+    description: Plain text representation of the concept.
+    type:
+    - string
+    - 'null'
+  component_0_valueQuantity_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  component_0_valueQuantity_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  component_0_valueQuantity_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  component_0_valueQuantity_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  component_1_code_coding_loinc_org:
+    description: Code defined by a terminology system.
+    type:
+    - string
+    - 'null'
+  component_1_code_text:
+    description: Plain text representation of the concept.
+    type:
+    - string
+    - 'null'
+  component_1_valueQuantity_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  component_1_valueQuantity_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  component_1_valueQuantity_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  component_1_valueQuantity_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
     - 'null'
   created_datetime:
     $ref: _definitions.yaml#/datetime
@@ -71,6 +166,16 @@ properties:
     - string
     - 'null'
   meta_profile:
+    description: Profiles this resource claims to conform to.
+    type:
+    - string
+    - 'null'
+  meta_profile_0:
+    description: Profiles this resource claims to conform to.
+    type:
+    - string
+    - 'null'
+  meta_profile_1:
     description: Profiles this resource claims to conform to.
     type:
     - string
@@ -117,6 +222,21 @@ properties:
     type: string
   updated_datetime:
     $ref: _definitions.yaml#/datetime
+  valueCodeableConcept_coding_loinc_org:
+    description: Code defined by a terminology system.
+    type:
+    - string
+    - 'null'
+  valueCodeableConcept_coding_sct:
+    description: Code defined by a terminology system.
+    type:
+    - string
+    - 'null'
+  valueCodeableConcept_text:
+    description: Plain text representation of the concept.
+    type:
+    - string
+    - 'null'
   valueQuantity_code:
     description: Coded form of the unit.
     type:
@@ -136,6 +256,34 @@ properties:
     description: Numerical value (with implicit precision).
     type:
     - number
+    - 'null'
+  valueSampledData_data:
+    description: Decimal values with spaces, or "E" | "U" | "L".
+    type:
+    - string
+    - 'null'
+  valueSampledData_dimensions:
+    description: Number of sample points at each time point.
+    type:
+    - number
+  valueSampledData_origin_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  valueSampledData_origin_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  valueSampledData_period:
+    description: Number of milliseconds between samples.
+    type:
+    - number
+  valueString:
+    description: Actual result.
+    type:
+    - string
     - 'null'
 required:
 - submitter_id

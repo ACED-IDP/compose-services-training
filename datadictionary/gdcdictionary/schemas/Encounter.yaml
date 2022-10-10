@@ -23,6 +23,16 @@ properties:
     - string
   created_datetime:
     $ref: _definitions.yaml#/datetime
+  hospitalization_dischargeDisposition_coding_patient_discharge:
+    description: Code defined by a terminology system.
+    type:
+    - string
+    - 'null'
+  hospitalization_dischargeDisposition_text:
+    description: Plain text representation of the concept.
+    type:
+    - string
+    - 'null'
   id:
     description: ''
     type:
@@ -90,6 +100,11 @@ properties:
     - 'null'
   project_id:
     $ref: _definitions.yaml#/project_id
+  reasonCode_coding_sct:
+    description: Code defined by a terminology system.
+    type:
+    - string
+    - 'null'
   resourceType:
     description: One of the resource types defined as part of this version of FHIR
     type:

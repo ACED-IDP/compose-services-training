@@ -72,6 +72,46 @@ properties:
     - 'null'
   project_id:
     $ref: _definitions.yaml#/project_id
+  reasonReference_0_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  reasonReference_0_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  reasonReference_1_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  reasonReference_1_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  reasonReference_2_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  reasonReference_2_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  reasonReference_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  reasonReference_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
   resourceType:
     description: One of the resource types defined as part of this version of FHIR
     type:
