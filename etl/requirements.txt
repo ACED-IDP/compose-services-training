@@ -4,3 +4,4 @@ Click
 https://github.com/ohsu-comp-bio/gen3sdk-python/archive/feat/alternate-data_upload_bucket.zip
 jsonpath-ng
 certifi
+faker-biology

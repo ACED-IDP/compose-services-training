@@ -463,6 +463,44 @@ environment:
 revproxy-service:
 ```
 
+## Change the data dictionary
+
+* Update the data dictionary.  In this case we've updated it from the data_dictionary repo.
+  * Note: This is not the only potential source of changes, see https://github.com/uc-cdis/compose-services/blob/master/docs/using_the_commons.md#changing-the-data-dictionary
+
+```commandline
+  cp ../data_model/DATA/gen3/*.yaml datadictionary/gdcdictionary/schemas/
+  #  "compile" the yaml into a single json file
+  python3 etl/compile.py datadictionary/gdcdictionary/schemas/  --out datadictionary/
+  #  copy the resulting datadictionary/aced.json  to S3
+  # verify you can read https://aced-public.s3.us-west-2.amazonaws.com/aced.json
+```
+ 
+* Set the new datadictionary URL in docker-compose
+```commandline
+git diff docker-compose.yml 
+diff --git a/docker-compose.yml b/docker-compose.yml
+index 7d139a0..6280178 100644
+--- a/docker-compose.yml
++++ b/docker-compose.yml
+@@ -125,7 +125,7 @@ services:
+       - ./scripts/peregrine_setup.sh:/peregrine_setup.sh
+       - ./datadictionary/gdcdictionary/schemas:/schemas_dir
+     environment: &env
+-      DICTIONARY_URL: https://s3.amazonaws.com/dictionary-artifacts/datadictionary/develop/schema.json
++      DICTIONARY_URL: https://aced-public.s3.us-west-2.amazonaws.com/aced.json
+
+```
+
+* add custom graphql section to 
+* Review services
+  * restart services as necessary, typically peregrine, sheepdog and portal
+    * comment out guppy in nginx.conf until we re-build guppy 
+  * see https://github.com/uc-cdis/compose-services/blob/master/docs/using_the_commons.md#changing-the-data-dictionary* 
+
+
+
+
 # Microservices Reference
 
 - `Sheepdog`: Handles the submitting and downloading of metadata to and from the GraphQL database.
