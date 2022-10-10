@@ -110,6 +110,11 @@ https://github.com/uc-cdis/fence/pull/1048
 > These steps assume the PRs have _not_ been merged to main.
 
 * Clone fence in the compose-services dir. checkout the `alternate-data_upload_bucket` branch  
+
+```sh
+git clone git@github.com:uc-cdis/fence.git
+```
+
 * Alter docker-compose.
 
 ```diff
@@ -382,7 +387,9 @@ ports:
 
 * Start the service
 
-```dc up -d ; dc logs -f minio-default```
+```
+dc up -d ; dc logs -f minio-default
+```
 
 * Examine logs
 
@@ -404,7 +411,7 @@ minio1-service  | Documentation: https://docs.min.io
 
 * Verify connection
 
-* `curl http://minio-default.compbio.ohsu.edu/minio/health/live`
+* `curl -I http://minio-default.compbio.ohsu.edu/minio/health/live`
 * open http://minio-default-console.compbio.ohsu.edu
 * repeat for other minio-* servers
 
