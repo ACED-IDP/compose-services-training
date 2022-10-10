@@ -125,7 +125,7 @@ services:
       - ./scripts/peregrine_setup.sh:/peregrine_setup.sh
       - ./datadictionary/gdcdictionary/schemas:/schemas_dir
     environment: &env
-      DICTIONARY_URL: https://s3.amazonaws.com/dictionary-artifacts/datadictionary/develop/schema.json
+      DICTIONARY_URL: https://aced-public.s3.us-west-2.amazonaws.com/aced.json
       # PATH_TO_SCHEMA_DIR: /schemas_dir
       REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
     healthcheck:

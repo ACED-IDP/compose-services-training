@@ -1,3 +1,15 @@
+
+
+ACED - Training
+===
+> This repo was established as a sandbox to introduce Gen3 in a local, docker-compose laptop friendly environment.
+
+```commandline
+cp ../data_model/DATA/gen3/*.yaml datadictionary/gdcdictionary/schemas/
+
+
+```
+
 # Data Dictionary
 
 The data dictionary provides the first level of validation for all data

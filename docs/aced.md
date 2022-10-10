@@ -13,7 +13,7 @@
     - [Re-Enable Guppy](#re-enable-guppy)
     - [Expose the Kibana Service](#expose-the-kibana-service)
     - [Refactor the Spark and Tube Services](#refactor-the-spark-and-tube-services)
-    - [Local Object Store (Minio)](#local-object-store-minio)
+  - [Minio (Local Object Store)](#minio-local-object-store)
   - [Let's Setup Discovery](#lets-setup-discovery)
   - [Enable jupyter notebooks](#enable-jupyter-notebooks)
 - [Microservices Reference](#microservices-reference)
@@ -21,7 +21,7 @@
 # ACED specific changes
 
 > This document assumes you have completed setting up a 'stock' gen3 instance as described in https://github.com/uc-cdis/compose-services
-> 
+>
 > Now that you've completed this task, let's explore some ACED specific customizations.
 
 ## Fence (Authentication and Authorization)
@@ -43,7 +43,7 @@ To test locally, update your `/etc/hosts` file.
 127.0.0.1 minio-console.compbio.ohsu.edu
 ```
 ### Windmill's Auth Display
-  
+
 add to Secrets/gitops.json
 ```json
 "showArboristAuthzOnProfile": true,
@@ -154,6 +154,12 @@ mkdir -p "$TEST_DATA_PATH"
 
 docker run -it -v "${TEST_DATA_PATH}:/mnt/data" --rm --name=dsim --entrypoint=data-simulator quay.io/cdis/data-simulator:master simulate --url https://s3.amazonaws.com/dictionary-artifacts/datadictionary/develop/schema.json --path /mnt/data --program MyFirstProgram --project MyFirstProject --max_samples 10
 ```
+* Let's run setup-minio.sh
+```sh
+docker compose exec -it etl-service bash
+#copy paste the contents of /etl/setup-minio.#!/bin/sh and press enter
+# then press control d to exit the container ssh
+```
 
 * Now, let's generate corresponding data files
 
@@ -189,7 +195,7 @@ This may be a good time to examine the Gen3 API.  You will need an API key first
 
 For example, view the `metadata` script, where `credentials.json` is the key file downloaded above.
 
-List the schema entities: 
+List the schema entities:
 
 ```sh
 ./etl/metadata --gen3_credentials_file Secrets/credentials.json ls  | jq .
@@ -348,7 +354,9 @@ docker container start guppy-service
 
 ![image](portal-tube-results.png)
 
-### Local Object Store (Minio)
+## Minio (Local Object Store)
+
+Root credentials for the Minio consoles are stored within environmental variables defined in the `.env` file. Docker passes these values to the Minio services upon the `docker-compose up` command. If the values are changed simply rerun `docker-compose up` and the updated values will be passed to the Minio services.
 
 * Add the following to `/etc/hosts` for local host testing.
 
@@ -383,7 +391,7 @@ volumes:
 ports:
 ```
 
-* Add the minio configuration to `docker-compose-override.yml` 
+* Add the minio configuration to `docker-compose-override.yml`
 
 * Start the service
 
@@ -470,6 +478,44 @@ environment:
 revproxy-service:
 ```
 
+## Change the data dictionary
+
+* Update the data dictionary.  In this case we've updated it from the data_dictionary repo.
+  * Note: This is not the only potential source of changes, see https://github.com/uc-cdis/compose-services/blob/master/docs/using_the_commons.md#changing-the-data-dictionary
+
+```commandline
+  cp ../data_model/DATA/gen3/*.yaml datadictionary/gdcdictionary/schemas/
+  #  "compile" the yaml into a single json file
+  python3 etl/compile.py datadictionary/gdcdictionary/schemas/  --out datadictionary/
+  #  copy the resulting datadictionary/aced.json  to S3
+  # verify you can read https://aced-public.s3.us-west-2.amazonaws.com/aced.json
+```
+
+* Set the new datadictionary URL in docker-compose
+```commandline
+git diff docker-compose.yml
+diff --git a/docker-compose.yml b/docker-compose.yml
+index 7d139a0..6280178 100644
+--- a/docker-compose.yml
++++ b/docker-compose.yml
+@@ -125,7 +125,7 @@ services:
+       - ./scripts/peregrine_setup.sh:/peregrine_setup.sh
+       - ./datadictionary/gdcdictionary/schemas:/schemas_dir
+     environment: &env
+-      DICTIONARY_URL: https://s3.amazonaws.com/dictionary-artifacts/datadictionary/develop/schema.json
++      DICTIONARY_URL: https://aced-public.s3.us-west-2.amazonaws.com/aced.json
+
+```
+
+* add custom graphql section to
+* Review services
+  * restart services as necessary, typically peregrine, sheepdog and portal
+    * comment out guppy in nginx.conf until we re-build guppy
+  * see https://github.com/uc-cdis/compose-services/blob/master/docs/using_the_commons.md#changing-the-data-dictionary*
+
+
+
+
 # Microservices Reference
 
 - `Sheepdog`: Handles the submitting and downloading of metadata to and from the GraphQL database.
@@ -503,7 +549,7 @@ We're ready to start the project with `docker-compose`:
 docker-compose up -d
 ```
 
-Once all services are running the SSL certificates should be inspected to verify the correct domains and information were used. 
+Once all services are running the SSL certificates should be inspected to verify the correct domains and information were used.
 
 ![Firefox SSL certificate](ssl-firefox.png)
 
