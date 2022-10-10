@@ -13,7 +13,7 @@
     - [Re-Enable Guppy](#re-enable-guppy)
     - [Expose the Kibana Service](#expose-the-kibana-service)
     - [Refactor the Spark and Tube Services](#refactor-the-spark-and-tube-services)
-    - [Local Object Store (Minio)](#local-object-store-minio)
+  - [Minio (Local Object Store)](#minio-local-object-store)
   - [Let's Setup Discovery](#lets-setup-discovery)
   - [Enable jupyter notebooks](#enable-jupyter-notebooks)
 - [Microservices Reference](#microservices-reference)
@@ -349,7 +349,9 @@ docker container start guppy-service
 
 ![image](portal-tube-results.png)
 
-### Local Object Store (Minio)
+## Minio (Local Object Store)
+
+Root credentials for the Minio consoles are stored within environmental variables defined in the `.env` file. Docker passes these values to the Minio services upon the `docker-compose up` command. If the values are changed simply rerun `docker-compose up` and the updated values will be passed to the Minio services.
 
 * Add the following to `/etc/hosts` for local host testing.
 
