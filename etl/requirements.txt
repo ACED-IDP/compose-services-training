@@ -5,3 +5,7 @@ https://github.com/ohsu-comp-bio/gen3sdk-python/archive/feat/alternate-data_uplo
 jsonpath-ng
 certifi
 faker-biology
+
+# fastavro
+
+https://github.com/uc-cdis/pelican/archive/refs/tags/2022.10.zip

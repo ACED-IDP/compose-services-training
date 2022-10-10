@@ -5,6 +5,7 @@ import logging
 from pathlib import Path
 
 import click
+import fastavro
 import jwt
 import requests
 import urllib.parse
@@ -89,23 +90,100 @@ def get_index(ctx, did):
     print("presigned_url", result)
 
 
+
 @cli.command()
 @click.option('--bucket_name', default='aced-default', show_default=True,
               help='File name to upload')
-@click.option('--project_path', required=True, default=None, show_default=True,
-              help='Path to metadata data')
+@click.option('--pfb_path', required=True, default=None, show_default=True,
+              help='Path to pfb file')
 @click.option('--program', default='MyFirstProgram', show_default=True,
               help='Gen3 program')
 @click.option('--project', default='MyFirstProject', show_default=True,
               help='Gen3 project')
 @click.pass_context
-def upload(ctx, bucket_name, project_path, program, project):
-    """Upload file_name to default gen3 bucket, update hashes and size."""
+def upload_pfb(ctx, bucket_name, pfb_path, program, project):
+    """Filter DocumentReference records found in PFB to gen3 managed bucket, update hashes and size."""
 
-    project_path = Path(project_path)
     index_client = ctx.obj['index_client']
     file_client = ctx.obj['file_client']
 
+    """Finds DocumentReferences with attachment urls."""
+    for record in pfb_reader(pfb_path):
+        if record['name'] == 'DocumentReference':
+            if record['object']['content_attachment_url']:
+                object_name = record['object']['content_attachment_url'].lstrip('./')
+                content_attachment_md5 = record['object']['content_attachment_md5']
+                content_attachment_size = record['object']['content_attachment_size']
+                record_id = record['id']
+                # print(record['id'], object_name, content_attachment_md5, content_attachment_size)
+                assert 'name' in record, record.keys()
+                record_name = record['name']
+                assert 'submitter_id' in record['object'], record.keys()
+                submitter_id = record['object']['submitter_id']
+                document = file_client.upload_file(object_name, bucket=bucket_name)
+                assert 'guid' in document, document
+                assert 'url' in document, document
+                signed_url = urllib.parse.unquote(document['url'])
+                guid = document['guid']
+                hashes = {'md5': content_attachment_md5}
+                metadata = {
+                    **{
+                        'datanode_type': record_name,
+                        'datanode_submitter_id': submitter_id,
+                        'datanode_object_id': guid
+                    },
+                    **hashes}
+
+                # open the file and upload it to the signed url returned above
+                with open(object_name, 'rb') as data:
+                    # When you use this header, Amazon S3 checks the object against the provided MD5 value and,
+                    # if they do not match, returns an error.
+                    content_md5 = base64.b64encode(bytes.fromhex(content_attachment_md5))
+                    headers = {'Content-MD5': content_md5}
+                    # Our meta data
+                    for key, value in metadata.items():
+                        headers[f"x-amz-meta-{key}"] = value
+                    r = requests.put(signed_url, data=data, headers=headers)
+                    assert r.status_code == 200, (signed_url, r.text)
+                    get_logger_("upload").info(f"Successfully uploaded file \"{object_name}\" to GUID {guid}")
+
+                # update the indexd record with urls, authz, size and hashes
+                indexd_record = index_client.get_record(guid)
+                assert 'rev' in indexd_record, record
+                rev = indexd_record['rev']
+                r = index_client.update_blank(guid, rev, hashes=hashes, size=content_attachment_size)
+
+                urls = [f"s3://{bucket_name}/{guid}/{object_name}"]
+                authz = [f'/programs/{program}/projects/{project}']
+
+                result = index_client.update_record(guid=guid, version=rev, file_name=object_name,
+                                                    authz=authz, urls=urls,
+                                                    metadata=metadata)
+                assert result   # TODO - better check
+                print(json.dumps({'id': record_id, 'name': record_name, 'object_id': guid}))
+
+
+@cli.command()
+@click.option('--bucket_name', default='aced-default', show_default=True,
+              help='File name to upload')
+@click.option('--project_path', required=True, default=None, show_default=True,
+              help='Path to simulated metadata data see: shorturl.at/jqvZ5')
+@click.option('--pfb_path', required=False, default=None, show_default=True,
+              help='Path to pfb file')
+@click.option('--program', default='MyFirstProgram', show_default=True,
+              help='Gen3 program')
+@click.option('--project', default='MyFirstProject', show_default=True,
+              help='Gen3 project')
+@click.pass_context
+def upload(ctx, bucket_name, project_path, pfb_path, program, project):
+    """Filter data_files found in generated synthetic data to gen3 managed bucket, update hashes and size."""
+
+    index_client = ctx.obj['index_client']
+    file_client = ctx.obj['file_client']
+
+    # this code reads files created by gen3's test meta data
+    # https://github.com/uc-cdis/compose-services/blob/master/docs/using_the_commons.md#generating-test-metadata
+    project_path = Path(project_path)
     for synthetic_data_path in list(project_path.glob('**/*.json')):
         updated_records = []
         for record in json.load(open(synthetic_data_path, "r")):
@@ -163,6 +241,14 @@ def upload(ctx, bucket_name, project_path, program, project):
             with open(synthetic_data_path, "w") as fp:
                 json.dump(updated_records, fp, indent=4)
                 print(f"Uploaded data and update object_id in records in {synthetic_data_path}")
+
+
+def pfb_reader(pfb_path):
+    """Yields records from pfb."""
+    reader = fastavro.read.reader
+    with open(pfb_path, 'rb') as fo:
+        for record in reader(fo):
+            yield record
 
 
 @cli.command()
