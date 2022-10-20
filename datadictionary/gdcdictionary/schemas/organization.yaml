@@ -1,0 +1,134 @@
+$schema: http://json-schema.org/draft-04/schema#
+additionalProperties: false
+category: Administrative
+description: " A grouping of people or organizations with a common purpose.\n    \n\
+  \    A formally or informally recognized grouping of people or organizations\n \
+  \   formed for the purpose of achieving some form of collective action.\n    Includes\
+  \ companies, institutions, corporations, departments, community\n    groups, healthcare\
+  \ practice groups, payer/insurer, etc.\n     http://hl7.org/fhir/organization"
+id: organization
+links: []
+namespace: http://hl7.org/fhir
+program: '*'
+project: '*'
+properties:
+  active:
+    description: Whether the organization's record is still in active use.
+    type:
+    - boolean
+    - 'null'
+  alias:
+    description: A list of alternate names that the organization is known as, or was
+      known as in the past.
+    type:
+    - string
+    - 'null'
+  contact_0_purpose_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  contact_0_purpose_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  contact_0_purpose_coding_0_system:
+    description: Indicates a purpose for which the contact can be reached.. Code defined
+      by a terminology system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  created_datetime:
+    $ref: _definitions.yaml#/datetime
+  id:
+    description: Logical id of this artifact.
+    type:
+    - string
+    - 'null'
+  identifier_0_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  identifier_0_use:
+    description: Identifies this organization  across multiple systems.. The purpose
+      of this identifier.. http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: Identifies this organization  across multiple systems.. The purpose
+        of this identifier.. http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  identifier_0_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  language:
+    description: Language of the resource content.
+    type:
+    - string
+    - 'null'
+  name:
+    description: Name used for the organization.
+    type:
+    - string
+    - 'null'
+  project_id:
+    $ref: _definitions.yaml#/project_id
+  resource_type:
+    description: ''
+    type:
+    - string
+    - 'null'
+  state:
+    $ref: _definitions.yaml#/state
+  submitter_id:
+    type:
+    - string
+    - 'null'
+  type_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  type_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  type_0_coding_0_system:
+    description: The kind(s) of organization that this is.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  updated_datetime:
+    $ref: _definitions.yaml#/datetime
+required:
+- submitter_id
+submittable: true
+systemProperties:
+- id
+- project_id
+- created_datetime
+- updated_datetime
+- state
+title: Organization
+type: object
+uniqueKeys:
+- - id
+- - project_id
+  - submitter_id
+validators: null

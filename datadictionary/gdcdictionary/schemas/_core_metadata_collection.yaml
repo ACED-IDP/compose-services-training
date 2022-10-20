@@ -1,5 +1,10 @@
 $schema: "http://json-schema.org/draft-04/schema#"
 
+#
+# included because of windmill portal.
+# portal wont build unless this entity exists
+#
+
 id: "core_metadata_collection"
 title: Core Metadata Collection
 type: object
@@ -8,7 +13,7 @@ namespace: https://data.midrc.org
 category: administrative
 program: '*'
 project: '*'
-description: A collection of data files in a project.
+description: A collection of data files in a project.  DEPRECATED - included for portal compatibility
 additionalProperties: false
 submittable: true
 validators: null
