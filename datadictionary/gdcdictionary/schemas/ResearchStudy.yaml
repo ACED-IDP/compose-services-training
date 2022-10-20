@@ -60,6 +60,11 @@ properties:
     - 'null'
   created_datetime:
     $ref: _definitions.yaml#/datetime
+  description:
+    description: What this is study doing.
+    type:
+    - string
+    - 'null'
   id:
     description: ''
     type:

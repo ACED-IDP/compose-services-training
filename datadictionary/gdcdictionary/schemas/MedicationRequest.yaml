@@ -38,6 +38,16 @@ properties:
     - 'null'
   created_datetime:
     $ref: _definitions.yaml#/datetime
+  dosageInstruction_additionalInstruction_coding_sct:
+    description: Code defined by a terminology system.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_additionalInstruction_text:
+    description: Plain text representation of the concept.
+    type:
+    - string
+    - 'null'
   dosageInstruction_asNeededBoolean:
     description: Take "as needed" (for x).
     type:
@@ -57,6 +67,11 @@ properties:
     description: The order of the dosage instructions.
     type:
     - number
+    - 'null'
+  dosageInstruction_text:
+    description: Free text dosage instructions e.g. SIG.
+    type:
+    - string
     - 'null'
   dosageInstruction_timing_repeat_frequency:
     description: Event occurs frequency times per period.
@@ -114,6 +129,11 @@ properties:
     type:
     - string
     - 'null'
+  medicationReference_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
   meta_profile:
     description: Profiles this resource claims to conform to.
     type:
@@ -121,6 +141,26 @@ properties:
     - 'null'
   project_id:
     $ref: _definitions.yaml#/project_id
+  reasonReference_0_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  reasonReference_1_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  reasonReference_2_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  reasonReference_3_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
   reasonReference_reference:
     description: Literal reference, Relative, internal or absolute URL.
     type:

@@ -513,8 +513,120 @@ index 7d139a0..6280178 100644
     * comment out guppy in nginx.conf until we re-build guppy
   * see https://github.com/uc-cdis/compose-services/blob/master/docs/using_the_commons.md#changing-the-data-dictionary*
 
+### Import data files from the study into gen3
+
+```commandline
+ python3 etl/file --gen3_credentials_file  Secrets/credentials.json upload-pfb  --pfb_path output/research_study_Alzheimers.pfb > file-object_ids.ndjson
+```
+
+* This will upload the files into gen3's indexd & mino's default_bucket.   
+* Indexd's object ids are saved to file-object_ids.ndjson
+
+### Import metadata into gen3
+
+```commandline
+ python3 etl/import_pfb.py 
+Importing output/research_study_Alzheimers.pfb into MyFirstProgram-MyFirstProject project node d8668bf7-ed94-5fe2-bc2c-24a9ede57d4f
+2022-10-10 14:50:29.497221
+total_count 10000 Practitioner 2022-10-10 14:50:49.200088
+...
+total_count 450000 DocumentReference 2022-10-10 15:22:35.035110
+total_count 460000 DocumentReference 2022-10-10 15:23:22.449487
+Elapsed time: 0:32:58.921382 total_count 461412
+
+```
+
+### Try some Graphql queries "Graph"
+
+````commandline
+{
+  program {
+    id
+    name
+    projects {
+      id
+      code
+      ResearchStudies {
+        id
+        state
+        title
+        ResearchSubjects(first: 1) {
+          id
+          Patients {
+            id
+            Specimen {
+              Tasks {
+                id
+                DocumentReferences {
+                  ga4gh_drs_uri
+                }
+              }
+            }
+            Observations {
+              id
+              category_coding_observation_category
+              code_text
+              valueString
+              valueQuantity_unit
+              valueQuantity_value
+              component_0_code_coding_loinc_org
+              component_0_code_text
+              component_0_valueQuantity_unit
+              component_0_valueQuantity_value
+              component_1_code_coding_loinc_org
+              component_1_code_text
+              component_1_valueQuantity_unit
+              component_1_valueQuantity_value
+            }
+          }
+        }
+      }
+    }
+  }
+}
 
 
+````
+![image](https://user-images.githubusercontent.com/47808/194961779-8603208c-9d3c-46d1-a7b4-103e71ad75c4.png)
+
+```commandline
+{
+  DocumentReference(id: "6c37767e-6b9a-5376-bf93-b814d6a24fc1") {
+    id
+    object_id
+    content_attachment_md5
+    content_attachment_size
+    content_attachment_url
+    Tasks {
+      id
+      Specimen {
+        id
+        Patients {
+          id
+        }
+      }
+    }
+	}
+}
+```
+
+![image](https://user-images.githubusercontent.com/47808/194962256-a2ef9522-3d0b-46d6-a402-87f2337716aa.png)
+
+### Test download
+
+```commandline
+$ python3 etl/file --gen3_credentials_file  credentials-aced-training-local.json  drs-download --did FOOBAR:17a1bf1b-d71b-40c3-8382-967628546eec  --file_name /tmp/ttt
+2022-10-10 15:42:48,120 cli INFO : https://aced-training.compbio.ohsu.edu
+2022-10-10 15:42:48,487 download DEBUG : START
+2022-10-10 15:42:48,487 download DEBUG : ('process', 'https://minio-default.compbio.ohsu.edu/aced-default/FOOBAR%3A17a1bf1b-d71b-40c3-8382-967628546eec/output/dna/Adam631_Turner526_6f60d183-2b8d-8c3c-77d0-2b684653651e_dna.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=test%2F20221010%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221010T224248Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&client_id=&user_id=1&username=test&X-Amz-Signature=f35fd6d6bc079845d812720c972804511df9f2aad9c739c6af629b64c9881240')
+2022-10-10 15:42:48,548 download DEBUG : ('get', 'https://minio-default.compbio.ohsu.edu/aced-default/FOOBAR%3A17a1bf1b-d71b-40c3-8382-967628546eec/output/dna/Adam631_Turner526_6f60d183-2b8d-8c3c-77d0-2b684653651e_dna.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=test%2F20221010%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221010T224248Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&client_id=&user_id=1&username=test&X-Amz-Signature=f35fd6d6bc079845d812720c972804511df9f2aad9c739c6af629b64c9881240', <ClientResponse(https://minio-default.compbio.ohsu.edu/aced-default/FOOBAR:17a1bf1b-d71b-40c3-8382-967628546eec/output/dna/Adam631_Turner526_6f60d183-2b8d-8c3c-77d0-2b684653651e_dna.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=test/20221010/us-east-1/s3/aws4_request&X-Amz-Date=20221010T224248Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&client_id=&user_id=1&username=test&X-Amz-Signature=f35fd6d6bc079845d812720c972804511df9f2aad9c739c6af629b64c9881240) [206 Partial Content]>
+<CIMultiDictProxy('Server': 'nginx/1.19.6', 'Date': 'Mon, 10 Oct 2022 22:42:48 GMT', 'Content-Type': 'binary/octet-stream', 'Content-Length': '23485', 'Connection': 'keep-alive', 'Accept-Ranges': 'bytes', 'Content-Range': 'bytes 0-23484/23485', 'Content-Security-Policy': 'block-all-mixed-content', 'Etag': '"499555740bfeed3cf1b28bb6525f0fa7"', 'Last-Modified': 'Mon, 10 Oct 2022 20:04:55 GMT', 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains', 'Vary': 'Origin', 'Vary': 'Accept-Encoding', 'X-Amz-Request-Id': '171CD676F036578C', 'X-Content-Type-Options': 'nosniff', 'X-Xss-Protection': '1; mode=block', 'x-amz-meta-datanode_object_id': 'FOOBAR:17a1bf1b-d71b-40c3-8382-967628546eec', 'x-amz-meta-datanode_submitter_id': '6c37767e-6b9a-5376-bf93-b814d6a24fc1', 'x-amz-meta-datanode_type': 'DocumentReference', 'x-amz-meta-md5': '499555740bfeed3cf1b28bb6525f0fa7')>
+)
+2022-10-10 15:42:48,550 download DEBUG : ('download', 4341499264, '/Users/walsbr/aced/compose-services/Adam631_Turner526_6f60d183-2b8d-8c3c-77d0-2b684653651e_dna.csv2q8u7a6g/Adam631_Turner526_6f60d183-2b8d-8c3c-77d0-2b684653651e_dna.csv.part0')
+2022-10-10 15:42:48,560 download DEBUG : ('md5', 4341499264, 'Adam631_Turner526_6f60d183-2b8d-8c3c-77d0-2b684653651e_dna.csv', '499555740bfeed3cf1b28bb6525f0fa7', b'SZVVdAv+7Tzxsou2Ul8Ppw==')
+2022-10-10 15:42:48,566 download INFO : 0.07946720800000007 seconds [True]
+
+```
 
 # Microservices Reference
 

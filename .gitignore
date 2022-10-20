@@ -15,5 +15,8 @@ credential*.json
 venv/
 .idea/
 
-/Secrets/
 /fence/
+
+/output/
+
+

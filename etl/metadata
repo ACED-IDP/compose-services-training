@@ -9,6 +9,7 @@ import logging
 from collections import defaultdict
 from glob import glob
 
+import fastavro
 from gen3.auth import Gen3Auth
 from gen3.metadata import Gen3Metadata
 from gen3.submission import Gen3Submission
@@ -16,6 +17,7 @@ import click
 import jwt
 
 from cdislogging import get_logger as get_gen3_logger
+from dictionary import init_dictionary, DataDictionaryTraversal, convert_to_node
 
 log_fmt = "%(asctime)s %(name)s %(levelname)s : %(message)s"
 
@@ -67,30 +69,6 @@ def delete_type(submission_client, program, project, batch_size, t):
         # postpones the execution of next line of code until all processes in the queue are done
         # # pool.close()
         # # pool.join()
-
-
-def create_node(submission_client, program_name, project_code, node):
-    """Create node(s)."""
-    logger = get_logger_("create_node")
-
-    try:
-        nodes = node
-        if not isinstance(node, (list,)):
-            nodes = [node]
-        response = None
-        response = submission_client.submit_record(program_name, project_code, nodes)
-        return response
-    except Exception as e:
-        logger.error(f"create_node: error {e}")
-        logger.error(f"create_node: error {nodes}")
-        if response:
-            for entity in response.get('entities', []):
-                for error in entity.get('errors', []):
-                    logger.error('{} {} {}'.format(error['type'], entity['type'], entity))
-            for error in response.get('transactional_errors', []):
-                logger.error(' transactional_error {}'.format(error))
-                logger.error(json.dumps(response))
-        raise e
 
 
 class JsonReader:
@@ -158,6 +136,127 @@ def grouper(n, iterable):
         if not chunk:
             return
         yield chunk
+
+
+def create_node(submission_client, program_name, project_code, node):
+    """Create node(s)."""
+    logger = get_logger_("create_node")
+
+    try:
+        nodes = node
+        if not isinstance(node, (list,)):
+            nodes = [node]
+        response = None
+        response = submission_client.submit_record(program_name, project_code, nodes)
+        return response
+    except Exception as e:
+        logger.error(f"create_node: error {e}")
+        logger.error(f"create_node: error {nodes}")
+        if response:
+            for entity in response.get('entities', []):
+                for error in entity.get('errors', []):
+                    logger.error('{} {} {}'.format(error['type'], entity['type'], entity))
+            for error in response.get('transactional_errors', []):
+                logger.error(' transactional_error {}'.format(error))
+                logger.error(json.dumps(response))
+        raise e
+
+
+@click.group()
+@click.option('--gen3_credentials_file', default='credentials.json', show_default=True,
+              help='API credentials file downloaded from gen3 profile.')
+@click.pass_context
+def cli(ctx, gen3_credentials_file):
+    """Metadata loader."""
+
+    endpoint = extract_endpoint(gen3_credentials_file)
+    get_logger_("cli").debug(f"Read {gen3_credentials_file} endpoint {endpoint}")
+    auth = Gen3Auth(endpoint, refresh_file=gen3_credentials_file)
+    submission_client = Gen3Submission(endpoint, auth)
+    ctx.ensure_object(dict)
+    ctx.obj['submission_client'] = submission_client
+    ctx.obj['discovery_client'] = Gen3Metadata(endpoint, auth)
+    ctx.obj['endpoint'] = endpoint
+    ctx.obj['programs'] = [link.split('/')[-1] for link in submission_client.get_programs()['links']]
+
+
+@cli.command()
+@click.option('--pfb_path', default=None, required=True, show_default=True,
+              help='directory that contains research_studyXXXX.pfb')
+@click.option('--program', default=None, show_default=True,
+              help='Gen3 "program"')
+@click.option('--project', default=None, show_default=True,
+              help='Gen3 "project"')
+@click.option('--batch_size', default=10, show_default=True,
+              help='number of records to process per call')
+@click.pass_context
+def load_pfb(ctx, pfb_path, program, project, batch_size):
+    """Loads metadata into project"""
+    logger = get_logger_("load_pfb")
+    submission_client = ctx.obj['submission_client']
+    dictionary, model = init_dictionary(url='https://aced-public.s3.us-west-2.amazonaws.com/aced.json')
+    ddt = DataDictionaryTraversal(model)
+    node_table_by_label = ddt.get_node_table_by_label()
+    # {'root': 'node_root', 'data_release': 'node_datarelease', 'DocumentReference': 'node_DocumentReference',
+    #  'Observation': 'node_Observation', 'Patient': 'node_Patient', 'Practitioner': 'node_Practitioner',
+    #  'MedicationRequest': 'node_MedicationRequest', 'program': 'node_program', 'project': 'node_project',
+    #  'DiagnosticReport': 'node_DiagnosticReport', 'Task': 'node_Task', 'Condition': 'node_Condition',
+    #  'Location': 'node_Location', 'Encounter': 'node_Encounter', 'Procedure': 'node_Procedure',
+    #  'Organization': 'node_Organization', 'ImagingStudy': 'node_ImagingStudy', 'ResearchStudy': 'node_ResearchStudy',
+    #  'Specimen': 'node_Specimen', 'Medication': 'node_Medication', 'ResearchSubject': 'node_ResearchSubject',
+    #  'core_metadata_collection': 'node_coremetadatacollection'}
+    edge_table_by_labels = ddt.get_edge_table_by_labels()
+    # {('data_release', 'root'): 'edge_datareleasedescribesroot',
+    #  ('DocumentReference', 'Patient'): 'edge_DocumentReferencePatientsPatient',
+    #  ('DocumentReference', 'Organization'): 'edge_ec062b7b_DoOrOr',
+    #  ('Observation', 'ResearchStudy'): 'edge_0b10b6fb_ObReRe',
+    #  ('Observation', 'Specimen'): 'edge_ObservationSpecimenSpecimen',
+    #  ('Observation', 'Patient'): 'edge_ObservationPatientsPatient',
+    #  ('Observation', 'Encounter'): 'edge_ObservationEncountersEncounter',
+    #  ('Patient', 'Organization'): 'edge_PatientOrganizationsOrganization',
+    #  ('MedicationRequest', 'Patient'): 'edge_MedicationRequestPatientsPatient',
+    #  ('MedicationRequest', 'Encounter'): 'edge_8ffbdcaa_MeEnEn',
+    #  ('MedicationRequest', 'Medication'): 'edge_df7c93a6_MeMeMe', ('project', 'program'): 'edge_projectmemberofprogram',
+    #  ('DiagnosticReport', 'Patient'): 'edge_DiagnosticReportPatientsPatient',
+    #  ('DiagnosticReport', 'Encounter'): 'edge_DiagnosticReportEncountersEncounter',
+    #  ('DiagnosticReport', 'Practitioner'): 'edge_398dc3a8_DiPrPr', ('Task', 'Patient'): 'edge_TaskPatientsPatient',
+    #  ('Task', 'Specimen'): 'edge_TaskSpecimenSpecimen', ('Task', 'DocumentReference'): 'edge_42e2e26b_TaDoDo',
+    #  ('Condition', 'Patient'): 'edge_ConditionPatientsPatient',
+    #  ('Condition', 'Encounter'): 'edge_ConditionEncountersEncounter',
+    #  ('Location', 'Organization'): 'edge_LocationOrganizationsOrganization',
+    #  ('Encounter', 'Patient'): 'edge_EncounterPatientsPatient',
+    #  ('Procedure', 'Patient'): 'edge_ProcedurePatientsPatient',
+    #  ('Procedure', 'Encounter'): 'edge_ProcedureEncountersEncounter',
+    #  ('Organization', 'Organization'): 'edge_85f2b993_OrOrOr',
+    #  ('ImagingStudy', 'Patient'): 'edge_ImagingStudyPatientsPatient',
+    #  ('ImagingStudy', 'Encounter'): 'edge_ImagingStudyEncountersEncounter',
+    #  ('ResearchStudy', 'ResearchStudy'): 'edge_e2d4f866_ReReRe',
+    #  ('ResearchStudy', 'Practitioner'): 'edge_876d23c4_RePrPr',
+    #  ('ResearchStudy', 'Organization'): 'edge_8abff393_ReOrOr',
+    #  ('ResearchStudy', 'project'): 'edge_ResearchStudyprojectsproject',
+    #  ('Specimen', 'Patient'): 'edge_SpecimenPatientsPatient',
+    #  ('ResearchSubject', 'Patient'): 'edge_ResearchSubjectPatientsPatient',
+    #  ('ResearchSubject', 'ResearchStudy'): 'edge_7ecdea32_ReReRe',
+    #  ('core_metadata_collection', 'project'): 'edge_9197510c_comecodafrpr'}
+
+    for records in grouper(batch_size, pfb_reader(pfb_path)):
+        nodes = []
+        for record in records:
+            if record['name'] == 'Metadata':
+                continue
+            print(record['name'], record['id'], record)
+            convert_to_node(record)
+            break
+        break
+        # collect_result(create_node(submission_client, program, project, nodes))
+
+
+def pfb_reader(pfb_path):
+    """Yields records from pfb."""
+    reader_ = fastavro.read.reader
+    with open(pfb_path, 'rb') as fo:
+        for record in reader_(fo):
+            yield record
 
 
 def upload_metadata(path, program, project, submission_client, batch_size):
@@ -264,24 +363,6 @@ def extract_endpoint(gen3_credentials_file):
         claims = jwt.decode(api_key, options={"verify_signature": False})
         assert 'iss' in claims
         return claims['iss'].replace('/user', '')
-
-
-@click.group()
-@click.option('--gen3_credentials_file', default='credentials.json', show_default=True,
-              help='API credentials file downloaded from gen3 profile.')
-@click.pass_context
-def cli(ctx, gen3_credentials_file):
-    """Metadata loader."""
-
-    endpoint = extract_endpoint(gen3_credentials_file)
-    get_logger_("cli").debug(f"Read {gen3_credentials_file} endpoint {endpoint}")
-    auth = Gen3Auth(endpoint, refresh_file=gen3_credentials_file)
-    submission_client = Gen3Submission(endpoint, auth)
-    ctx.ensure_object(dict)
-    ctx.obj['submission_client'] = submission_client
-    ctx.obj['discovery_client'] = Gen3Metadata(endpoint, auth)
-    ctx.obj['endpoint'] = endpoint
-    ctx.obj['programs'] = [link.split('/')[-1] for link in submission_client.get_programs()['links']]
 
 
 @cli.command()

@@ -23,6 +23,12 @@ links:
   required: false
   target_type: Encounter
 - backref: DiagnosticReports
+  label: Organizations
+  multiplicity: many_to_many
+  name: Organizations
+  required: false
+  target_type: Organization
+- backref: DiagnosticReports
   label: Practitioners
   multiplicity: many_to_many
   name: Practitioners
@@ -62,6 +68,11 @@ properties:
     type:
     - string
     - 'null'
+  category_coding_v2_0074:
+    description: Code defined by a terminology system.
+    type:
+    - string
+    - 'null'
   code_coding_0_code:
     description: Symbol in syntax defined by the system.
     type:
@@ -89,6 +100,16 @@ properties:
     - 'null'
   code_coding_1_system:
     description: Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  code_coding_loinc_org:
+    description: Code defined by a terminology system.
+    type:
+    - string
+    - 'null'
+  code_text:
+    description: Plain text representation of the concept.
     type:
     - string
     - 'null'
@@ -139,10 +160,540 @@ properties:
     type:
     - string
     - 'null'
+  presentedForm_url:
+    description: Uri where the data can be found.
+    type:
+    - string
+    - 'null'
   project_id:
     $ref: _definitions.yaml#/project_id
   resourceType:
     description: One of the resource types defined as part of this version of FHIR
+    type:
+    - string
+    - 'null'
+  result_0_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_0_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_10_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_10_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_11_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_11_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_12_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_12_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_13_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_13_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_14_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_14_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_15_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_15_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_16_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_16_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_17_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_17_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_18_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_18_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_19_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_19_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_1_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_1_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_20_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_20_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_21_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_21_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_22_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_22_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_23_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_23_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_24_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_24_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_25_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_25_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_26_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_26_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_27_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_27_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_28_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_28_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_29_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_29_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_2_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_2_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_30_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_30_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_31_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_31_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_32_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_32_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_33_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_33_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_34_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_34_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_35_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_35_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_36_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_36_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_37_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_37_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_38_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_38_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_39_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_39_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_3_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_3_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_40_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_40_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_41_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_41_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_42_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_42_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_43_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_43_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_44_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_44_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_45_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_45_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_46_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_46_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_47_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_47_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_48_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_48_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_49_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_49_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_4_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_4_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_50_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_50_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_5_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_5_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_6_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_6_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_7_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_7_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_8_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_8_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_9_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_9_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  result_display:
+    description: Text alternative for the resource.
+    type:
+    - string
+    - 'null'
+  result_reference:
+    description: Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  specimen_reference:
+    description: Literal reference, Relative, internal or absolute URL.
     type:
     - string
     - 'null'

@@ -64,6 +64,11 @@ properties:
     type:
     - string
     - 'null'
+  communication_language_coding_iso639_1:
+    description: Code defined by a terminology system.
+    type:
+    - string
+    - 'null'
   communication_language_coding_urn_ietf_bcp_47:
     description: Code defined by a terminology system.
     type:
@@ -155,6 +160,11 @@ properties:
     type:
     - boolean
     - 'null'
+  multipleBirthInteger:
+    description: Whether patient is part of a multiple birth.
+    type:
+    - number
+    - 'null'
   name_0_family:
     description: Family name (often called 'Surname').
     type:
@@ -167,6 +177,11 @@ properties:
     - 'null'
   name_0_prefix:
     description: Parts that come before the name.
+    type:
+    - string
+    - 'null'
+  name_0_suffix:
+    description: Parts that come after the name.
     type:
     - string
     - 'null'
@@ -204,7 +219,51 @@ properties:
     type:
     - string
     - 'null'
+  name_1_suffix:
+    description: Parts that come after the name.
+    type:
+    - string
+    - 'null'
   name_1_use:
+    description: Identifies the purpose for this name.. http://hl7.org/fhir/name-use
+    enum:
+    - usual
+    - official
+    - temp
+    - nickname
+    - anonymous
+    - old
+    - maiden
+    term:
+      description: Identifies the purpose for this name.. http://hl7.org/fhir/name-use
+      termDef:
+        cde_id: http://hl7.org/fhir/name-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/name-use
+        term_url: http://hl7.org/fhir/name-use
+  name_family:
+    description: Family name (often called 'Surname').
+    type:
+    - string
+    - 'null'
+  name_given:
+    description: Given names (not always 'first'). Includes middle names.
+    type:
+    - string
+    - 'null'
+  name_prefix:
+    description: Parts that come before the name.
+    type:
+    - string
+    - 'null'
+  name_suffix:
+    description: Parts that come after the name.
+    type:
+    - string
+    - 'null'
+  name_use:
     description: Identifies the purpose for this name.. http://hl7.org/fhir/name-use
     enum:
     - usual

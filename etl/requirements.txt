@@ -1,7 +1,25 @@
 pyjwt
 Click
-#  gen3
-https://github.com/ohsu-comp-bio/gen3sdk-python/archive/feat/alternate-data_upload_bucket.zip
 jsonpath-ng
 certifi
 faker-biology
+
+
+# "stock" gen3 - the version on https://pypi.org/project/gen3/ 4.14.0 does not have the bucket change
+# gen3
+
+# uchicago official repo - has the bucket change https://github.com/uc-cdis/gen3sdk-python/pull/160
+https://github.com/uc-cdis/gen3sdk-python/archive/master.zip
+
+# to test:
+# from gen3.file import Gen3File
+# import inspect
+# assert 'bucket' in [parameter_name for parameter_name in inspect.signature(Gen3File.upload_file).parameters]
+# print('ok')
+
+
+# our fork of pelican that supports 3.9
+git+https://github.com/ACED-IDP/pelican.git@chore/python-version
+# to test:
+# python3 -c "from pelican.dictionary import init_dictionary, DataDictionaryTraversal; print('ok')"
+

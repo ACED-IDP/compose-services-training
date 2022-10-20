@@ -22,6 +22,11 @@ namespace: http://hl7.org/fhir
 program: '*'
 project: '*'
 properties:
+  abatementDateTime:
+    description: When in resolution/remission.
+    type:
+    - string
+    - 'null'
   category_coding_condition_category:
     description: Code defined by a terminology system.
     type:
