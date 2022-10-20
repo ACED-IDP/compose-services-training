@@ -1,0 +1,1365 @@
+$schema: http://json-schema.org/draft-04/schema#
+additionalProperties: false
+category: Clinical
+description: " Measurements and simple assertions.\n    \n    Measurements and simple\
+  \ assertions made about a patient, device or other\n    subject.\n     http://hl7.org/fhir/observation"
+id: observation
+links:
+- backref: observations
+  label: Observation_encounter_encounter
+  multiplicity: many_to_many
+  name: encounter_encounter
+  required: false
+  target_type: encounter
+- backref: observations
+  label: Observation_specimen_specimen
+  multiplicity: many_to_many
+  name: specimen_specimen
+  required: false
+  target_type: specimen
+- backref: observations
+  label: Observation_subject_patient
+  multiplicity: many_to_many
+  name: subject_patient
+  required: false
+  target_type: patient
+- backref: observations
+  label: Observation_subject_research_study
+  multiplicity: many_to_many
+  name: subject_research_study
+  required: false
+  target_type: research_study
+namespace: http://hl7.org/fhir
+program: '*'
+project: '*'
+properties:
+  bodySite_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  bodySite_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  bodySite_coding_0_system:
+    description: Observed body part.. Code defined by a terminology system.. Identity
+      of the terminology system.
+    type:
+    - string
+    - 'null'
+  category_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  category_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  category_0_coding_0_system:
+    description: A code that classifies the general type of observation being made..
+      Code defined by a terminology system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  code_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  code_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  code_coding_0_system:
+    description: Type of observation (code / type).. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  component_0_code_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  component_0_code_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  component_0_code_coding_0_system:
+    description: Type of component observation (code / type).. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  component_0_dataAbsentReason_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  component_0_dataAbsentReason_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  component_0_dataAbsentReason_coding_0_system:
+    description: Provides a reason why the expected value in the element Observation.component.value[x]
+      is missing.. Code defined by a terminology system.. Identity of the terminology
+      system.
+    type:
+    - string
+    - 'null'
+  component_0_interpretation_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  component_0_interpretation_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  component_0_interpretation_0_coding_0_system:
+    description: High, low, normal, etc... Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  component_0_referenceRange_0_high_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  component_0_referenceRange_0_high_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  component_0_referenceRange_0_high_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  component_0_referenceRange_0_high_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  component_0_referenceRange_0_high_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  component_0_referenceRange_0_low_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  component_0_referenceRange_0_low_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  component_0_referenceRange_0_low_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  component_0_referenceRange_0_low_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  component_0_referenceRange_0_low_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  component_0_referenceRange_0_text:
+    description: Text based reference range in an observation.
+    type:
+    - string
+    - 'null'
+  component_0_valueBoolean:
+    description: Actual component result.
+    type:
+    - boolean
+    - 'null'
+  component_0_valueCodeableConcept_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  component_0_valueCodeableConcept_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  component_0_valueCodeableConcept_coding_0_system:
+    description: Actual component result.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  component_0_valueDateTime:
+    description: Actual component result.
+    type:
+    - string
+    - 'null'
+  component_0_valueInteger:
+    description: Actual component result.
+    type:
+    - number
+    - 'null'
+  component_0_valuePeriod_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  component_0_valuePeriod_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  component_0_valueQuantity_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  component_0_valueQuantity_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  component_0_valueQuantity_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  component_0_valueQuantity_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  component_0_valueQuantity_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  component_0_valueRange_high_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  component_0_valueRange_high_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  component_0_valueRange_high_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  component_0_valueRange_high_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  component_0_valueRange_high_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  component_0_valueRange_low_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  component_0_valueRange_low_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  component_0_valueRange_low_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  component_0_valueRange_low_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  component_0_valueRange_low_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  component_0_valueRatio_denominator_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  component_0_valueRatio_denominator_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  component_0_valueRatio_denominator_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  component_0_valueRatio_denominator_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  component_0_valueRatio_denominator_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  component_0_valueRatio_numerator_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  component_0_valueRatio_numerator_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  component_0_valueRatio_numerator_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  component_0_valueRatio_numerator_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  component_0_valueRatio_numerator_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  component_0_valueSampledData_data:
+    description: Decimal values with spaces, or "E" | "U" | "L".
+    type:
+    - string
+    - 'null'
+  component_0_valueSampledData_dimensions:
+    description: Number of sample points at each time point.
+    type:
+    - number
+  component_0_valueSampledData_factor:
+    description: Multiply data by this before adding to origin.
+    type:
+    - number
+    - 'null'
+  component_0_valueSampledData_lowerLimit:
+    description: Lower limit of detection.
+    type:
+    - number
+    - 'null'
+  component_0_valueSampledData_origin_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  component_0_valueSampledData_origin_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  component_0_valueSampledData_origin_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  component_0_valueSampledData_origin_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  component_0_valueSampledData_origin_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  component_0_valueSampledData_period:
+    description: Number of milliseconds between samples.
+    type:
+    - number
+  component_0_valueSampledData_upperLimit:
+    description: Upper limit of detection.
+    type:
+    - number
+    - 'null'
+  component_0_valueString:
+    description: Actual component result.
+    type:
+    - string
+    - 'null'
+  component_0_valueTime:
+    description: Actual component result.
+    type:
+    - string
+    - 'null'
+  created_datetime:
+    $ref: _definitions.yaml#/datetime
+  dataAbsentReason_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  dataAbsentReason_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  dataAbsentReason_coding_0_system:
+    description: Provides a reason why the expected value in the element Observation.value[x]
+      is missing.. Code defined by a terminology system.. Identity of the terminology
+      system.
+    type:
+    - string
+    - 'null'
+  effectiveDateTime:
+    description: Clinically relevant time/time-period for observation.
+    type:
+    - string
+    - 'null'
+  effectiveInstant:
+    description: Clinically relevant time/time-period for observation.
+    type:
+    - string
+    - 'null'
+  effectivePeriod_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  effectivePeriod_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  effectiveTiming_code_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  effectiveTiming_code_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  effectiveTiming_code_coding_0_system:
+    description: BID | TID | QID | AM | PM | QD | QOD | +.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  effectiveTiming_event:
+    description: When the event occurs.
+    type:
+    - string
+    - 'null'
+  effectiveTiming_repeat_boundsDuration_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  effectiveTiming_repeat_boundsDuration_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.
+    type:
+    - string
+    - 'null'
+  effectiveTiming_repeat_boundsDuration_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  effectiveTiming_repeat_boundsDuration_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  effectiveTiming_repeat_boundsDuration_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  effectiveTiming_repeat_boundsPeriod_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  effectiveTiming_repeat_boundsPeriod_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  effectiveTiming_repeat_count:
+    description: Number of times to repeat.
+    type:
+    - number
+    - 'null'
+  effectiveTiming_repeat_countMax:
+    description: Maximum number of times to repeat.
+    type:
+    - number
+    - 'null'
+  effectiveTiming_repeat_dayOfWeek:
+    description: If one or more days of week is provided, then the action happens
+      only on the specified day(s).. http://hl7.org/fhir/days-of-week
+    enum:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+    - sat
+    - sun
+    term:
+      description: If one or more days of week is provided, then the action happens
+        only on the specified day(s).. http://hl7.org/fhir/days-of-week
+      termDef:
+        cde_id: http://hl7.org/fhir/days-of-week
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/days-of-week
+        term_url: http://hl7.org/fhir/days-of-week
+  effectiveTiming_repeat_duration:
+    description: How long when it happens.
+    type:
+    - number
+    - 'null'
+  effectiveTiming_repeat_durationMax:
+    description: How long when it happens (Max).
+    type:
+    - number
+    - 'null'
+  effectiveTiming_repeat_durationUnit:
+    description: s | min | h | d | wk | mo | a - unit of time (UCUM).
+    type:
+    - string
+    - 'null'
+  effectiveTiming_repeat_frequency:
+    description: Event occurs frequency times per period.
+    type:
+    - number
+    - 'null'
+  effectiveTiming_repeat_frequencyMax:
+    description: Event occurs up to frequencyMax times per period.
+    type:
+    - number
+    - 'null'
+  effectiveTiming_repeat_offset:
+    description: Minutes from event (before or after).
+    type:
+    - number
+    - 'null'
+  effectiveTiming_repeat_period:
+    description: Event occurs frequency times per period.
+    type:
+    - number
+    - 'null'
+  effectiveTiming_repeat_periodMax:
+    description: Upper limit of period (3-4 hours).
+    type:
+    - number
+    - 'null'
+  effectiveTiming_repeat_periodUnit:
+    description: s | min | h | d | wk | mo | a - unit of time (UCUM).
+    type:
+    - string
+    - 'null'
+  effectiveTiming_repeat_timeOfDay:
+    description: Time of day for action.
+    type:
+    - string
+    - 'null'
+  effectiveTiming_repeat_when:
+    description: Code for time period of occurrence.
+    type:
+    - string
+    - 'null'
+  id:
+    description: Logical id of this artifact.
+    type:
+    - string
+    - 'null'
+  identifier_0_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  identifier_0_use:
+    description: Business Identifier for observation.. The purpose of this identifier..
+      http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: Business Identifier for observation.. The purpose of this identifier..
+        http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  identifier_0_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  interpretation_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  interpretation_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  interpretation_0_coding_0_system:
+    description: High, low, normal, etc... Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  issued:
+    description: Date/Time this version was made available.
+    type:
+    - string
+    - 'null'
+  language:
+    description: Language of the resource content.
+    type:
+    - string
+    - 'null'
+  method_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  method_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  method_coding_0_system:
+    description: How it was done.. Code defined by a terminology system.. Identity
+      of the terminology system.
+    type:
+    - string
+    - 'null'
+  project_id:
+    $ref: _definitions.yaml#/project_id
+  referenceRange_0_age_high_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_age_high_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  referenceRange_0_age_high_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_age_high_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_age_high_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  referenceRange_0_age_low_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_age_low_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  referenceRange_0_age_low_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_age_low_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_age_low_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  referenceRange_0_appliesTo_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_appliesTo_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_appliesTo_0_coding_0_system:
+    description: Reference range population.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_high_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_high_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  referenceRange_0_high_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_high_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_high_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  referenceRange_0_low_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_low_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  referenceRange_0_low_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_low_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_low_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  referenceRange_0_text:
+    description: Text based reference range in an observation.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_type_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_type_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  referenceRange_0_type_coding_0_system:
+    description: Codes to indicate the what part of the targeted reference population
+      it applies to. For example, the normal or therapeutic range.. Code defined by
+      a terminology system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  resource_type:
+    description: ''
+    type:
+    - string
+    - 'null'
+  state:
+    $ref: _definitions.yaml#/state
+  status:
+    description: The status of the result value.. http://hl7.org/fhir/observation-status
+    enum:
+    - registered
+    - preliminary
+    - final
+    - amended
+    - corrected
+    - cancelled
+    - entered-in-error
+    - unknown
+    term:
+      description: The status of the result value.. http://hl7.org/fhir/observation-status
+      termDef:
+        cde_id: http://hl7.org/fhir/observation-status
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/observation-status
+        term_url: http://hl7.org/fhir/observation-status
+  submitter_id:
+    type:
+    - string
+    - 'null'
+  updated_datetime:
+    $ref: _definitions.yaml#/datetime
+  valueBoolean:
+    description: Actual result.
+    type:
+    - boolean
+    - 'null'
+  valueCodeableConcept_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  valueCodeableConcept_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  valueCodeableConcept_coding_0_system:
+    description: Actual result.. Code defined by a terminology system.. Identity of
+      the terminology system.
+    type:
+    - string
+    - 'null'
+  valueDateTime:
+    description: Actual result.
+    type:
+    - string
+    - 'null'
+  valueInteger:
+    description: Actual result.
+    type:
+    - number
+    - 'null'
+  valuePeriod_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  valuePeriod_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  valueQuantity_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  valueQuantity_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  valueQuantity_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  valueQuantity_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  valueQuantity_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  valueRange_high_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  valueRange_high_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  valueRange_high_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  valueRange_high_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  valueRange_high_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  valueRange_low_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  valueRange_low_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  valueRange_low_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  valueRange_low_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  valueRange_low_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  valueRatio_denominator_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  valueRatio_denominator_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  valueRatio_denominator_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  valueRatio_denominator_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  valueRatio_denominator_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  valueRatio_numerator_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  valueRatio_numerator_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  valueRatio_numerator_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  valueRatio_numerator_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  valueRatio_numerator_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  valueSampledData_data:
+    description: Decimal values with spaces, or "E" | "U" | "L".
+    type:
+    - string
+    - 'null'
+  valueSampledData_dimensions:
+    description: Number of sample points at each time point.
+    type:
+    - number
+  valueSampledData_factor:
+    description: Multiply data by this before adding to origin.
+    type:
+    - number
+    - 'null'
+  valueSampledData_lowerLimit:
+    description: Lower limit of detection.
+    type:
+    - number
+    - 'null'
+  valueSampledData_origin_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  valueSampledData_origin_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  valueSampledData_origin_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  valueSampledData_origin_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  valueSampledData_origin_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  valueSampledData_period:
+    description: Number of milliseconds between samples.
+    type:
+    - number
+  valueSampledData_upperLimit:
+    description: Upper limit of detection.
+    type:
+    - number
+    - 'null'
+  valueString:
+    description: Actual result.
+    type:
+    - string
+    - 'null'
+  valueTime:
+    description: Actual result.
+    type:
+    - string
+    - 'null'
+required:
+- submitter_id
+- status
+- code
+submittable: true
+systemProperties:
+- id
+- project_id
+- created_datetime
+- updated_datetime
+- state
+title: Observation
+type: object
+uniqueKeys:
+- - id
+- - project_id
+  - submitter_id
+validators: null

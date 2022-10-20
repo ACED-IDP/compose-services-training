@@ -1,0 +1,545 @@
+$schema: http://json-schema.org/draft-04/schema#
+additionalProperties: false
+category: Biospecimen
+description: " Sample for analysis.\n    \n    A sample to be used for analysis.\n\
+  \     http://hl7.org/fhir/specimen"
+id: specimen
+links:
+- backref: specimen
+  label: Specimen_parent_specimen
+  multiplicity: many_to_many
+  name: parent_specimen
+  required: false
+  target_type: specimen
+- backref: specimen
+  label: Specimen_subject_patient
+  multiplicity: many_to_many
+  name: subject_patient
+  required: false
+  target_type: patient
+namespace: http://hl7.org/fhir
+program: '*'
+project: '*'
+properties:
+  accessionIdentifier_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  accessionIdentifier_use:
+    description: Identifier assigned by the lab.. The purpose of this identifier..
+      http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: Identifier assigned by the lab.. The purpose of this identifier..
+        http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  accessionIdentifier_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  collection_bodySite_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  collection_bodySite_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  collection_bodySite_coding_0_system:
+    description: Anatomical collection site.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  collection_collectedDateTime:
+    description: Collection time.
+    type:
+    - string
+    - 'null'
+  collection_collectedPeriod_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  collection_collectedPeriod_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  collection_collector_reference:
+    description: Who collected the specimen.. Literal reference, Relative, internal
+      or absolute URL.
+    type:
+    - string
+    - 'null'
+  collection_collector_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  collection_duration_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  collection_duration_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.
+    type:
+    - string
+    - 'null'
+  collection_duration_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  collection_duration_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  collection_duration_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  collection_fastingStatusCodeableConcept_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  collection_fastingStatusCodeableConcept_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  collection_fastingStatusCodeableConcept_coding_0_system:
+    description: Whether or how long patient abstained from food and/or drink.. Code
+      defined by a terminology system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  collection_fastingStatusDuration_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  collection_fastingStatusDuration_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.
+    type:
+    - string
+    - 'null'
+  collection_fastingStatusDuration_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  collection_fastingStatusDuration_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  collection_fastingStatusDuration_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  collection_method_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  collection_method_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  collection_method_coding_0_system:
+    description: Technique used to perform collection.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  collection_quantity_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  collection_quantity_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  collection_quantity_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  collection_quantity_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  collection_quantity_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  condition_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  condition_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  condition_0_coding_0_system:
+    description: State of the specimen.. Code defined by a terminology system.. Identity
+      of the terminology system.
+    type:
+    - string
+    - 'null'
+  container_0_additiveCodeableConcept_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  container_0_additiveCodeableConcept_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  container_0_additiveCodeableConcept_coding_0_system:
+    description: Additive associated with container.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  container_0_additiveReference_reference:
+    description: Additive associated with container.. Literal reference, Relative,
+      internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  container_0_additiveReference_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  container_0_capacity_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  container_0_capacity_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  container_0_capacity_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  container_0_capacity_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  container_0_capacity_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  container_0_description:
+    description: Textual description of the container.
+    type:
+    - string
+    - 'null'
+  container_0_identifier_0_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  container_0_identifier_0_use:
+    description: Id for the container.. The purpose of this identifier.. http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: Id for the container.. The purpose of this identifier.. http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  container_0_identifier_0_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  container_0_specimenQuantity_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  container_0_specimenQuantity_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  container_0_specimenQuantity_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  container_0_specimenQuantity_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  container_0_specimenQuantity_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  container_0_type_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  container_0_type_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  container_0_type_coding_0_system:
+    description: Kind of container directly associated with specimen.. Code defined
+      by a terminology system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  created_datetime:
+    $ref: _definitions.yaml#/datetime
+  id:
+    description: Logical id of this artifact.
+    type:
+    - string
+    - 'null'
+  identifier_0_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  identifier_0_use:
+    description: External Identifier.. The purpose of this identifier.. http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: External Identifier.. The purpose of this identifier.. http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  identifier_0_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  language:
+    description: Language of the resource content.
+    type:
+    - string
+    - 'null'
+  processing_0_additive_0_reference:
+    description: Material used in the processing step.. Literal reference, Relative,
+      internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  processing_0_additive_0_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  processing_0_description:
+    description: Textual description of procedure.
+    type:
+    - string
+    - 'null'
+  processing_0_procedure_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  processing_0_procedure_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  processing_0_procedure_coding_0_system:
+    description: Indicates the treatment step  applied to the specimen.. Code defined
+      by a terminology system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  processing_0_timeDateTime:
+    description: Date and time of specimen processing.
+    type:
+    - string
+    - 'null'
+  processing_0_timePeriod_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  processing_0_timePeriod_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  project_id:
+    $ref: _definitions.yaml#/project_id
+  receivedTime:
+    description: The time when specimen was received for processing.
+    type:
+    - string
+    - 'null'
+  resource_type:
+    description: ''
+    type:
+    - string
+    - 'null'
+  state:
+    $ref: _definitions.yaml#/state
+  status:
+    description: The availability of the specimen.. http://hl7.org/fhir/specimen-status
+    enum:
+    - available
+    - unavailable
+    - unsatisfactory
+    - entered-in-error
+    term:
+      description: The availability of the specimen.. http://hl7.org/fhir/specimen-status
+      termDef:
+        cde_id: http://hl7.org/fhir/specimen-status
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/specimen-status
+        term_url: http://hl7.org/fhir/specimen-status
+  submitter_id:
+    type:
+    - string
+    - 'null'
+  type_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  type_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  type_coding_0_system:
+    description: Kind of material that forms the specimen.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  updated_datetime:
+    $ref: _definitions.yaml#/datetime
+required:
+- submitter_id
+submittable: true
+systemProperties:
+- id
+- project_id
+- created_datetime
+- updated_datetime
+- state
+title: Specimen
+type: object
+uniqueKeys:
+- - id
+- - project_id
+  - submitter_id
+validators: null

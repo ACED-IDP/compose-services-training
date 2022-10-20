@@ -250,3 +250,15 @@ ubiquitous_properties:
     $ref: "#/datetime"
   updated_datetime:
     $ref: "#/datetime"
+
+
+fhir_resource:
+    type: object
+    # Allow true here because we can have other unique keys defined on
+    # a target type
+    additionalProperties: true
+    properties:
+        id:
+            $ref: "#/UUID"
+        resource_type:
+            type: string

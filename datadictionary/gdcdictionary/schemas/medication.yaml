@@ -1,0 +1,334 @@
+$schema: http://json-schema.org/draft-04/schema#
+additionalProperties: false
+category: Clinical
+description: " Definition of a Medication.\n    \n    This resource is primarily used\
+  \ for the identification and definition of a\n    medication for the purposes of\
+  \ prescribing, dispensing, and administering a\n    medication as well as for making\
+  \ statements about medication use.\n     http://hl7.org/fhir/medication"
+id: medication
+links: []
+namespace: http://hl7.org/fhir
+program: '*'
+project: '*'
+properties:
+  amount_denominator_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  amount_denominator_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  amount_denominator_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  amount_denominator_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  amount_denominator_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  amount_numerator_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  amount_numerator_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  amount_numerator_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  amount_numerator_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  amount_numerator_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  batch_expirationDate:
+    description: When batch will expire.
+    type:
+    - string
+    - 'null'
+  batch_lotNumber:
+    description: Identifier assigned to batch.
+    type:
+    - string
+    - 'null'
+  code_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  code_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  code_coding_0_system:
+    description: Codes that identify this medication.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  created_datetime:
+    $ref: _definitions.yaml#/datetime
+  form_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  form_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  form_coding_0_system:
+    description: powder | tablets | capsule +.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  id:
+    description: Logical id of this artifact.
+    type:
+    - string
+    - 'null'
+  identifier_0_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  identifier_0_use:
+    description: Business identifier for this medication.. The purpose of this identifier..
+      http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: Business identifier for this medication.. The purpose of this identifier..
+        http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  identifier_0_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  ingredient_0_isActive:
+    description: Active ingredient indicator.
+    type:
+    - boolean
+    - 'null'
+  ingredient_0_itemCodeableConcept_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  ingredient_0_itemCodeableConcept_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  ingredient_0_itemCodeableConcept_coding_0_system:
+    description: The actual ingredient or content.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  ingredient_0_itemReference_reference:
+    description: The actual ingredient or content.. Literal reference, Relative, internal
+      or absolute URL.
+    type:
+    - string
+    - 'null'
+  ingredient_0_itemReference_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  ingredient_0_strength_denominator_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  ingredient_0_strength_denominator_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  ingredient_0_strength_denominator_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  ingredient_0_strength_denominator_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  ingredient_0_strength_denominator_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  ingredient_0_strength_numerator_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  ingredient_0_strength_numerator_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  ingredient_0_strength_numerator_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  ingredient_0_strength_numerator_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  ingredient_0_strength_numerator_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  language:
+    description: Language of the resource content.
+    type:
+    - string
+    - 'null'
+  project_id:
+    $ref: _definitions.yaml#/project_id
+  resource_type:
+    description: ''
+    type:
+    - string
+    - 'null'
+  state:
+    $ref: _definitions.yaml#/state
+  status:
+    description: A code to indicate if the medication is in active use.. http://hl7.org/fhir/CodeSystem/medication-status
+    enum:
+    - active
+    - inactive
+    - entered-in-error
+    term:
+      description: A code to indicate if the medication is in active use.. http://hl7.org/fhir/CodeSystem/medication-status
+      termDef:
+        cde_id: http://hl7.org/fhir/CodeSystem/medication-status
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/CodeSystem/medication-status
+        term_url: http://hl7.org/fhir/CodeSystem/medication-status
+  submitter_id:
+    type:
+    - string
+    - 'null'
+  updated_datetime:
+    $ref: _definitions.yaml#/datetime
+required:
+- submitter_id
+submittable: true
+systemProperties:
+- id
+- project_id
+- created_datetime
+- updated_datetime
+- state
+title: Medication
+type: object
+uniqueKeys:
+- - id
+- - project_id
+  - submitter_id
+validators: null

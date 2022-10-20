@@ -1,0 +1,468 @@
+$schema: http://json-schema.org/draft-04/schema#
+additionalProperties: false
+category: Clinical
+description: " Detailed information about conditions, problems or diagnoses.\n   \
+  \ \n    A clinical condition, problem, diagnosis, or other event, situation, issue,\n\
+  \    or clinical concept that has risen to a level of concern.\n     http://hl7.org/fhir/condition"
+id: condition
+links:
+- backref: conditions
+  label: Condition_encounter_encounter
+  multiplicity: many_to_many
+  name: encounter_encounter
+  required: false
+  target_type: encounter
+- backref: conditions
+  label: Condition_subject_patient
+  multiplicity: many_to_many
+  name: subject_patient
+  required: false
+  target_type: patient
+namespace: http://hl7.org/fhir
+program: '*'
+project: '*'
+properties:
+  abatementDateTime:
+    description: When in resolution/remission.
+    type:
+    - string
+    - 'null'
+  abatementPeriod_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  abatementPeriod_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  abatementRange_high_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  abatementRange_high_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  abatementRange_high_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  abatementRange_high_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  abatementRange_high_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  abatementRange_low_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  abatementRange_low_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  abatementRange_low_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  abatementRange_low_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  abatementRange_low_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  abatementString:
+    description: When in resolution/remission.
+    type:
+    - string
+    - 'null'
+  bodySite_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  bodySite_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  bodySite_0_coding_0_system:
+    description: Anatomical location, if relevant.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  category_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  category_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  category_0_coding_0_system:
+    description: A category assigned to the condition.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  clinicalStatus_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  clinicalStatus_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  clinicalStatus_coding_0_system:
+    description: The clinical status of the condition.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  code_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  code_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  code_coding_0_system:
+    description: Identification of the condition, problem or diagnosis.. Code defined
+      by a terminology system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  created_datetime:
+    $ref: _definitions.yaml#/datetime
+  evidence_0_code_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  evidence_0_code_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  evidence_0_code_0_coding_0_system:
+    description: Manifestation/symptom.. Code defined by a terminology system.. Identity
+      of the terminology system.
+    type:
+    - string
+    - 'null'
+  evidence_0_detail_0_reference:
+    description: Supporting information found elsewhere.. Literal reference, Relative,
+      internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  evidence_0_detail_0_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  id:
+    description: Logical id of this artifact.
+    type:
+    - string
+    - 'null'
+  identifier_0_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  identifier_0_use:
+    description: External Ids for this condition.. The purpose of this identifier..
+      http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: External Ids for this condition.. The purpose of this identifier..
+        http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  identifier_0_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  language:
+    description: Language of the resource content.
+    type:
+    - string
+    - 'null'
+  onsetDateTime:
+    description: Estimated or actual date,  date-time, or age.
+    type:
+    - string
+    - 'null'
+  onsetPeriod_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  onsetPeriod_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  onsetRange_high_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  onsetRange_high_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  onsetRange_high_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  onsetRange_high_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  onsetRange_high_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  onsetRange_low_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  onsetRange_low_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  onsetRange_low_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  onsetRange_low_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  onsetRange_low_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  onsetString:
+    description: Estimated or actual date,  date-time, or age.
+    type:
+    - string
+    - 'null'
+  project_id:
+    $ref: _definitions.yaml#/project_id
+  recordedDate:
+    description: Date record was first recorded.
+    type:
+    - string
+    - 'null'
+  resource_type:
+    description: ''
+    type:
+    - string
+    - 'null'
+  severity_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  severity_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  severity_coding_0_system:
+    description: Subjective severity of condition.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  stage_0_assessment_0_reference:
+    description: Formal record of assessment.. Literal reference, Relative, internal
+      or absolute URL.
+    type:
+    - string
+    - 'null'
+  stage_0_assessment_0_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  stage_0_summary_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  stage_0_summary_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  stage_0_summary_coding_0_system:
+    description: Simple summary (disease specific).. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  stage_0_type_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  stage_0_type_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  stage_0_type_coding_0_system:
+    description: Kind of staging.. Code defined by a terminology system.. Identity
+      of the terminology system.
+    type:
+    - string
+    - 'null'
+  state:
+    $ref: _definitions.yaml#/state
+  submitter_id:
+    type:
+    - string
+    - 'null'
+  updated_datetime:
+    $ref: _definitions.yaml#/datetime
+  verificationStatus_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  verificationStatus_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  verificationStatus_coding_0_system:
+    description: The verification status to support the clinical status of the condition..
+      Code defined by a terminology system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+required:
+- submitter_id
+- subject
+submittable: true
+systemProperties:
+- id
+- project_id
+- created_datetime
+- updated_datetime
+- state
+title: Condition
+type: object
+uniqueKeys:
+- - id
+- - project_id
+  - submitter_id
+validators: null

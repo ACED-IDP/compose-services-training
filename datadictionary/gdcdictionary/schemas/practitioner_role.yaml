@@ -1,0 +1,198 @@
+$schema: http://json-schema.org/draft-04/schema#
+additionalProperties: false
+category: Administrative
+description: " Roles/organizations the practitioner is associated with.\n    \n  \
+  \  A specific set of Roles/Locations/specialties/services that a practitioner\n\
+  \    may perform at an organization for a period of time.\n     http://hl7.org/fhir/practitionerrole"
+id: practitioner_role
+links:
+- backref: practitioner_roles
+  label: PractitionerRole_organization_organization
+  multiplicity: many_to_many
+  name: organization_organization
+  required: false
+  target_type: organization
+- backref: practitioner_roles
+  label: PractitionerRole_practitioner_practitioner
+  multiplicity: many_to_many
+  name: practitioner_practitioner
+  required: false
+  target_type: practitioner
+namespace: http://hl7.org/fhir
+program: '*'
+project: '*'
+properties:
+  active:
+    description: Whether this practitioner role record is in active use.
+    type:
+    - boolean
+    - 'null'
+  availabilityExceptions:
+    description: Description of availability exceptions.
+    type:
+    - string
+    - 'null'
+  availableTime_0_allDay:
+    description: Always available? e.g. 24 hour service.
+    type:
+    - boolean
+    - 'null'
+  availableTime_0_availableEndTime:
+    description: Closing time of day (ignored if allDay = true).
+    type:
+    - string
+    - 'null'
+  availableTime_0_availableStartTime:
+    description: Opening time of day (ignored if allDay = true).
+    type:
+    - string
+    - 'null'
+  availableTime_0_daysOfWeek:
+    description: Indicates which days of the week are available between the start
+      and end Times.. http://hl7.org/fhir/days-of-week
+    enum:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+    - sat
+    - sun
+    term:
+      description: Indicates which days of the week are available between the start
+        and end Times.. http://hl7.org/fhir/days-of-week
+      termDef:
+        cde_id: http://hl7.org/fhir/days-of-week
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/days-of-week
+        term_url: http://hl7.org/fhir/days-of-week
+  code_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  code_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  code_0_coding_0_system:
+    description: Roles which this practitioner may perform.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  created_datetime:
+    $ref: _definitions.yaml#/datetime
+  id:
+    description: Logical id of this artifact.
+    type:
+    - string
+    - 'null'
+  identifier_0_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  identifier_0_use:
+    description: Business Identifiers that are specific to a role/location.. The purpose
+      of this identifier.. http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: Business Identifiers that are specific to a role/location.. The
+        purpose of this identifier.. http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  identifier_0_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  language:
+    description: Language of the resource content.
+    type:
+    - string
+    - 'null'
+  notAvailable_0_description:
+    description: Reason presented to the user explaining why time not available.
+    type:
+    - string
+  notAvailable_0_during_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  notAvailable_0_during_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  period_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  period_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  project_id:
+    $ref: _definitions.yaml#/project_id
+  resource_type:
+    description: ''
+    type:
+    - string
+    - 'null'
+  specialty_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  specialty_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  specialty_0_coding_0_system:
+    description: Specific specialty of the practitioner.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  state:
+    $ref: _definitions.yaml#/state
+  submitter_id:
+    type:
+    - string
+    - 'null'
+  updated_datetime:
+    $ref: _definitions.yaml#/datetime
+required:
+- submitter_id
+submittable: true
+systemProperties:
+- id
+- project_id
+- created_datetime
+- updated_datetime
+- state
+title: PractitionerRole
+type: object
+uniqueKeys:
+- - id
+- - project_id
+  - submitter_id
+validators: null

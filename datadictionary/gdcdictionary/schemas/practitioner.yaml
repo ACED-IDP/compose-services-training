@@ -1,0 +1,234 @@
+$schema: http://json-schema.org/draft-04/schema#
+additionalProperties: false
+category: Administrative
+description: " A person with a  formal responsibility in the provisioning of healthcare\
+  \ or\n    related services.\n    \n    A person who is directly or indirectly involved\
+  \ in the provisioning of\n    healthcare.\n     http://hl7.org/fhir/practitioner"
+id: practitioner
+links: []
+namespace: http://hl7.org/fhir
+program: '*'
+project: '*'
+properties:
+  active:
+    description: Whether this practitioner's record is in active use.
+    type:
+    - boolean
+    - 'null'
+  birthDate:
+    description: The date  on which the practitioner was born.
+    type:
+    - string
+    - 'null'
+  communication_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  communication_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  communication_0_coding_0_system:
+    description: A language the practitioner can use in patient communication.. Code
+      defined by a terminology system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  created_datetime:
+    $ref: _definitions.yaml#/datetime
+  gender:
+    description: Administrative Gender - the gender that the person is considered
+      to have for administration and record keeping purposes.. http://hl7.org/fhir/administrative-gender
+    enum:
+    - male
+    - female
+    - other
+    - unknown
+    term:
+      description: Administrative Gender - the gender that the person is considered
+        to have for administration and record keeping purposes.. http://hl7.org/fhir/administrative-gender
+      termDef:
+        cde_id: http://hl7.org/fhir/administrative-gender
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/administrative-gender
+        term_url: http://hl7.org/fhir/administrative-gender
+  id:
+    description: Logical id of this artifact.
+    type:
+    - string
+    - 'null'
+  identifier_0_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  identifier_0_use:
+    description: An identifier for the person as this agent.. The purpose of this
+      identifier.. http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: An identifier for the person as this agent.. The purpose of this
+        identifier.. http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  identifier_0_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  language:
+    description: Language of the resource content.
+    type:
+    - string
+    - 'null'
+  photo_0_contentType:
+    description: Mime type of the content, with charset etc..
+    type:
+    - string
+    - 'null'
+  photo_0_creation:
+    description: Date attachment was first created.
+    type:
+    - string
+    - 'null'
+  photo_0_data:
+    description: Data inline, base64ed.
+    type:
+    - string
+    - 'null'
+  photo_0_hash:
+    description: Hash of the data (sha-1, base64ed).
+    type:
+    - string
+    - 'null'
+  photo_0_language:
+    description: Human language of the content (BCP-47).
+    type:
+    - string
+    - 'null'
+  photo_0_size:
+    description: Number of bytes of content (if url provided).
+    type:
+    - number
+    - 'null'
+  photo_0_title:
+    description: Label to display in place of the data.
+    type:
+    - string
+    - 'null'
+  photo_0_url:
+    description: Uri where the data can be found.
+    type:
+    - string
+    - 'null'
+  project_id:
+    $ref: _definitions.yaml#/project_id
+  qualification_0_code_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  qualification_0_code_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  qualification_0_code_coding_0_system:
+    description: Coded representation of the qualification.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  qualification_0_identifier_0_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  qualification_0_identifier_0_use:
+    description: An identifier for this qualification for the practitioner.. The purpose
+      of this identifier.. http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: An identifier for this qualification for the practitioner.. The
+        purpose of this identifier.. http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  qualification_0_identifier_0_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  qualification_0_issuer_reference:
+    description: Organization that regulates and issues the qualification.. Literal
+      reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  qualification_0_issuer_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  qualification_0_period_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  qualification_0_period_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  resource_type:
+    description: ''
+    type:
+    - string
+    - 'null'
+  state:
+    $ref: _definitions.yaml#/state
+  submitter_id:
+    type:
+    - string
+    - 'null'
+  updated_datetime:
+    $ref: _definitions.yaml#/datetime
+required:
+- submitter_id
+submittable: true
+systemProperties:
+- id
+- project_id
+- created_datetime
+- updated_datetime
+- state
+title: Practitioner
+type: object
+uniqueKeys:
+- - id
+- - project_id
+  - submitter_id
+validators: null

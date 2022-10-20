@@ -1,0 +1,239 @@
+$schema: http://json-schema.org/draft-04/schema#
+additionalProperties: false
+category: Administrative
+description: " Details and position information for a physical place.\n    \n    Details\
+  \ and position information for a physical place where services are\n    provided\
+  \ and resources and participants may be stored, found, contained, or\n    accommodated.\n\
+  \     http://hl7.org/fhir/location"
+id: location
+links: []
+namespace: http://hl7.org/fhir
+program: '*'
+project: '*'
+properties:
+  alias:
+    description: A list of alternate names that the location is known as, or was known
+      as, in the past.
+    type:
+    - string
+    - 'null'
+  availabilityExceptions:
+    description: Description of availability exceptions.
+    type:
+    - string
+    - 'null'
+  created_datetime:
+    $ref: _definitions.yaml#/datetime
+  description:
+    description: Additional details about the location that could be displayed as
+      further information to identify the location beyond its name.
+    type:
+    - string
+    - 'null'
+  hoursOfOperation_0_allDay:
+    description: The Location is open all day.
+    type:
+    - boolean
+    - 'null'
+  hoursOfOperation_0_closingTime:
+    description: Time that the Location closes.
+    type:
+    - string
+    - 'null'
+  hoursOfOperation_0_daysOfWeek:
+    description: Indicates which days of the week are available between the start
+      and end Times.. http://hl7.org/fhir/days-of-week
+    enum:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+    - sat
+    - sun
+    term:
+      description: Indicates which days of the week are available between the start
+        and end Times.. http://hl7.org/fhir/days-of-week
+      termDef:
+        cde_id: http://hl7.org/fhir/days-of-week
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/days-of-week
+        term_url: http://hl7.org/fhir/days-of-week
+  hoursOfOperation_0_openingTime:
+    description: Time that the Location opens.
+    type:
+    - string
+    - 'null'
+  id:
+    description: Logical id of this artifact.
+    type:
+    - string
+    - 'null'
+  identifier_0_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  identifier_0_use:
+    description: Unique code or number identifying the location to its users.. The
+      purpose of this identifier.. http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: Unique code or number identifying the location to its users.. The
+        purpose of this identifier.. http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  identifier_0_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  language:
+    description: Language of the resource content.
+    type:
+    - string
+    - 'null'
+  mode:
+    description: Indicates whether a resource instance represents a specific location
+      or a class of locations.. http://hl7.org/fhir/location-mode
+    enum:
+    - instance
+    - kind
+    term:
+      description: Indicates whether a resource instance represents a specific location
+        or a class of locations.. http://hl7.org/fhir/location-mode
+      termDef:
+        cde_id: http://hl7.org/fhir/location-mode
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/location-mode
+        term_url: http://hl7.org/fhir/location-mode
+  name:
+    description: Name of the location as used by humans.
+    type:
+    - string
+    - 'null'
+  operationalStatus_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  operationalStatus_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  operationalStatus_system:
+    description: The operational status of the location (typically only for a bed/room)..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  physicalType_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  physicalType_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  physicalType_coding_0_system:
+    description: Physical form of the location, e.g. building, room, vehicle, road..
+      Code defined by a terminology system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  position_altitude:
+    description: Altitude with WGS84 datum.
+    type:
+    - number
+    - 'null'
+  position_latitude:
+    description: Latitude with WGS84 datum.
+    type:
+    - number
+  position_longitude:
+    description: Longitude with WGS84 datum.
+    type:
+    - number
+  project_id:
+    $ref: _definitions.yaml#/project_id
+  resource_type:
+    description: ''
+    type:
+    - string
+    - 'null'
+  state:
+    $ref: _definitions.yaml#/state
+  status:
+    description: The status property covers the general availability of the resource,
+      not the current value which may be covered by the operationStatus, or by a schedule/slots
+      if they are configured for the location.. http://hl7.org/fhir/location-status
+    enum:
+    - active
+    - suspended
+    - inactive
+    term:
+      description: The status property covers the general availability of the resource,
+        not the current value which may be covered by the operationStatus, or by a
+        schedule/slots if they are configured for the location.. http://hl7.org/fhir/location-status
+      termDef:
+        cde_id: http://hl7.org/fhir/location-status
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/location-status
+        term_url: http://hl7.org/fhir/location-status
+  submitter_id:
+    type:
+    - string
+    - 'null'
+  type_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  type_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  type_0_coding_0_system:
+    description: Type of function performed.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  updated_datetime:
+    $ref: _definitions.yaml#/datetime
+required:
+- submitter_id
+submittable: true
+systemProperties:
+- id
+- project_id
+- created_datetime
+- updated_datetime
+- state
+title: Location
+type: object
+uniqueKeys:
+- - id
+- - project_id
+  - submitter_id
+validators: null

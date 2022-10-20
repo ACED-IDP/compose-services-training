@@ -1,0 +1,306 @@
+$schema: http://json-schema.org/draft-04/schema#
+additionalProperties: false
+category: Administrative
+description: " Information about an individual or animal receiving health care services.\n\
+  \    \n    Demographics and other administrative information about an individual\
+  \ or\n    animal receiving care or other health-related services.\n     http://hl7.org/fhir/patient"
+id: patient
+links:
+- backref: patients
+  label: Patient_generalPractitioner_practitioner
+  multiplicity: many_to_many
+  name: generalPractitioner_practitioner
+  required: false
+  target_type: practitioner
+- backref: patients
+  label: Patient_managingOrganization_organization
+  multiplicity: many_to_many
+  name: managingOrganization_organization
+  required: false
+  target_type: organization
+namespace: http://hl7.org/fhir
+program: '*'
+project: '*'
+properties:
+  active:
+    description: Whether this patient's record is in active use.
+    type:
+    - boolean
+    - 'null'
+  birthDate:
+    description: The date of birth for the individual.
+    type:
+    - string
+    - 'null'
+  communication_0_language_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  communication_0_language_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  communication_0_language_coding_0_system:
+    description: The language which can be used to communicate with the patient about
+      his or her health.. Code defined by a terminology system.. Identity of the terminology
+      system.
+    type:
+    - string
+    - 'null'
+  communication_0_preferred:
+    description: Language preference indicator.
+    type:
+    - boolean
+    - 'null'
+  contact_0_gender:
+    description: Administrative Gender - the gender that the contact person is considered
+      to have for administration and record keeping purposes.. http://hl7.org/fhir/administrative-gender
+    enum:
+    - male
+    - female
+    - other
+    - unknown
+    term:
+      description: Administrative Gender - the gender that the contact person is considered
+        to have for administration and record keeping purposes.. http://hl7.org/fhir/administrative-gender
+      termDef:
+        cde_id: http://hl7.org/fhir/administrative-gender
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/administrative-gender
+        term_url: http://hl7.org/fhir/administrative-gender
+  contact_0_organization_reference:
+    description: Organization that is associated with the contact.. Literal reference,
+      Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  contact_0_organization_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  contact_0_period_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  contact_0_period_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  contact_0_relationship_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  contact_0_relationship_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  contact_0_relationship_0_coding_0_system:
+    description: The kind of relationship.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  created_datetime:
+    $ref: _definitions.yaml#/datetime
+  deceasedBoolean:
+    description: Indicates if the individual is deceased or not.
+    type:
+    - boolean
+    - 'null'
+  deceasedDateTime:
+    description: Indicates if the individual is deceased or not.
+    type:
+    - string
+    - 'null'
+  gender:
+    description: Administrative Gender - the gender that the patient is considered
+      to have for administration and record keeping purposes.. http://hl7.org/fhir/administrative-gender
+    enum:
+    - male
+    - female
+    - other
+    - unknown
+    term:
+      description: Administrative Gender - the gender that the patient is considered
+        to have for administration and record keeping purposes.. http://hl7.org/fhir/administrative-gender
+      termDef:
+        cde_id: http://hl7.org/fhir/administrative-gender
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/administrative-gender
+        term_url: http://hl7.org/fhir/administrative-gender
+  id:
+    description: Logical id of this artifact.
+    type:
+    - string
+    - 'null'
+  identifier_0_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  identifier_0_use:
+    description: An identifier for this patient.. The purpose of this identifier..
+      http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: An identifier for this patient.. The purpose of this identifier..
+        http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  identifier_0_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  language:
+    description: Language of the resource content.
+    type:
+    - string
+    - 'null'
+  link_0_other_reference:
+    description: The other patient or related person resource that the link refers
+      to.. Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  link_0_other_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  link_0_type:
+    description: The type of link between this patient resource and another patient
+      resource.. http://hl7.org/fhir/link-type
+    enum:
+    - replaced-by
+    - replaces
+    - refer
+    - seealso
+    term:
+      description: The type of link between this patient resource and another patient
+        resource.. http://hl7.org/fhir/link-type
+      termDef:
+        cde_id: http://hl7.org/fhir/link-type
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/link-type
+        term_url: http://hl7.org/fhir/link-type
+  maritalStatus_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  maritalStatus_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  maritalStatus_coding_0_system:
+    description: Marital (civil) status of a patient.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  multipleBirthBoolean:
+    description: Whether patient is part of a multiple birth.
+    type:
+    - boolean
+    - 'null'
+  multipleBirthInteger:
+    description: Whether patient is part of a multiple birth.
+    type:
+    - number
+    - 'null'
+  photo_0_contentType:
+    description: Mime type of the content, with charset etc..
+    type:
+    - string
+    - 'null'
+  photo_0_creation:
+    description: Date attachment was first created.
+    type:
+    - string
+    - 'null'
+  photo_0_data:
+    description: Data inline, base64ed.
+    type:
+    - string
+    - 'null'
+  photo_0_hash:
+    description: Hash of the data (sha-1, base64ed).
+    type:
+    - string
+    - 'null'
+  photo_0_language:
+    description: Human language of the content (BCP-47).
+    type:
+    - string
+    - 'null'
+  photo_0_size:
+    description: Number of bytes of content (if url provided).
+    type:
+    - number
+    - 'null'
+  photo_0_title:
+    description: Label to display in place of the data.
+    type:
+    - string
+    - 'null'
+  photo_0_url:
+    description: Uri where the data can be found.
+    type:
+    - string
+    - 'null'
+  project_id:
+    $ref: _definitions.yaml#/project_id
+  resource_type:
+    description: ''
+    type:
+    - string
+    - 'null'
+  state:
+    $ref: _definitions.yaml#/state
+  submitter_id:
+    type:
+    - string
+    - 'null'
+  updated_datetime:
+    $ref: _definitions.yaml#/datetime
+required:
+- submitter_id
+submittable: true
+systemProperties:
+- id
+- project_id
+- created_datetime
+- updated_datetime
+- state
+title: Patient
+type: object
+uniqueKeys:
+- - id
+- - project_id
+  - submitter_id
+validators: null
