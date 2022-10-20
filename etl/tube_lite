@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 
 """A lightweight replacement for gen3's spark/tube."""
-import logging
-from typing import List
+
+from datetime import datetime
 
 import click
+import requests
 from gen3.auth import Gen3Auth
 from gen3.submission import Gen3Submission
-import requests
 from jsonpath_ng import parse
-from datetime import datetime
 
 """
 export EP='--endpoint https://aced-training.compbio.ohsu.edu'
@@ -31,240 +30,148 @@ DEFAULT_NAMESPACE = "gen3.aced.io"
 
 # graphql for FILE
 
-FILE_SAMPLES = """
-      samples {
-        id
-        submitter_id
-        cases {
-          id
-          submitter_id
-        }
-      }
-"""
-
-FILE_ALIQUOTS = """
-      aliquots {
-        id
-        submitter_id
-        $FILE_SAMPLES
-      }
-""".replace('$FILE_SAMPLES', FILE_SAMPLES)
-
-FILE_READ_GROUPS = """
-read_groups {
-    id
-    submitter_id
-    $FILE_ALIQUOTS
-}
-""".replace('$FILE_ALIQUOTS', FILE_ALIQUOTS)
-
-FILE_SLIDES = """
-    slides {
-      id
-      submitter_id  
-      $FILE_SAMPLES
-    }
-""".replace('$FILE_SAMPLES', FILE_SAMPLES)
-
 FILE_PROPERTIES = """
-    id
-    type
-    state
-    md5sum
-    data_type
+    file_id: id
+    category_0_coding_0_code
+    category_0_coding_0_display
+    category_0_coding_0_system
+    content_0_attachment_contentType
+    content_0_attachment_creation
+    content_0_attachment_data
+    content_0_attachment_hash
+    content_0_attachment_language
+    content_0_attachment_size
+    content_0_attachment_title
+    content_0_attachment_url
+    content_0_format_code
+    content_0_format_display
+    content_0_format_system
+    context_encounter_0_reference
+    context_encounter_0_type
+    context_event_0_coding_0_code
+    context_event_0_coding_0_display
+    context_event_0_coding_0_system
+    context_facilityType_coding_0_code
+    context_facilityType_coding_0_display
+    context_facilityType_coding_0_system
+    context_period_end
+    context_period_start
+    context_practiceSetting_coding_0_code
+    context_practiceSetting_coding_0_display
+    context_practiceSetting_coding_0_system
+    context_related_0_reference
+    context_related_0_type
+    context_sourcePatientInfo_reference
+    context_sourcePatientInfo_type
+    created_datetime
+    data_category
     data_format
+    data_type
+    date
+    description
+    docStatus
+    error_type
+    file_format
     file_name
     file_size
-    project_id
+    file_state
+    ga4gh_drs_uri
+    id
+    identifier_0_system
+    identifier_0_use
+    identifier_0_value
+    language
+    masterIdentifier_system
+    masterIdentifier_use
+    masterIdentifier_value
+    md5sum
     object_id
-    submitter_id
+    project_id
+    file_resource_type: resource_type
+    securityLabel_0_coding_0_code
+    securityLabel_0_coding_0_display
+    securityLabel_0_coding_0_system
+    state
+    status
+    file_submitter_id: submitter_id
+    type_coding_0_code
+    type_coding_0_display
+    type_coding_0_system
 """
 
+
+PATIENT_PROPERTIES = """
+        patient_id: id
+        patient_submitter_id: submitter_id
+        active
+        birthDate
+        communication_0_language_coding_0_code
+        communication_0_language_coding_0_display
+        communication_0_language_coding_0_system
+        communication_0_preferred
+        contact_0_gender
+        contact_0_organization_reference
+        contact_0_organization_type
+        contact_0_period_end
+        contact_0_period_start
+        contact_0_relationship_0_coding_0_code
+        contact_0_relationship_0_coding_0_display
+        contact_0_relationship_0_coding_0_system
+        created_datetime
+        deceasedBoolean
+        deceasedDateTime
+        gender
+        id
+        identifier_0_system
+        identifier_0_use
+        identifier_0_value
+        language
+        link_0_other_reference
+        link_0_other_type
+        link_0_type
+        maritalStatus_coding_0_code
+        maritalStatus_coding_0_display
+        maritalStatus_coding_0_system
+        multipleBirthBoolean
+        multipleBirthInteger
+        photo_0_contentType
+        photo_0_creation
+        photo_0_data
+        photo_0_hash
+        photo_0_language
+        photo_0_size
+        photo_0_title
+        photo_0_url
+        project_id
+        patient_resource_type: resource_type
+        state
+        submitter_id
+      
+"""
 FILE_GRAPHQL = """
 query ($first: Int!, $offset: Int!) {
-  submitted_copy_number(first: $first, offset: $offset) {
+ document_reference(first: $first, offset: $offset)  {
     $FILE_PROPERTIES
-    $FILE_READ_GROUPS
-  }
-  submitted_unaligned_reads(first: $first, offset: $offset) {
-    $FILE_PROPERTIES
-    $FILE_READ_GROUPS
-  }
-  submitted_somatic_mutation(first: $first, offset: $offset) {
-    $FILE_PROPERTIES
-    $FILE_READ_GROUPS
-  }
-  submitted_aligned_reads(first: $first, offset: $offset) {
-    $FILE_PROPERTIES
-    $FILE_READ_GROUPS
-  }
-  submitted_copy_number(first: $first, offset: $offset) {
-    $FILE_PROPERTIES
-    $FILE_ALIQUOTS
-  }
-  submitted_methylation(first: $first, offset: $offset) {
-    $FILE_PROPERTIES
-    $FILE_ALIQUOTS
-  }
-  slide_image(first: $first, offset: $offset)  {
-    $FILE_PROPERTIES
-    $FILE_SLIDES    
+    subject_patient{
+        $PATIENT_PROPERTIES
+    }
   }
 }
 """.replace('$FILE_PROPERTIES', FILE_PROPERTIES)\
-    .replace('$FILE_SLIDES', FILE_SLIDES)\
-    .replace('$FILE_ALIQUOTS', FILE_ALIQUOTS)\
-    .replace('$FILE_READ_GROUPS', FILE_READ_GROUPS)
-
-
-# target file record in ES
-EXPECTED_FILE_SOURCE = {
-    "source_node": "submitted_methylation",
-    "state": "validated",
-    "md5sum": "923f43968664016555688b6911732725",
-    "data_type": "Methylation Intensity Values",
-    "file_name": "7693efc928",
-    "file_size": 83,
-    "object_id": "1c227e28-caa7-416b-935a-046eebdf4472",
-    "data_format": "IDAT",
-    "project_id": "MyFirstProgram-MySecondProject",
-    "program_name": [
-      "MyFirstProgram"
-    ],
-    "project_code": [
-      "MySecondProject"
-    ],
-    "_case_id": [],
-    "auth_resource_path": "/programs/MyFirstProgram/projects/MySecondProject",
-    "_file_id": "84656403-d8f5-4454-b2e5-87f82ec37e96",
-    "node_id": "84656403-d8f5-4454-b2e5-87f82ec37e96"
-  }
-
-
-EXPECTED_CASE_SOURCE = {
-    "project_id": "MyFirstProgram-MySecondProject",
-    "disease_type": "a8dae39b2f",
-    "primary_site": "4a428d5b1e",
-    "submitter_id": "case_4cf6575e60",
-    "race": "american indian or alaska native",
-    "gender": None,
-    "ethnicity": "Unknown",
-    "year_of_birth": 33.87963205329386,
-    "_samples_count": 1,
-    "_aliquots_count": 1,
-    "_submitted_methylations_count": 0,
-    "_submitted_copy_number_files_on_aliquots_count": 0,
-    "_read_groups_count": 1,
-    "_submitted_unaligned_reads_count": 1,
-    "_submitted_aligned_reads_count": 1,
-    "_submitted_somatic_mutations_count": 0,
-    "_submitted_copy_number_files_on_read_groups_count": 0,
-    "data_format": [
-      "BED",
-      "c07ce6b6df",
-      "FASTQ"
-    ],
-    "data_type": [
-      "Raw IMC Data",
-      "Aligned Reads",
-      "Unaligned Reads"
-    ],
-    "_file_id": [
-      "b112e1e0-35a1-473d-98b9-7a6f303954c1",
-      "39c088dc-826a-4f12-8924-402d05835222",
-      "05fff922-dc26-496c-946f-8352d71969ec"
-    ],
-    "auth_resource_path": "/programs/MyFirstProgram/projects/MySecondProject",
-    "_case_id": "1631deee-f909-4921-b38e-d75e062f9f1a",
-    "node_id": "1631deee-f909-4921-b38e-d75e062f9f1a"
-  }
-
+    .replace('$PATIENT_PROPERTIES', PATIENT_PROPERTIES)
 
 #   graphql query for CASE
-CASE_GRAPHQL = """
+PATIENT_GRAPHQL = """
 query ($first: Int!, $offset: Int!) {
-  case(first: $first, offset: $offset) {
-    id
-    project_id
-    disease_type
-    primary_site
-    submitter_id
-    demographics {
-      race
-      gender
-      year_of_birth
-    }
-    _samples_count
-    samples {
-      _aliquots_count
-      aliquots {
-        _read_groups_count
-        _submitted_copy_number_files_count
-        _submitted_methylation_files_count
-        read_groups {
-          _submitted_copy_number_files_count
-          _submitted_somatic_mutations_count
-          _submitted_aligned_reads_files_count
-          _submitted_unaligned_reads_files_count
-          submitted_aligned_reads_files {
-            file_name
-            data_type
-            data_format
-            file_id: id
-          }
-          submitted_unaligned_reads_files {
-            file_name
-            data_type
-            data_format
-            file_id: id
-          }
-          submitted_somatic_mutations {
-            file_name
-            data_type
-            data_format
-            file_id: id
-          }
-          submitted_copy_number_files {
-            file_name
-            data_type
-            data_format
-            file_id: id
-          }
-        }
-        submitted_methylation_files {
-          file_name
-          data_type
-          data_format
-          file_id: id
-        }
-        submitted_copy_number_files {
-          file_name
-          data_type
-          data_format
-          file_id: id
-        }
-      }
+  patient(first: $first, offset: $offset) {
+    $PATIENT_PROPERTIES
+    document_references {
+        $FILE_PROPERTIES
     }
   }
 }
-
-"""
-
-
-EXPECTED_FILE_ARRAY_CONFIG = {
-    "timestamp": "2022-08-25T01:44:47.115494",
-    "array": [
-      "_case_id"
-    ]
-  }
-EXPECTED_ETL_ARRAY_CONFIG = {
-    "timestamp": "2022-08-25T01:44:47.115494",
-    "array": [
-        "data_format",
-        "data_type",
-        "_file_id"
-    ]
-}
+""".replace('$PATIENT_PROPERTIES', PATIENT_PROPERTIES)\
+    .replace('$FILE_PROPERTIES', FILE_PROPERTIES)
 
 
 def key_values(nested, key, normalize=True):
@@ -476,6 +383,7 @@ def read_files(sc, batch_size):
         graph_ql_response = sc.query(FILE_GRAPHQL, variables=graphql_variables)
         c += 1
         has_data = False
+
         if 'data' in graph_ql_response:
             sum_data = 0
             for k in graph_ql_response['data']:
@@ -483,70 +391,66 @@ def read_files(sc, batch_size):
             has_data = sum_data > 0
         if not has_data:
             break
-
         offset += batch_size
         for file_entity in graph_ql_response['data']:
-            # ['slide_image', 'submitted_aligned_reads', 'submitted_copy_number', 'submitted_methylation', 'submitted_somatic_mutation', 'submitted_unaligned_reads']
             for f in graph_ql_response['data'][file_entity]:
                 assert 'project_id' in f, (file_entity, f.keys())
                 program, project = f['project_id'].split('-')
 
-                for k in ['read_groups', 'aliquots', 'slides']:
-                    if k in f:
-                        parent_entity_name = k
-                assert parent_entity_name
-
                 source_ = {
-                    "node_id":  f['id'],
-                    "object_id":  f['object_id'],
-                    "source_node": "file",
+                    "file_id": f['file_id'],
+                    # "author_display": f['author_display'],
+                    # "author_reference": f['author_reference'],
                     "auth_resource_path": f"/programs/{program}/projects/{project}",
-                    '_file_id': f['id'],
-                    # 'submitter_id': f['submitter_id'],
+                    # "category_coding_us_core_documentreference_category": f['category_coding_us_core_documentreference_category'],
+
+                    "content_attachment_contentType": f['content_0_attachment_contentType'],
+                    # "content_attachment_md5": f['content_0_attachment_md5'],  TODO ?
+                    "content_attachment_size": f['content_0_attachment_size'],
+                    "content_attachment_url": f['content_0_attachment_url'],
+                    "content_attachment_url": f['category_0_coding_0_system'],
+
+                    "content_format_code": f['content_0_format_code'],
+                    "content_format_system": f['content_0_format_system'],
+                    "content_format_display": f['content_0_format_display'],
+
+                    "context_encounter_reference": f['context_encounter_0_reference'],
+                    "context_period_end": f['context_period_end'],
+                    "context_period_start": f['context_period_start'],
+                    "date": f['date'],
+                    "ga4gh_drs_uri": f['ga4gh_drs_uri'],
+                    # "identifier_urn_ietf_rfc_3986": f['identifier_urn_ietf_rfc_3986'],
+                    "file_resource_type": f['context_encounter_0_reference'],
+                    "status": f['status'],
+                    "subject_patient": f['subject_patient'][0]['id'],
+                    "submitter_id": f['file_submitter_id'],
+
+                    "type_coding_code": f['type_coding_0_code'],
+                    "type_coding_display": f['type_coding_0_display'],
+                    "type_coding_system": f['type_coding_0_system'],
+
+                    # "type_coding_1_code": f['type_coding_1_code'],
+                    # "type_coding_1_system": f['type_coding_1_system'],
+                    # "type_coding_1_display": f['type_coding_1_display'],
+
+                    "md5sum": f['md5sum'],
+                    'project_id': f['project_id'],
+                    'object_id': f['object_id'],
                     'data_format': f['data_format'],
                     'file_name': f['file_name'],
                     'data_type': f['data_type'],
-                    'md5sum': f['md5sum'],
                     'file_size': f['file_size'],
-                    'project_id': f['project_id'],
+                    'state': f['state'],
+
                     'project_code': [
                         project
                     ],
                     'program_name': [
                         program
-                    ],
-                    'state': f['state']
+                    ]
+
                 }
 
-                if len(f[parent_entity_name]) == 0:
-                    source_ = source_ | {
-                    # '_sample_id': None,
-                    # 'sample_submitter_id': None,
-                    '_case_id': None,
-                    # 'case_submitter_id': None,
-                    }
-                elif 'aliquots' in f[parent_entity_name][0]:
-                    source_ = source_ | {
-                    # '_sample_id': f[parent_entity_name][0]['aliquots'][0]['samples'][0]['id'],
-                    # 'sample_submitter_id': f[parent_entity_name][0]['aliquots'][0]['samples'][0]['submitter_id'],
-                    '_case_id': f[parent_entity_name][0]['aliquots'][0]['samples'][0]['cases'][0]['id'],
-                    # 'case_submitter_id': f[parent_entity_name][0]['aliquots'][0]['samples'][0]['cases'][0]['submitter_id'],
-                    }
-                else:
-                    source_ = source_ | {
-                    # '_sample_id': f[parent_entity_name][0]['samples'][0]['id'],
-                    # 'sample_submitter_id': f[parent_entity_name][0]['samples'][0]['submitter_id'],
-                    '_case_id': f[parent_entity_name][0]['samples'][0]['cases'][0]['id'],
-                    # 'case_submitter_id': f[parent_entity_name][0]['samples'][0]['cases'][0]['submitter_id'],
-                    }
-
-                # check against template record
-                source_keys = set(source_.keys())
-                expected_source_keys = set(EXPECTED_FILE_SOURCE.keys())
-                assert source_keys == expected_source_keys, (
-                    "Missing or extra keys",
-                    expected_source_keys.difference(source_keys), source_keys.difference(expected_source_keys)
-                )
                 yield source_
 
 
@@ -558,47 +462,119 @@ def read_patients(sc, batch_size):
     while True:
         # pagination
         graphql_variables = {"first": first, "offset": offset}
-        r = sc.query(CASE_GRAPHQL, variables=graphql_variables)
+        r = sc.query(PATIENT_GRAPHQL, variables=graphql_variables)
         c += 1
-        if 'data' not in r or 'case' not in r['data'] or len(r['data']['case']) == 0:
+
+        if 'data' not in r or 'patient' not in r['data'] or len(r['data']['patient']) == 0:
             break
         offset += batch_size
-        for case in r['data']['case']:
-            program, project = case['project_id'].split('-')
-            # patient fields
+        for patient in r['data']['patient']:
+            program, project = patient['project_id'].split('-')
             _source = {
-                "project_id": case['project_id'],
-                "disease_type": case['disease_type'],
-                "primary_site": case['primary_site'],
-                "submitter_id": case['submitter_id'],
-                "race": key_values(case, 'race'),
-                "gender": key_values(case, 'gender'),
-                "ethnicity": key_values(case, 'ethnicity'),  # TODO
-                "year_of_birth": key_values(case, 'year_of_birth'),
-                "_samples_count": case['_samples_count'],
-                "_aliquots_count": sum_key_values(case, '_aliquots_count'),
-                "_submitted_methylations_count": sum_key_values(case, '_submitted_methylation_files_count'),
-                "_submitted_copy_number_files_on_aliquots_count": sum_key_values(case, '_submitted_methylation_files_count'),
-                "_read_groups_count": sum_key_values(case, '_read_groups_count'),
-                "_submitted_unaligned_reads_count": sum_key_values(case, '_submitted_unaligned_reads_files_count'),
-                "_submitted_aligned_reads_count": sum_key_values(case, '_submitted_aligned_reads_files_count'),
-                "_submitted_somatic_mutations_count": sum_key_values(case, '_submitted_somatic_mutations_count'),
-                "_submitted_copy_number_files_on_read_groups_count":  sum_key_values(case, '_submitted_copy_number_files_count'),
-                "data_format": key_values(case, 'data_format'),
-                "data_type": key_values(case, 'data_type'),
-                "_file_id": key_values(case, 'file_id'),
-                "auth_resource_path": f"/programs/{program}/projects/{project}",
-                "_case_id": case['id'],
-                "node_id": case['id']
-              }
+                "project_id": patient['project_id'],
+                "patient_id": patient['id'],
+                "patient_resource_type": patient['patient_resource_type'],
+                # "text_status": patient['text_status'],
+                # "text_div": patient['text_div'],
 
-            # check against template record
-            source_keys = set(_source.keys())
-            expected_source_keys = set(EXPECTED_CASE_SOURCE.keys())
-            assert source_keys == expected_source_keys, (
-                "Missing or extra keys",
-                expected_source_keys.difference(source_keys), source_keys.difference(expected_source_keys)
-            )
+                # TODO - review extension anonymization
+                # "us_core_race_ombCategory": patient['us_core_race_ombCategory'],
+                # "us_core_race_text": patient['us_core_race_text'],
+                # "us_core_ethnicity_ombCategory": patient['us_core_ethnicity_ombCategory'],
+                # "us_core_ethnicity_text": patient['us_core_ethnicity_text'],
+                # "patient_mothersMaidenName": patient['patient_mothersMaidenName'],
+                # "us_core_birthsex": patient['us_core_birthsex'],
+
+                # TODO - more extension
+                # "patient_birthPlace_city": patient['patient_birthPlace_city'],
+                # "patient_birthPlace_state": patient['patient_birthPlace_state'],
+                # "patient_birthPlace_country": patient['patient_birthPlace_country'],
+
+                # TODO - more extension
+                # "disability_adjusted_life_years": patient['disability_adjusted_life_years'],
+                # "quality_adjusted_life_years": patient['quality_adjusted_life_years'],
+                # "identifier_synthea": patient['identifier_synthea'],
+                # "identifier_MR": patient['identifier_MR'],
+                # "identifier_SS": patient['identifier_SS'],
+                # "identifier_DL": patient['identifier_DL'],
+                # "identifier_PPN": patient['identifier_PPN'],
+
+                # TODO - anonymizer
+                # "name_use": patient['name_use'],
+                # "name_family": patient['name_family'],
+                # "name_given": patient['name_given'],
+                # "name_prefix": patient['name_prefix'],
+                # "telecom_system": patient['telecom_system'],
+                # "telecom_value": patient['telecom_value'],
+                # "telecom_use": patient['telecom_use'],
+
+                "gender": patient['gender'],
+                "birthDate": patient['birthDate'],
+                "deceasedDateTime": patient['deceasedDateTime'],
+                "deceasedBoolean": patient['deceasedBoolean'],
+
+                # TODO - anonymizer
+                # "address_geolocation_latitude": patient['address_geolocation_latitude'],
+                # "address_geolocation_longitude": patient['address_geolocation_longitude'],
+                # "address_line": patient['address_line'],
+                # "address_city": patient['address_city'],
+                # "address_state": patient['address_state'],
+                # "address_postalCode": patient['address_postalCode'],
+                # "address_country": patient['address_country'],
+
+                "maritalStatus_coding_0_code": patient['maritalStatus_coding_0_code'],
+                "maritalStatus_coding_0_system": patient['maritalStatus_coding_0_system'],
+                "maritalStatus_coding_0_display": patient['maritalStatus_coding_0_display'],
+
+                "multipleBirthBoolean": str(patient['multipleBirthBoolean']),   # TODO handle booleans better
+                "multipleBirthInteger": patient['multipleBirthInteger'],
+
+                # "communication_language_text": patient['communication_language_text'],
+                "patient_submitter_id": patient['submitter_id'],
+                "auth_resource_path": f"/programs/{program}/projects/{project}",
+
+                "_case_id": patient['patient_id'],  # TODO ??? in gitops ?
+
+                "file_id": key_values(patient, 'file_id'),
+                "author_display": key_values(patient, 'author_display'),
+                "author_reference": key_values(patient, 'author_reference'),
+                # "category_coding_us_core_documentreference_category": key_values(patient, 'category_coding_us_core_documentreference_category'),
+
+                "content_attachment_contentType": key_values(patient, 'content_0_attachment_contentType'),
+                "content_attachment_md5": key_values(patient, 'content_0_attachment_md5'),
+                "content_attachment_size": key_values(patient, 'content_0_attachment_size'),
+                "content_attachment_url": key_values(patient, 'content_0_attachment_url'),
+
+                "content_format_code": key_values(patient, 'content_0_format_code'),
+                "content_format_system": key_values(patient, 'content_0_format_system'),
+                "content_format_display": key_values(patient, 'content_0_format_display'),
+
+                "context_encounter_reference": key_values(patient, 'context_encounter_0_reference'),
+                "context_period_end": key_values(patient, 'context_period_end'),
+                "context_period_start": key_values(patient, 'context_period_start'),
+
+                # "custodian_display": key_values(patient, 'custodian_display'),
+                # "custodian_reference": key_values(patient, 'custodian_reference'),
+                #
+                "date": key_values(patient, 'date'),
+                "md5sum": key_values(patient, 'md5sum'),
+                "ga4gh_drs_uri": key_values(patient, 'ga4gh_drs_uri'),
+                # "identifier_urn_ietf_rfc_3986": key_values(patient, 'identifier_urn_ietf_rfc_3986'),
+
+                "file_resourceType": key_values(patient, 'resource_type'),
+                "status": key_values(patient, 'status'),
+                # "file_submitter_id": key_values(patient, 'file_submitter_id'),
+                # "type_coding_0_code": key_values(patient, 'type_coding_0_code'),
+                # "type_coding_0_display": key_values(patient, 'type_coding_0_display'),
+                # "type_coding_0_system": key_values(patient, 'type_coding_0_system'),
+                # "type_coding_1_code": key_values(patient, 'type_coding_1_code'),
+                # "type_coding_1_system": key_values(patient, 'type_coding_1_system'),
+                # "type_coding_1_display": key_values(patient, 'type_coding_1_display'),
+                "data_format": key_values(patient, 'data_format'),
+                "data_type": key_values(patient, 'data_type')
+
+
+            }
 
             yield _source
 
@@ -608,21 +584,20 @@ def write_dict(output, d):
     output.write(str(d))
     output.write("\n")
 
-
 def write_http(session, _params, raise_for_status=True):
     """Write a dict to the session."""
     r = session.request(**_params)
     if raise_for_status:
         if r.status_code > 300:
-            print(_params)
-            print(r.text)
+            print("TEXT_PARAMS", _params)
+            print("TEXT", r.text)
         r.raise_for_status()
 
 
 @click.command()
 @click.option('--endpoint', type=str, help='Gen3 host base url.')
 @click.option('--credentials_path', type=str, help='Path to gen3 credentials.')
-@click.option('--batch_size', type=int, default=50, help='Number of records to read from gen3 at a time (50).')
+@click.option('--batch_size', type=int, default=500, help='Number of records to read from gen3 at a time (500.')
 @click.option('--output_path', type=str, default=None, help='For debugging, write the output to this path')
 @click.option('--elastic', type=str, default=None, help='Write directly to elastic host')
 def etl(credentials_path, endpoint, output_path, batch_size, elastic):
@@ -651,23 +626,21 @@ def etl(credentials_path, endpoint, output_path, batch_size, elastic):
     #
 
     # assumes guppy-setup dropped ES indices
-    # _writer(drop_file_indexes(elastic))
+    #_writer(drop_file_indexes(elastic))
     # write data
-    for i, row in enumerate(read_files(sc, batch_size)):
-        # on first row, sample the data and create an index
-        if i == 0:
-            _writer(create_file_indexes(row, elastic))
-        _writer(write_file_data(row, elastic))
-    # write "special" index guppy uses to discover arrays
-    _writer(write_file_array_config(elastic))
-    # write devops aliases
-    _writer(write_file_alias_config(elastic))
+
+    # for i, row in enumerate(read_files(sc, batch_size)):
+    #     if i == 0:
+    #         _writer(create_file_indexes(row, elastic))
+    #     _writer(write_file_data(row, elastic))
+    # _writer(write_file_array_config(elastic))
+    # _writer(write_file_alias_config(elastic))
+    # _writer(write_file_array_config(elastic))
 
     #
     # PATIENT centric index
     #
 
-    # _writer(drop_patient_indexes(elastic))
     for i, row in enumerate(read_patients(sc, batch_size)):
         if i == 0:
             _writer(create_patient_indexes(row, elastic))
@@ -682,4 +655,3 @@ def etl(credentials_path, endpoint, output_path, batch_size, elastic):
 
 if __name__ == '__main__':
     etl()
-
