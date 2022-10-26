@@ -182,7 +182,7 @@ services:
       - bootstrap.memory_lock=false
       # For apple silicon
       - bootstrap.system_call_filter=false
-      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - "ES_JAVA_OPTS=-Xms2g -Xmx4g"
     entrypoint:
       - /bin/bash
     # mmapfs requires systemctl update - see https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules-store.html#mmapfs
