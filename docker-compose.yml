@@ -41,8 +41,8 @@ services:
     depends_on:
       - postgres
   fence-service:
-    #image: "quay.io/cdis/fence:2021.03"
-    build: fence
+    image: "quay.io/cdis/fence:2022.10"
+    #build: fence
     command: bash /var/www/fence/fence_setup.sh
     container_name: fence-service
     networks:
@@ -125,7 +125,7 @@ services:
       - ./scripts/peregrine_setup.sh:/peregrine_setup.sh
       - ./datadictionary/gdcdictionary/schemas:/schemas_dir
     environment: &env
-      DICTIONARY_URL: https://aced-public.s3.us-west-2.amazonaws.com/aced.json
+      DICTIONARY_URL: https://aced-public.s3.us-west-2.amazonaws.com/aced-test.json
       # PATH_TO_SCHEMA_DIR: /schemas_dir
       REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
     healthcheck:
@@ -225,7 +225,7 @@ services:
     depends_on:
       - peregrine-service
   portal-service:
-    image: "quay.io/cdis/data-portal:3.33.0"  # 2021.03
+    image: "quay.io/cdis/data-portal:5.1.0"  # 3.33.0"  # 2021.03
     container_name: portal-service
     command: ["bash", "/var/www/data-portal/waitForContainers.sh"]
     deploy:
@@ -247,7 +247,7 @@ services:
       - NODE_ENV=dev
       #- MOCK_STORE=true
       - APP=gitops
-      - GDC_SUBPATH=http://revproxy-service/api/v0/submission/
+      - GDC_SUBPATH=https://revproxy-service/api/v0/submission/
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost"]
       interval: 60s
