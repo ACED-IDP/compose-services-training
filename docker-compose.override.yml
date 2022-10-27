@@ -103,7 +103,11 @@ services:
       - minio-ucl
       - minio-manchester
       - minio-stanford
-
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
 ## create a web-hook container handle events
   minio-webhook:
     build: minio-webhook
@@ -122,7 +126,11 @@ services:
       - minio-ucl
       - minio-manchester
       - minio-stanford
-
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
 
 # expose postgres to host os
 
