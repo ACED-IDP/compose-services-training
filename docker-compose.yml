@@ -11,6 +11,10 @@ services:
       - ./scripts/postgres_always.sh:/postgres_always.sh:ro
       - ./scripts/postgres_run.sh:/usr/local/bin/postgres_run.sh:ro
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"      
     healthcheck:
       test: ["CMD-SHELL", "psql -U fence_user -d fence_db -c 'SELECT 1;'"]
       interval: 60s
@@ -40,8 +44,13 @@ services:
       retries: 3
     depends_on:
       - postgres
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"        
   fence-service:
-    image: "quay.io/cdis/fence:2022.10"
+    image: "quay.io/cdis/fence:integration202211"
     #build: fence
     command: bash /var/www/fence/fence_setup.sh
     container_name: fence-service
@@ -64,6 +73,11 @@ services:
     depends_on:
       - postgres
       - arborist-service
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"        
   arborist-service:
     image: "quay.io/cdis/arborist:2021.03"
     container_name: arborist-service
@@ -87,6 +101,11 @@ services:
       retries: 10
     depends_on:
       - postgres
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"        
   metadata-service:
     # update image
     image: "quay.io/cdis/metadata-service:1.8.0"
@@ -112,6 +131,11 @@ services:
       sh -c "/env/bin/alembic upgrade head && /env/bin/uvicorn --host 0.0.0.0 --port 80 mds.asgi:app --reload"
     networks:
       - devnet
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"        
   peregrine-service:
     image: "quay.io/cdis/peregrine:2021.03"
     container_name: peregrine-service
@@ -137,6 +161,11 @@ services:
     depends_on:
       - postgres
       - sheepdog-service
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"        
   sheepdog-service:
     image: "quay.io/cdis/sheepdog:2021.03"
     command: bash /sheepdog_setup.sh
@@ -157,6 +186,11 @@ services:
       retries: 5
     depends_on:
       - postgres
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"        
   guppy-service:
     image: "quay.io/cdis/guppy:2021.03"
     container_name: guppy-service
@@ -174,6 +208,11 @@ services:
     depends_on:
       - arborist-service
       - esproxy-service
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"        
   esproxy-service:
     image: quay.io/cdis/elasticsearch-oss:6.8.12
     container_name: esproxy-service
@@ -182,7 +221,7 @@ services:
       - bootstrap.memory_lock=false
       # For apple silicon
       - bootstrap.system_call_filter=false
-      - "ES_JAVA_OPTS=-Xms2g -Xmx4g"
+      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
     entrypoint:
       - /bin/bash
     # mmapfs requires systemctl update - see https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules-store.html#mmapfs
@@ -210,6 +249,11 @@ services:
       - 9300:9300
     networks:
       - devnet
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"        
   pidgin-service:
     image: "quay.io/cdis/pidgin:2021.03"
     container_name: pidgin-service
@@ -224,6 +268,11 @@ services:
       retries: 3
     depends_on:
       - peregrine-service
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"        
   portal-service:
     image: "quay.io/cdis/data-portal:5.1.0"  # 3.33.0"  # 2021.03
     container_name: portal-service
@@ -257,6 +306,11 @@ services:
       - postgres
       - peregrine-service
       - sheepdog-service
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"        
   jupyter-service:
     image: "quay.io/cdis/jupyter-slim:latest"
     container_name: jupyter-service
@@ -269,7 +323,12 @@ services:
     networks:
       - devnet
     environment:
-      - FRAME_ANCESTORS=http://aced-training.compbio.ohsu.edu
+      - FRAME_ANCESTORS=http://staging.aced-idp.org
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"        
   revproxy-service:
     image: "quay.io/cdis/nginx:2021.03"
     container_name: revproxy-service
@@ -277,7 +336,7 @@ services:
       - devnet
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./minio.conf:/etc/nginx/minio.conf
+      - ./minio.conf.staging:/etc/nginx/minio.conf
       - ./Secrets/TLS/service.crt:/etc/nginx/ssl/nginx.crt
       - ./Secrets/TLS/service.key:/etc/nginx/ssl/nginx.key
     ports:
@@ -296,42 +355,11 @@ services:
       - fence-service
       - portal-service
       - pidgin-service
-#  tube-service:
-#    image: "quay.io/cdis/tube:2021.03"
-#    container_name: tube-service
-#    command: bash -c "while true; do sleep 5; done"
-#    networks:
-#      - devnet
-#    environment:
-#      - DICTIONARY_URL=https://s3.amazonaws.com/dictionary-artifacts/datadictionary/develop/schema.json
-#      - ES_URL=esproxy-service
-#      - ES_INDEX_NAME=etl
-#      - HADOOP_URL=hdfs://spark-service:9000
-#      - HADOOP_HOST=spark-service
-#    volumes:
-#      - ./Secrets/etl_creds.json:/usr/share/gen3/tube/creds.json
-#      - ./Secrets/etlMapping.yaml:/usr/share/gen3/tube/etlMapping.yaml
-#      - ./Secrets/user.yaml:/usr/share/gen3/tube/user.yaml
-#      - ./datadictionary:/tmp/datadictionary
-#    depends_on:
-#      - postgres
-#      - esproxy-service
-#      - spark-service
-#  spark-service:
-#    image: "quay.io/cdis/gen3-spark:2021.03"
-#    container_name: spark-service
-#    command: bash -c "python run_config.py && hdfs namenode -format && hdfs --daemon start namenode && hdfs --daemon start datanode && yarn --daemon start resourcemanager && yarn --daemon start nodemanager && hdfs dfsadmin -safemode leave &&  hdfs dfs -mkdir /result && while true; do sleep 5; done"
-#    expose:
-#      - 22
-#      - 8030
-#      - 8031
-#      - 8032
-#      - 9000
-#    networks:
-#      - devnet
-#    environment:
-#      - HADOOP_URL=hdfs://0.0.0.0:9000
-#      - HADOOP_HOST=0.0.0.0
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"        
   kibana-service:
     image: quay.io/cdis/kibana-oss:6.5.4
     container_name: kibana-service

@@ -160,6 +160,7 @@ def upload_pfb(ctx, bucket_name, pfb_path, program, project):
                                                     authz=authz, urls=urls,
                                                     metadata=metadata)
                 assert result   # TODO - better check
+                json.dump()
                 print(json.dumps({'id': record_id, 'name': record_name, 'object_id': guid}))
 
 
@@ -168,14 +169,12 @@ def upload_pfb(ctx, bucket_name, pfb_path, program, project):
               help='File name to upload')
 @click.option('--project_path', required=True, default=None, show_default=True,
               help='Path to simulated metadata data see: shorturl.at/jqvZ5')
-@click.option('--pfb_path', required=False, default=None, show_default=True,
-              help='Path to pfb file')
 @click.option('--program', default='MyFirstProgram', show_default=True,
               help='Gen3 program')
 @click.option('--project', default='MyFirstProject', show_default=True,
               help='Gen3 project')
 @click.pass_context
-def upload(ctx, bucket_name, project_path, pfb_path, program, project):
+def upload(ctx, bucket_name, project_path, program, project):
     """Filter data_files found in generated synthetic data to gen3 managed bucket, update hashes and size."""
 
     index_client = ctx.obj['index_client']
