@@ -6,22 +6,17 @@ from datetime import datetime
 
 import click
 import requests
+from elasticsearch import Elasticsearch
+from elasticsearch.helpers import bulk
 from gen3.auth import Gen3Auth
 from gen3.submission import Gen3Submission
 from jsonpath_ng import parse
+from more_itertools import peekable
+import logging
 
-"""
-export EP='--endpoint https://aced-training.compbio.ohsu.edu'
-# program-project - the program & project we want to load, see https://aced-training.compbio.ohsu.edu/submission
-# credentials from https://aced-training.compbio.ohsu.edu/identity
-export CRED='--credentials_path  ./Secrets/credentials-etl.json'
-# DEBUGGING
-export ETL="python3 ./scripts/etl_lite.py $EP $CRED --batch_size 100 --output_path /tmp/etl_lite.output.txt"
-# PROD
-export ETL="python3 ./scripts/etl_lite.py $EP $CRED --batch_size 100 --elastic http://esproxy-service:9200"
-$ETL
-
-"""
+FORMAT = '%(name)s %(process)d %(asctime)s %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO)
+logger = logging.getLogger("root")
 
 DEFAULT_ELASTIC = "http://esproxy-service:9200"
 DEFAULT_NAMESPACE = "gen3.aced.io"
@@ -82,14 +77,114 @@ query ($first: Int!, $offset: Int!) {
     .replace('$PATIENT_PROPERTIES', PATIENT_PROPERTIES)
 
 #   graphql query for CASE
-PATIENT_GRAPHQL = """
+# PATIENT_GRAPHQL = """
+# query ($first: Int!, $offset: Int!) {
+#   patient(first: $first, offset: $offset) {
+#     $PATIENT_PROPERTIES
+#   }
+# }
+# """.replace('$PATIENT_PROPERTIES', PATIENT_PROPERTIES)\
+#     .replace('$FILE_PROPERTIES', FILE_PROPERTIES)
+
+# (with_links:["observations", "conditions", "medication_requests"])
+
+ENCOUNTER_QUERY = """
 query ($first: Int!, $offset: Int!) {
-  patient(first: $first, offset: $offset) {
-    $PATIENT_PROPERTIES
+  encounter(first: $first, offset: $offset) {
+    project_id
+    encounters_id: id
+    encounter_type: type_0_coding_0_display
+    encounter_reason: reasonCode_0_coding_0_display
+    encounter_start: period_start
+    subject: subject_patient {
+      id
+      ombCategory: extension_0_extension_0_valueCoding_display
+      ombCategory_detail: extension_1_extension_0_valueCoding_display
+      us_core_birthsex: extension_3_valueCode
+      disability_adjusted_life_years: extension_5_valueDecimal
+      quality_adjusted_life_years: extension_6_valueDecimal
+      gender
+      maritalStatus: maritalStatus_coding_0_display
+      deceasedBoolean
+      deceasedDateTime
+      birthDate
+    }
+    conditions {
+      condition_id: id
+      code_coding_0_display
+      code_coding_0_system
+      code_coding_0_code
+      category_0_coding_0_display
+      onsetDateTime
+      abatementDateTime
+      verificationStatus_coding_0_code
+      clinicalStatus_coding_0_code
+    }
+    observations {
+      observation_id: id
+      category: category_0_coding_0_display
+      bodySite: bodySite_coding_0_code
+      code_display: code_coding_0_display
+      valueTime
+      valueString
+      valueBoolean
+      valueInteger
+      valueDateTime
+      valuePeriod_end
+      valuePeriod_start
+      valueQuantity_code
+      valueQuantity_unit
+      valueQuantity_value
+      valueCodeableConcept_coding_0_system
+      valueCodeableConcept_coding_0_code
+      valueCodeableConcept_coding_0_display
+      component_0_code_coding_0_code
+      component_0_code_coding_0_display
+      component_0_code_coding_0_system
+      component_0_valueTime
+      component_0_valueTime
+      component_0_valueString
+      component_0_valueBoolean
+      component_0_valueInteger
+      component_0_valueDateTime
+      component_0_valuePeriod_end
+      component_0_valuePeriod_start
+      component_0_valueQuantity_code
+      component_0_valueQuantity_unit
+      component_0_valueQuantity_value
+      component_1_code_coding_0_code
+      component_1_code_coding_0_display
+      component_1_code_coding_0_system
+      component_1_valueTime
+      component_1_valueTime
+      component_1_valueString
+      component_1_valueBoolean
+      component_1_valueInteger
+      component_1_valueDateTime
+      component_1_valuePeriod_end
+      component_1_valuePeriod_start
+      component_1_valueQuantity_code
+      component_1_valueQuantity_unit
+      component_1_valueQuantity_value
+    }
+    medication_requests {
+      medication_id: id
+      medicationCodeableConcept_coding_0_code
+      medicationCodeableConcept_coding_0_system
+      medicationCodeableConcept_coding_0_display
+    }
+    procedures {
+      procedure_id: id
+      code_coding_0_code
+      code_coding_0_system
+      code_coding_0_display
+    }
   }
 }
-""".replace('$PATIENT_PROPERTIES', PATIENT_PROPERTIES)\
-    .replace('$FILE_PROPERTIES', FILE_PROPERTIES)
+
+"""
+
+PATIENT_GRAPHQL = str(ENCOUNTER_QUERY)
 
 
 def key_values(nested, key, normalize=True):
@@ -145,7 +240,7 @@ def drop_file_indexes(elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMESPACE):
     return {"method": 'DELETE', "url": f'{elastic}/{name_space}_file_0'}
 
 
-def write_array_aliases(elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMESPACE):
+def write_file_array_aliases(elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMESPACE):
     """Write the array aliases."""
     # EXPECTED_ALIASES = {
     #     ".kibana_1": {
@@ -186,10 +281,54 @@ def write_array_aliases(elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMESPACE):
         "json": {
             "actions": [{"add": {"index": f"{name_space}_file-array-config_0",
                                  "alias": f"{name_space}_array-config"}},
-                        {"add": {"index": f"{name_space}_case-array-config_0",
-                                 "alias": f"{name_space}_array-config"}},
                         {"add": {"index": f"{name_space}_file-array-config_0",
                                  "alias": f"file_array-config"}},
+                        ]}
+    }
+
+
+def write_patient_array_aliases(elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMESPACE):
+    """Write the array aliases."""
+    # EXPECTED_ALIASES = {
+    #     ".kibana_1": {
+    #         "aliases": {
+    #             ".kibana": {}
+    #         }
+    #     },
+    #     "etl-array-config_0": {
+    #         "aliases": {
+    #             "etl-array-config": {},
+    #             "etl_array-config": {},
+    #             "time_2022-08-25T01:44:47.115494": {}
+    #         }
+    #     },
+    #     "etl_0": {
+    #         "aliases": {
+    #             "etl": {},
+    #             "time_2022-08-25T01:44:47.115494": {}
+    #         }
+    #     },
+    #     "file-array-config_0": {
+    #         "aliases": {
+    #             "file-array-config": {},
+    #             "file_array-config": {},
+    #             "time_2022-08-25T01:44:47.115494": {}
+    #         }
+    #     },
+    #     "file_0": {
+    #         "aliases": {
+    #             "file": {},
+    #             "time_2022-08-25T01:44:47.115494": {}
+    #         }
+    #     }
+    # }
+    return {
+        "method": 'POST',
+        "url": f'{elastic}/_aliases',
+        "json": {
+            "actions": [
+                        {"add": {"index": f"{name_space}_case-array-config_0",
+                                 "alias": f"{name_space}_array-config"}},
                         {"add": {"index": f"{name_space}_case-array-config_0",
                                  "alias": f"etl_array-config"}}
                         ]}
@@ -203,7 +342,9 @@ def create_file_indexes(_source, elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAM
     return {
         "method": 'PUT',
         "url": f'{elastic}/{_index}',
-        "json": create_index_from_source(_source, _index, _type)
+        "json": create_index_from_source(_source, _index, _type),
+        "index": _index,
+        "type": _type
     }
 
 
@@ -259,7 +400,9 @@ def create_patient_indexes(_source, elastic=DEFAULT_ELASTIC, name_space=DEFAULT_
     return {
         "method": 'PUT',
         "url": f'{elastic}/{_index}',
-        "json": create_index_from_source(_source, _index, _type)
+        "json": create_index_from_source(_source, _index, _type),
+        "index": _index,
+        "type": _type
     }
 
 
@@ -352,126 +495,39 @@ def read_patients(sc, batch_size):
     while True:
         # pagination
         graphql_variables = {"first": first, "offset": offset}
+        # print(PATIENT_GRAPHQL, graphql_variables)
         r = sc.query(PATIENT_GRAPHQL, variables=graphql_variables)
         c += 1
 
-        if 'data' not in r or 'patient' not in r['data'] or len(r['data']['patient']) == 0:
+        if 'data' not in r or 'encounter' not in r['data'] or len(r['data']['encounter']) == 0:
             break
         offset += batch_size
-        for patient in r['data']['patient']:
-            assert 'project_id' in patient, (patient, patient.keys())
-            program, project = patient['project_id'].split('-')
+        for encounter in r['data']['encounter']:
+            assert 'project_id' in encounter, (encounter, encounter.keys())
+            program, project = encounter['project_id'].split('-')
+            # denormalize by patient
+            patient = dict()
             patient["auth_resource_path"] = f"/programs/{program}/projects/{project}"
-            patient["_case_id"] = patient['id']  # TODO ??? in gitops ?
-            yield patient
-
-            # _source = {
-            #     "project_id": patient['project_id'],
-            #     "patient_id": patient['patient_id'],
-            #     "patient_resource_type": patient['patient_resource_type'],
-            #     # "text_status": patient['text_status'],
-            #     # "text_div": patient['text_div'],
-            #
-            #     # TODO - review extension anonymization
-            #     # "us_core_race_ombCategory": patient['us_core_race_ombCategory'],
-            #     # "us_core_race_text": patient['us_core_race_text'],
-            #     # "us_core_ethnicity_ombCategory": patient['us_core_ethnicity_ombCategory'],
-            #     # "us_core_ethnicity_text": patient['us_core_ethnicity_text'],
-            #     # "patient_mothersMaidenName": patient['patient_mothersMaidenName'],
-            #     # "us_core_birthsex": patient['us_core_birthsex'],
-            #
-            #     # TODO - more extension
-            #     # "patient_birthPlace_city": patient['patient_birthPlace_city'],
-            #     # "patient_birthPlace_state": patient['patient_birthPlace_state'],
-            #     # "patient_birthPlace_country": patient['patient_birthPlace_country'],
-            #
-            #     # TODO - more extension
-            #     # "disability_adjusted_life_years": patient['disability_adjusted_life_years'],
-            #     # "quality_adjusted_life_years": patient['quality_adjusted_life_years'],
-            #     # "identifier_synthea": patient['identifier_synthea'],
-            #     # "identifier_MR": patient['identifier_MR'],
-            #     # "identifier_SS": patient['identifier_SS'],
-            #     # "identifier_DL": patient['identifier_DL'],
-            #     # "identifier_PPN": patient['identifier_PPN'],
-            #
-            #     # TODO - anonymizer
-            #     # "name_use": patient['name_use'],
-            #     # "name_family": patient['name_family'],
-            #     # "name_given": patient['name_given'],
-            #     # "name_prefix": patient['name_prefix'],
-            #     # "telecom_system": patient['telecom_system'],
-            #     # "telecom_value": patient['telecom_value'],
-            #     # "telecom_use": patient['telecom_use'],
-            #
-            #     "gender": patient['gender'],
-            #     "birthDate": patient['birthDate'],
-            #     "deceasedDateTime": patient['deceasedDateTime'],
-            #     "deceasedBoolean": patient['deceasedBoolean'],
-            #
-            #     # TODO - anonymizer
-            #     # "address_geolocation_latitude": patient['address_geolocation_latitude'],
-            #     # "address_geolocation_longitude": patient['address_geolocation_longitude'],
-            #     # "address_line": patient['address_line'],
-            #     # "address_city": patient['address_city'],
-            #     # "address_state": patient['address_state'],
-            #     # "address_postalCode": patient['address_postalCode'],
-            #     # "address_country": patient['address_country'],
-            #
-            #     # "maritalStatus_coding_0_code": patient['maritalStatus_coding_0_code'],
-            #     # "maritalStatus_coding_0_system": patient['maritalStatus_coding_0_system'],
-            #     "maritalStatus_coding_0_display": patient['maritalStatus_coding_0_display'],
-            #
-            #     # "multipleBirthBoolean": str(patient['multipleBirthBoolean']),   # TODO handle booleans better
-            #     # "multipleBirthInteger": patient['multipleBirthInteger'],
-            #
-            #     # "communication_language_text": patient['communication_language_text'],
-            #     "patient_submitter_id": patient['submitter_id'],
-            #     "auth_resource_path": f"/programs/{program}/projects/{project}",
-            #
-            #     "_case_id": patient['patient_id'],  # TODO ??? in gitops ?
-            #
-            #     "file_id": key_values(patient, 'file_id'),
-            #     "author_display": key_values(patient, 'author_display'),
-            #     "author_reference": key_values(patient, 'author_reference'),
-            #     # "category_coding_us_core_documentreference_category": key_values(patient, 'category_coding_us_core_documentreference_category'),
-            #
-            #     "content_attachment_contentType": key_values(patient, 'content_0_attachment_contentType'),
-            #     "content_attachment_md5": key_values(patient, 'content_0_attachment_md5'),
-            #     "content_attachment_size": key_values(patient, 'content_0_attachment_size'),
-            #     "content_attachment_url": key_values(patient, 'content_0_attachment_url'),
-            #
-            #     "content_format_code": key_values(patient, 'content_0_format_code'),
-            #     "content_format_system": key_values(patient, 'content_0_format_system'),
-            #     "content_format_display": key_values(patient, 'content_0_format_display'),
-            #
-            #     "context_encounter_reference": key_values(patient, 'context_encounter_0_reference'),
-            #     "context_period_end": key_values(patient, 'context_period_end'),
-            #     "context_period_start": key_values(patient, 'context_period_start'),
-            #
-            #     # "custodian_display": key_values(patient, 'custodian_display'),
-            #     # "custodian_reference": key_values(patient, 'custodian_reference'),
-            #     #
-            #     "date": key_values(patient, 'date'),
-            #     "md5sum": key_values(patient, 'md5sum'),
-            #     "ga4gh_drs_uri": key_values(patient, 'ga4gh_drs_uri'),
-            #     # "identifier_urn_ietf_rfc_3986": key_values(patient, 'identifier_urn_ietf_rfc_3986'),
-            #
-            #     "file_resourceType": key_values(patient, 'resource_type'),
-            #     "status": key_values(patient, 'status'),
-            #     # "file_submitter_id": key_values(patient, 'file_submitter_id'),
-            #     # "type_coding_0_code": key_values(patient, 'type_coding_0_code'),
-            #     # "type_coding_0_display": key_values(patient, 'type_coding_0_display'),
-            #     # "type_coding_0_system": key_values(patient, 'type_coding_0_system'),
-            #     # "type_coding_1_code": key_values(patient, 'type_coding_1_code'),
-            #     # "type_coding_1_system": key_values(patient, 'type_coding_1_system'),
-            #     # "type_coding_1_display": key_values(patient, 'type_coding_1_display'),
-            #     "data_format": key_values(patient, 'data_format'),
-            #     "data_type": key_values(patient, 'data_type')
-            #
-            #
-            # }
-            #
-            # yield _source
+            # get scalars for encounter
+            for k, v in encounter.items():
+                if not k.startswith('encounter'):
+                    continue
+                patient[k] = v
+            # get embedded subject
+            # expecting only one subject
+            for k, v in encounter['subject'][0].items():
+                patient[f"subject_{k}"] = v
+            patient["_case_id"] = encounter['subject'][0]['id']  # TODO  why this variable ??? in gitops.json ?
+            # create an array of condition names
+            patient['conditions'] = [c['code_coding_0_display'] for c in encounter['conditions']]
+            # create an array of medication names
+            patient['medications'] = [c['medicationCodeableConcept_coding_0_display'] for c in encounter['medication_requests']]
+            # denormalize by observation
+            for observation in encounter['observations']:
+                patient_observation = dict(patient)
+                for k, v in observation.items():
+                    patient_observation[k] = v
+                yield patient_observation
 
 
 def write_dict(output, d):
@@ -490,20 +546,86 @@ def write_http(session, _params, raise_for_status=True):
         r.raise_for_status()
 
 
+def write_patient_bulk_http(elastic, index, limit, doc_type, generator):
+    """Use efficient method to write to elastic"""
+    counter = 0
+
+    def _bulker(generator_, counter_=counter):
+        for dict_ in generator_:
+            if limit and counter_ > limit:
+                break  # for testing
+            yield {
+                '_index': index,
+                '_op_type': 'index',
+                '_type': doc_type,
+                '_source': dict_
+            }
+            counter_ += 1
+            if counter_ % 100 == 0:
+                logger.info(counter_)
+
+    logger.info('Fetching first record.')
+    generator = peekable(generator)
+    first_patient = generator.peek()
+    logger.info('Creating patient indices.')
+
+    index_dict = create_patient_indexes(first_patient, "FOO")
+    elastic.indices.create(index=index_dict['index'], body=index_dict['json'])
+
+    logger.info(f'Writing bulk to {index} limit {limit}.')
+    result = bulk(client=elastic,
+                  actions=(d for d in _bulker(generator)),
+                  request_timeout=120)
+
+
+def write_file_bulk_http(elastic, index, limit, doc_type, generator):
+    """Use efficient method to write to elastic"""
+    counter = 0
+
+    def _bulker(generator_, counter_=counter):
+        for dict_ in generator_:
+            if limit and counter_ > limit:
+                break  # for testing
+            yield {
+                '_index': index,
+                '_op_type': 'index',
+                '_type': doc_type,
+                '_source': dict_
+            }
+            counter_ += 1
+            if counter_ % 100 == 0:
+                logger.info(counter_)
+
+    logger.info('Fetching first record.')
+    generator = peekable(generator)
+    first_file = generator.peek()
+    logger.info('Creating file indices.')
+
+    index_dict = create_file_indexes(first_file, "FOO")
+    elastic.indices.create(index=index_dict['index'], body=index_dict['json'])
+
+    logger.info(f'Writing bulk to {index} limit {limit}.')
+    result = bulk(client=elastic,
+                  actions=(d for d in _bulker(generator)),
+                  request_timeout=120)
+
+
 @click.command()
 @click.option('--endpoint', type=str, help='Gen3 host base url.')
 @click.option('--credentials_path', type=str, help='Path to gen3 credentials.')
 @click.option('--batch_size', type=int, default=500, help='Number of records to read from gen3 at a time (500.')
 @click.option('--output_path', type=str, default=None, help='For debugging, write the output to this path')
 @click.option('--elastic', type=str, default=None, help='Write directly to elastic host')
+@click.option('--entity', type=str, default=None, help='One of file | observation')
 @click.option('--limit',
               default=None,
               show_default=True,
               help='Max number of rows per index.')
-def etl(credentials_path, endpoint, output_path, batch_size, elastic, limit):
+def etl(credentials_path, endpoint, output_path, batch_size, elastic, limit, entity):
     """Extract file centric index from Gen3, create elastic search index."""
     # check destination
     assert output_path or elastic, "Please set either elastic url or output_path file path"
+    assert entity,  "Please specify file | observation"
     # connect to source (gen3)
     sc = submission_client(endpoint, credentials_path)
 
@@ -523,6 +645,24 @@ def etl(credentials_path, endpoint, output_path, batch_size, elastic, limit):
         """Write to destination"""
         write_method(output_stream, data)
 
+    _es = Elasticsearch([elastic], request_timeout=120)
+
+    global logger
+    logger = logging.getLogger(entity)
+
+    #
+    # PATIENT centric index
+    #
+    if entity.lower() == 'observation':
+        logger.info(f'Reading patients. batch_size {batch_size}')
+
+        write_patient_bulk_http(elastic=_es, index=f"{DEFAULT_NAMESPACE}_case_0", doc_type='case', limit=limit,
+                                generator=read_patients(sc, batch_size))
+
+        _writer(write_patient_array_config(elastic))
+        _writer(write_patient_alias_config(elastic))
+
+        _writer(write_patient_array_aliases(elastic))
     #
     # FILE centric index
     #
@@ -532,40 +672,19 @@ def etl(credentials_path, endpoint, output_path, batch_size, elastic, limit):
 
     # write data
 
-    print(f'Reading files. batch_size {batch_size}')
-    for i, row in enumerate(read_files(sc, batch_size)):
-        if i == 0:
-            print('Creating file indices.')
-            _writer(create_file_indexes(row, elastic))
-        _writer(write_file_data(row, elastic))
-        if i % batch_size == 0:
-            print(f'Wrote {i} files')
-        if limit and i > limit:
-            break  # for testing
-    _writer(write_file_array_config(elastic))
-    _writer(write_file_alias_config(elastic))
-    _writer(write_file_array_config(elastic))
+    if entity.lower() == 'file':
+        logger.info(f'Reading files. batch_size {batch_size}')
+        write_file_bulk_http(elastic=_es, index=f"{DEFAULT_NAMESPACE}_file_0", doc_type='file', limit=limit,
+                             generator=read_files(sc, batch_size))
 
-    #
-    # PATIENT centric index
-    #
-    print('Reading patients.')
-    for i, row in enumerate(read_patients(sc, batch_size)):
-        if i == 0:
-            print('Creating patient indices.')
-            _writer(create_patient_indexes(row, elastic))
-        _writer(write_patient_data(row, elastic))
-        if i % batch_size == 0:
-            print(f'Wrote {i} patients')
-        if limit and i > limit:
-            break  # for testing
+        _writer(write_file_array_config(elastic))
+        _writer(write_file_alias_config(elastic))
 
-    _writer(write_patient_array_config(elastic))
-    _writer(write_patient_alias_config(elastic))
-    _writer(write_array_aliases(elastic))
+        _writer(write_file_array_aliases(elastic))
 
     # cleanup
     output_stream.close()
+    logger.info('done')
 
 
 if __name__ == '__main__':
