@@ -41,8 +41,7 @@ services:
     depends_on:
       - postgres
   fence-service:
-    #image: "quay.io/cdis/fence:2021.03"
-    build: fence
+    image: "quay.io/cdis/fence:integration202211"
     command: bash /var/www/fence/fence_setup.sh
     container_name: fence-service
     networks:
