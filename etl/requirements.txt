@@ -3,7 +3,7 @@ Click
 jsonpath-ng
 certifi
 faker-biology
-elasticsearch==6.8.2
+elasticsearch==8.4.3
 more-itertools
 
 

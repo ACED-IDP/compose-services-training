@@ -2,17 +2,17 @@
 
 """A lightweight replacement for gen3's spark/tube."""
 
+import logging
 from datetime import datetime
 
 import click
 import requests
-from elasticsearch import Elasticsearch
-from elasticsearch.helpers import bulk
 from gen3.auth import Gen3Auth
 from gen3.submission import Gen3Submission
 from jsonpath_ng import parse
 from more_itertools import peekable
-import logging
+from opensearchpy import OpenSearch
+from opensearchpy.helpers import bulk
 
 FORMAT = '%(name)s %(process)d %(asctime)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
@@ -96,7 +96,7 @@ query ($first: Int!, $offset: Int!) {
     encounter_type: type_0_coding_0_display
     encounter_reason: reasonCode_0_coding_0_display
     encounter_start: period_start
-    subject: subject_patient {
+    patient: subject_patient {
       id
       ombCategory: extension_0_extension_0_valueCoding_display
       ombCategory_detail: extension_1_extension_0_valueCoding_display
@@ -220,7 +220,7 @@ def create_index_from_source(_source, _index, _type):
             # naive, there are probably other types
             mappings[k] = {"type": "float"}
     return {
-        "mappings": {_type: {"properties": mappings}}
+        "mappings": {"properties": mappings}
     }
 
 
@@ -645,7 +645,12 @@ def etl(credentials_path, endpoint, output_path, batch_size, elastic, limit, ent
         """Write to destination"""
         write_method(output_stream, data)
 
-    _es = Elasticsearch([elastic], request_timeout=120)
+    _es = OpenSearch([elastic], http_auth=('admin', 'admin'), request_timeout=120, use_ssl=False,
+                     verify_certs=False,
+                     ssl_assert_hostname=False,
+                     ssl_show_warn=False,
+                     )
+
 
     global logger
     logger = logging.getLogger(entity)
