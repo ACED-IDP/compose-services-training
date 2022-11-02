@@ -96,7 +96,7 @@ query ($first: Int!, $offset: Int!) {
     encounter_type: type_0_coding_0_display
     encounter_reason: reasonCode_0_coding_0_display
     encounter_start: period_start
-    subject: subject_patient {
+    patient: subject_patient {
       id
       ombCategory: extension_0_extension_0_valueCoding_display
       ombCategory_detail: extension_1_extension_0_valueCoding_display
@@ -487,15 +487,17 @@ def read_files(sc, batch_size):
                 yield document_reference
 
 
-def read_patients(sc, batch_size):
+def read_patients(sc, batch_size, start):
     """Read patient records and their descendants from gen3."""
     first = batch_size
     offset = 0
+    if start:
+        offset = int(start)
     c = 0
     while True:
         # pagination
         graphql_variables = {"first": first, "offset": offset}
-        # print(PATIENT_GRAPHQL, graphql_variables)
+        logger.info((PATIENT_GRAPHQL, graphql_variables))
         r = sc.query(PATIENT_GRAPHQL, variables=graphql_variables)
         c += 1
 
@@ -515,9 +517,9 @@ def read_patients(sc, batch_size):
                 patient[k] = v
             # get embedded subject
             # expecting only one subject
-            for k, v in encounter['subject'][0].items():
-                patient[f"subject_{k}"] = v
-            patient["_case_id"] = encounter['subject'][0]['id']  # TODO  why this variable ??? in gitops.json ?
+            for k, v in encounter['patient'][0].items():
+                patient[f"patient_{k}"] = v
+            patient["_case_id"] = encounter['patient'][0]['id']  # TODO  why this variable ??? in gitops.json ?
             # create an array of condition names
             patient['conditions'] = [c['code_coding_0_display'] for c in encounter['conditions']]
             # create an array of medication names
@@ -621,7 +623,11 @@ def write_file_bulk_http(elastic, index, limit, doc_type, generator):
               default=None,
               show_default=True,
               help='Max number of rows per index.')
-def etl(credentials_path, endpoint, output_path, batch_size, elastic, limit, entity):
+@click.option('--start',
+              default=None,
+              show_default=True,
+              help='Max number of rows per index.')
+def etl(credentials_path, endpoint, output_path, batch_size, elastic, limit, entity, start):
     """Extract file centric index from Gen3, create elastic search index."""
     # check destination
     assert output_path or elastic, "Please set either elastic url or output_path file path"
@@ -657,7 +663,7 @@ def etl(credentials_path, endpoint, output_path, batch_size, elastic, limit, ent
         logger.info(f'Reading patients. batch_size {batch_size}')
 
         write_patient_bulk_http(elastic=_es, index=f"{DEFAULT_NAMESPACE}_case_0", doc_type='case', limit=limit,
-                                generator=read_patients(sc, batch_size))
+                                generator=read_patients(sc, batch_size, start))
 
         _writer(write_patient_array_config(elastic))
         _writer(write_patient_alias_config(elastic))
