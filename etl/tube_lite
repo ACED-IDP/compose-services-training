@@ -92,7 +92,7 @@ ENCOUNTER_QUERY = """
 query ($first: Int!, $offset: Int!) {
   encounter(first: $first, offset: $offset) {
     project_id
-    encounters_id: id
+    encounter_id: id
     encounter_type: type_0_coding_0_display
     encounter_reason: reasonCode_0_coding_0_display
     encounter_start: period_start
@@ -412,7 +412,7 @@ def write_patient_array_config(elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMES
     return {
         "method": 'PUT',
         "url": f'{elastic}/{name_space}_case-array-config_0/_doc/etl',
-        "json": {"timestamp": datetime.now().isoformat(), "array": ['data_format', 'data_type', '_file_id']}
+        "json": {"timestamp": datetime.now().isoformat(), "array": ['data_format', 'data_type', '_file_id', 'medications', 'conditions']}
     }
 
 
@@ -497,7 +497,7 @@ def read_patients(sc, batch_size, start):
     while True:
         # pagination
         graphql_variables = {"first": first, "offset": offset}
-        logger.info((PATIENT_GRAPHQL, graphql_variables))
+        # logger.info((PATIENT_GRAPHQL, graphql_variables))
         r = sc.query(PATIENT_GRAPHQL, variables=graphql_variables)
         c += 1
 
@@ -508,9 +508,10 @@ def read_patients(sc, batch_size, start):
             assert 'project_id' in encounter, (encounter, encounter.keys())
             program, project = encounter['project_id'].split('-')
             # denormalize by patient
-            patient = dict()
+            patient = dict({'project_id': encounter['project_id']})
             patient["auth_resource_path"] = f"/programs/{program}/projects/{project}"
             # get scalars for encounter
+
             for k, v in encounter.items():
                 if not k.startswith('encounter'):
                     continue
