@@ -515,3 +515,4 @@ def load(ctx, data_directory, program, project, batch_size):
 
 if __name__ == '__main__':
     cli()
+
