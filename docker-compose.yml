@@ -268,7 +268,7 @@ services:
     networks:
       - devnet
     environment:
-      - FRAME_ANCESTORS=http://aced-training.compbio.ohsu.edu
+      - FRAME_ANCESTORS=http://staging.aced-idp.org
   revproxy-service:
     image: "quay.io/cdis/nginx:2021.03"
     container_name: revproxy-service
@@ -276,7 +276,7 @@ services:
       - devnet
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./minio.conf:/etc/nginx/minio.conf
+      - ./minio.conf.staging:/etc/nginx/minio.conf
       - ./Secrets/TLS/service.crt:/etc/nginx/ssl/nginx.crt
       - ./Secrets/TLS/service.key:/etc/nginx/ssl/nginx.key
     ports:
