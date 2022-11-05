@@ -1,0 +1,15 @@
+pandas
+dash
+requests
+cachelib
+dash_bootstrap_components
+
+gen3
+
+# dotnotation for dicts
+
+dotwiz
+
+flatten_json==0.1.13
+
+inflection
