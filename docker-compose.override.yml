@@ -71,24 +71,6 @@ services:
       - data5-2:/data2
 
 
-  #
-  # adds minio dependencies to revproxy
-  #
-  revproxy-service:
-    depends_on:
-      - arborist-service
-      - indexd-service
-      - peregrine-service
-      - sheepdog-service
-      - fence-service
-      - portal-service
-      - pidgin-service
-      - minio-default
-      - minio-ohsu
-      - minio-ucl
-      - minio-manchester
-      - minio-stanford
-
 ## create an etl container to hold our command line tools
   etl-service:
     build: etl
@@ -130,7 +112,80 @@ services:
     ports:
       - 5432:5432
 
-## By default this config uses default local driver,
+  # https://github.com/opensearch-project/OpenSearch/issues/1598#issuecomment-978189603
+  opensearch-node1: # This is also the hostname of the container within the Docker network (i.e. https://opensearch-node1/)
+    image: opensearchproject/opensearch:latest # Specifying the latest available image - modify if you want a specific version
+    container_name: opensearch-node1
+    environment:
+      - cluster.name=opensearch-cluster # Name the cluster
+      - node.name=opensearch-node1 # Name the node that will run in this container
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true
+      - discovery.type=single-node
+#      - discovery.seed_hosts=opensearch-node1,opensearch-node2 # Nodes to look for when discovering the cluster
+#      - cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2 # Nodes eligibile to serve as cluster manager
+      - bootstrap.memory_lock=true # Disable JVM heap memory swapping
+      - "OPENSEARCH_JAVA_OPTS=-Xms4g -Xmx4g" # Set min and max JVM heap sizes to at least 50% of system RAM
+    ulimits:
+      memlock:
+        soft: -1 # Set memlock to unlimited (no soft or hard limit)
+        hard: -1
+      nofile:
+        soft: 65536 # Maximum number of open files for the opensearch user - set to at least 65536
+        hard: 65536
+    volumes:
+      - opensearch-data1:/usr/share/opensearch/data # Creates volume called opensearch-data1 and mounts it to the container
+    ports:
+      - 9201:9200 # REST API (HOST_PORT:CONTAINER_PORT).
+      - 9601:9600 # Performance Analyzer
+    networks:
+      - devnet # All of the containers will join the same Docker bridge network
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:latest # Make sure the version of opensearch-dashboards matches the version of opensearch installed on other nodes
+    container_name: opensearch-dashboards
+    ports:
+      - "5602:5601"  # Map host port 5602 to container port 5601
+    expose:
+      - "5601" # Expose port 5601 for web access to OpenSearch Dashboards
+    environment:
+      - OPENSEARCH_HOSTS=["http://opensearch-node1:9200"] # Define the OpenSearch nodes that OpenSearch Dashboards will query
+      - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
+    networks:
+      - devnet
+
+
+  dash-service:
+    build: dash
+    container_name: dash-service
+    ports:
+      - "8050:8050"  # HOST:CONTAINER
+    environment:
+      - DASH_URL_BASE_PATHNAME=/dash/proxy/
+    networks:
+      - devnet
+
+  #
+  # adds minio dependencies to revproxy
+  #
+  revproxy-service:
+    depends_on:
+      - arborist-service
+      - indexd-service
+      - peregrine-service
+      - sheepdog-service
+      - fence-service
+      - portal-service
+      - pidgin-service
+      - minio-default
+      - minio-ohsu
+      - minio-ucl
+      - minio-manchester
+      - minio-stanford
+      - dash-service
+
+
+## By default, this config uses default local driver,
 ## For custom volumes replace with volume driver configuration.
 volumes:
   data1-1:
@@ -143,3 +198,4 @@ volumes:
   data4-2:
   data5-1:
   data5-2:
+  opensearch-data1:

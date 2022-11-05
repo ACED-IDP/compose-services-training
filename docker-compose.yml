@@ -122,10 +122,10 @@ services:
       - ./Secrets/config_helper.py:/var/www/peregrine/config_helper.py
       - ./Secrets/TLS/service.crt:/usr/local/share/ca-certificates/cdis-ca.crt
       - ./scripts/peregrine_setup.sh:/peregrine_setup.sh
-      - ./datadictionary/gdcdictionary/schemas:/schemas_dir
+      - ../data_model/output/gen3:/schemas_dir
     environment: &env
-      DICTIONARY_URL: https://aced-public.s3.us-west-2.amazonaws.com/aced.json
-      # PATH_TO_SCHEMA_DIR: /schemas_dir
+#      DICTIONARY_URL: https://aced-public.s3.us-west-2.amazonaws.com/aced-test.json
+      PATH_TO_SCHEMA_DIR: /schemas_dir
       REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost/_status"]
@@ -181,7 +181,7 @@ services:
       - bootstrap.memory_lock=false
       # For apple silicon
       - bootstrap.system_call_filter=false
-      - "ES_JAVA_OPTS=-Xms2g -Xmx4g"
+      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
     entrypoint:
       - /bin/bash
     # mmapfs requires systemctl update - see https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules-store.html#mmapfs
