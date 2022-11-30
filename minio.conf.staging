@@ -1,6 +1,6 @@
 #
-#  MINIO configuration
-#
+#  MINIO configuration 
+#  
 
     # For load balancing, cluster support: coordinate with docker-compose.override.yml
     upstream minio-default {
@@ -45,6 +45,10 @@
     #  MINIO S3 storage host(s)
     #
     server {
+        #
+        # TODO this is the only change for staging.  Can we implement a script & template combination
+        # so there is not one of these files for every environment?
+        #
         server_name  minio-default-staging.aced-idp.org;
 
         listen       80;
