@@ -30,3 +30,7 @@ ALTER USER indexd_user WITH SUPERUSER;
 CREATE USER arborist_user;
 ALTER USER arborist_user WITH PASSWORD 'arborist_pass';
 ALTER USER arborist_user WITH SUPERUSER;
+
+CREATE USER fhir_user;
+ALTER USER fhir_user WITH PASSWORD 'fhir_pass';
+ALTER USER fhir_user WITH SUPERUSER;

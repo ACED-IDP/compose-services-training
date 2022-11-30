@@ -152,6 +152,9 @@ query ($first: Int!, $offset: Int!) {
       component_0_valueQuantity_code
       component_0_valueQuantity_unit
       component_0_valueQuantity_value
+      component_0_valueCodeableConcept_coding_0_system
+      component_0_valueCodeableConcept_coding_0_code
+      component_0_valueCodeableConcept_coding_0_display
       component_1_code_coding_0_code
       component_1_code_coding_0_display
       component_1_code_coding_0_system
@@ -166,6 +169,9 @@ query ($first: Int!, $offset: Int!) {
       component_1_valueQuantity_code
       component_1_valueQuantity_unit
       component_1_valueQuantity_value
+      component_1_valueCodeableConcept_coding_0_system
+      component_1_valueCodeableConcept_coding_0_code
+      component_1_valueCodeableConcept_coding_0_display      
     }
     medication_requests {
       medication_id: id

@@ -18,6 +18,14 @@ mc mb ucl/aced-ucl
 mc mb manchester/aced-manchester
 mc mb stanford/aced-stanford
 
+## remove all objects from bucket
+#mc rm --recursive default/aced-default
+#mc rm --recursive default/aced-public
+#mc rm --recursive ohsu/aced-ohsu
+#mc rm --recursive ucl/aced-ucl
+#mc rm --recursive manchester/aced-manchester
+#mc rm --recursive stanford/aced-stanford
+
 
 # add users
 mc admin user add default $MINIO_TEST_USER $MINIO_TEST_PASSWORD

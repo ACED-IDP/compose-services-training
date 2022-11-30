@@ -181,7 +181,9 @@ services:
       - bootstrap.memory_lock=false
       # For apple silicon
       - bootstrap.system_call_filter=false
-      - "ES_JAVA_OPTS=-Xms2g -Xmx4g"
+      # For apple silicon
+      # - "ES_JAVA_OPTS=-Xms6g -Xmx6g -XX:+HeapDumpOnOutOfMemoryError -XX:UseAVX=0"
+      - "ES_JAVA_OPTS=-Xms6g -Xmx6g"
     entrypoint:
       - /bin/bash
     # mmapfs requires systemctl update - see https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules-store.html#mmapfs
@@ -276,7 +278,7 @@ services:
       - devnet
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./minio.conf.staging:/etc/nginx/minio.conf
+      - ./minio.conf:/etc/nginx/minio.conf
       - ./Secrets/TLS/service.crt:/etc/nginx/ssl/nginx.crt
       - ./Secrets/TLS/service.key:/etc/nginx/ssl/nginx.key
     ports:

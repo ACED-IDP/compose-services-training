@@ -123,6 +123,27 @@ services:
       - minio-manchester
       - minio-stanford
 
+  dash-service:
+    build: dash
+    container_name: dash-service
+    ports:
+      - "8050:8050"  # HOST:CONTAINER
+    environment:
+      - DASH_URL_BASE_PATHNAME=/dash/proxy/
+    networks:
+      - devnet
+
+
+  fhir-service:
+    image: "hapiproject/hapi:latest"
+    ports:
+      - "8090:8080"
+    volumes:
+      - ./fhir/data:/data/hapi
+    environment:
+      SPRING_CONFIG_LOCATION: 'file:///data/hapi/application.yaml'
+    networks:
+      - devnet
 
 # expose postgres to host os
 
