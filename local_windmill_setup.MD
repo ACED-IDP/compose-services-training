@@ -3,8 +3,9 @@ These are the steps for setting up a local Windmill local Windmill/Portal-Servic
 1. clone feature/local-data-portal branch and follow the steps to setup in 
 https://github.com/ACED-IDP/compose-services-training/blob/feature/staging/docs/New_Setup.md
 
-```txt
+
 OR if you already have a working staging implementation:
+
 
 ```sh
 dc down rm -f
@@ -12,7 +13,7 @@ dc down rm -f
 
 change line 230 in docker compose yaml:
 https://github.com/ACED-IDP/compose-services-training/blob/feature/local-data-portal/docker-compose.yml#L230
-```
+
 
 2. Clone data-portal into your compose-services root directory located here:
 https://github.com/uc-cdis/data-portal/
@@ -52,6 +53,7 @@ export NODE_OPTIONS=--openssl-legacy-provider
 ```
 
 10. To get the query page to load make this one line change in data-portal/src/localconf.js:L108 and reload webpack with the above command:
+
 ```txt
 const graphqlSchemaUrl = `${hostname}${(basename && basename !== '/' && basename !== '/dev.html') ? basename : ''}/data/schema.json`;s
 ```
