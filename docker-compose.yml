@@ -20,7 +20,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
   indexd-service:
-    image: quay.io/cdis/indexd:2023.01 #"quay.io/cdis/indexd:2022.09"
+    image: quay.io/cdis/indexd:2022.12 #"quay.io/cdis/indexd:2022.09"
     command: bash indexd_setup.sh
     container_name: indexd-service
     networks:
