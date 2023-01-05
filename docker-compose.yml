@@ -20,7 +20,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
   indexd-service:
-    image: "quay.io/cdis/indexd:2022.09"
+    image: quay.io/cdis/indexd:2023.01 #"quay.io/cdis/indexd:2022.09"
     command: bash indexd_setup.sh
     container_name: indexd-service
     networks:
@@ -41,7 +41,7 @@ services:
     depends_on:
       - postgres
   fence-service:
-    image: "quay.io/cdis/fence:integration202211"
+    image: quay.io/cdis/fence:2023.01 #"quay.io/cdis/fence:integration202211"
     command: bash /var/www/fence/fence_setup.sh
     container_name: fence-service
     networks:
@@ -64,7 +64,7 @@ services:
       - postgres
       - arborist-service
   arborist-service:
-    image: "quay.io/cdis/arborist:2021.03"
+    image: "quay.io/cdis/arborist:2022.12"
     container_name: arborist-service
     entrypoint: bash /go/src/github.com/uc-cdis/arborist/arborist_setup.sh
     networks:
@@ -88,7 +88,7 @@ services:
       - postgres
   metadata-service:
     # update image
-    image: "quay.io/cdis/metadata-service:1.8.0"
+    image: quay.io/cdis/metadata-service:2.1.0 #"quay.io/cdis/metadata-service:1.8.0"
     container_name: metadata-service
     depends_on:
       - postgres
@@ -112,7 +112,7 @@ services:
     networks:
       - devnet
   peregrine-service:
-    image: "quay.io/cdis/peregrine:2021.03"
+    image: quay.io/cdis/peregrine:2023.01 #"quay.io/cdis/peregrine:2021.03"
     container_name: peregrine-service
     networks:
       - devnet
@@ -137,7 +137,7 @@ services:
       - postgres
       - sheepdog-service
   sheepdog-service:
-    image: "quay.io/cdis/sheepdog:2021.03"
+    image: quay.io/cdis/sheepdog:2023.01 #"quay.io/cdis/sheepdog:2021.03"
     command: bash /sheepdog_setup.sh
     container_name: sheepdog-service
     networks:
@@ -157,7 +157,7 @@ services:
     depends_on:
       - postgres
   guppy-service:
-    image: "quay.io/cdis/guppy:2021.03"
+    image: quay.io/cdis/guppy:2023.01 #"quay.io/cdis/guppy:2021.03"
     container_name: guppy-service
     networks:
       - devnet
@@ -174,14 +174,14 @@ services:
       - arborist-service
       - esproxy-service
   esproxy-service:
-    image: quay.io/cdis/elasticsearch-oss:6.8.12
+    build: elasticsearch-mac
     container_name: esproxy-service
     environment:
       - cluster.name=elasticsearch-cluster
       - bootstrap.memory_lock=false
       # For apple silicon
       - bootstrap.system_call_filter=false
-      - "ES_JAVA_OPTS=-Xms2g -Xmx4g"
+      - "ES_JAVA_OPTS=-Xms6g -Xmx6g"
     entrypoint:
       - /bin/bash
     # mmapfs requires systemctl update - see https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules-store.html#mmapfs
@@ -210,7 +210,7 @@ services:
     networks:
       - devnet
   pidgin-service:
-    image: "quay.io/cdis/pidgin:2021.03"
+    image: quay.io/cdis/pidgin:2023.01 #"quay.io/cdis/pidgin:2021.03"
     container_name: pidgin-service
     networks:
       - devnet
@@ -224,7 +224,7 @@ services:
     depends_on:
       - peregrine-service
   portal-service:
-    image: "quay.io/cdis/data-portal:3.33.0"  # 2021.03
+    image: quay.io/cdis/data-portal:2023.01 #"quay.io/cdis/data-portal:3.33.0"  # 2021.03
     container_name: portal-service
     command: ["bash", "/var/www/data-portal/waitForContainers.sh"]
     deploy:
@@ -268,15 +268,15 @@ services:
     networks:
       - devnet
     environment:
-      - FRAME_ANCESTORS=http://staging.aced-idp.org
+      - FRAME_ANCESTORS=https://aced-training.compbio.ohsu.edu
   revproxy-service:
-    image: "quay.io/cdis/nginx:2021.03"
+    image: quay.io/cdis/nginx:2023.01 #"quay.io/cdis/nginx:2021.03"
     container_name: revproxy-service
     networks:
       - devnet
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./minio.conf.staging:/etc/nginx/minio.conf
+      - ./minio.conf:/etc/nginx/minio.conf
       - ./Secrets/TLS/service.crt:/etc/nginx/ssl/nginx.crt
       - ./Secrets/TLS/service.key:/etc/nginx/ssl/nginx.key
     ports:
