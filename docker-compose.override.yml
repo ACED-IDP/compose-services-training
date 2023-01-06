@@ -146,6 +146,16 @@ services:
       options:
         max-size: "10m"         
 
+  dash-service:
+    build: dash
+    container_name: dash-service
+    ports:
+      - "8050:8050"  # HOST:CONTAINER
+    environment:
+      - DASH_URL_BASE_PATHNAME=/dash/proxy/
+    networks:
+      - devnet
+
 ## By default this config uses default local driver,
 ## For custom volumes replace with volume driver configuration.
 volumes:
