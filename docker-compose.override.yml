@@ -130,6 +130,22 @@ services:
     ports:
       - 5432:5432
 
+# adds fhir service
+  fhir-service:
+    image: "hapiproject/hapi:v6.1.0"
+    ports:
+      - "8090:8080"
+    volumes:
+      - ./fhir/data:/data/hapi
+    environment:
+      SPRING_CONFIG_LOCATION: 'file:///data/hapi/application.yaml'
+    networks:
+      - devnet
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"         
+
 ## By default this config uses default local driver,
 ## For custom volumes replace with volume driver configuration.
 volumes:

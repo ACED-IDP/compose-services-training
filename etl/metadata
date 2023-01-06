@@ -15,6 +15,7 @@ from gen3.metadata import Gen3Metadata
 from gen3.submission import Gen3Submission
 import click
 import jwt
+import yaml
 
 from cdislogging import get_logger as get_gen3_logger
 from dictionary import init_dictionary, DataDictionaryTraversal, convert_to_node
@@ -163,7 +164,7 @@ def create_node(submission_client, program_name, project_code, node):
 
 
 @click.group()
-@click.option('--gen3_credentials_file', default='credentials.json', show_default=True,
+@click.option('--gen3_credentials_file', default='Secrets/credentials.json', show_default=True,
               help='API credentials file downloaded from gen3 profile.')
 @click.pass_context
 def cli(ctx, gen3_credentials_file):
@@ -478,6 +479,28 @@ def drop_program(ctx, data_directory, program):
     """Drops empty program"""
     submission_client = ctx.obj['submission_client']
     submission_client.delete_progranm(program)
+
+
+@cli.command()
+@click.option('--program', show_default=True, required=True,
+              help='Gen3 "program"')
+@click.option('--manifest', show_default=True,  required=True,
+              help='Study names, conditions, expected counts, etc. e.g. coherent_studies.manifest.yaml')
+@click.pass_context
+def create_program(ctx, program, manifest):
+    """Creates program and projects."""
+    submission_client = ctx.obj['submission_client']
+    response = submission_client.create_program({'name': program, 'dbgap_accession_number': program, 'type': 'program'})
+    get_logger_('create_program').info(response)
+    study_manifests = yaml.load(open(manifest), yaml.SafeLoader)
+    for name, values in study_manifests.items():
+        response = submission_client.create_project(program, {
+            "type": "project",
+            "code": name,
+            "dbgap_accession_number": name,
+            "name": name
+        })
+        get_logger_('create_program').info(response)
 
 
 @cli.command()
