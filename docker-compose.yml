@@ -279,6 +279,8 @@ services:
       - ./minio.conf.staging:/etc/nginx/minio.conf
       - ./Secrets/TLS/service.crt:/etc/nginx/ssl/nginx.crt
       - ./Secrets/TLS/service.key:/etc/nginx/ssl/nginx.key
+      - certdata:/var/www/certbot/
+      - certs:/etc/letsencrypt/
     ports:
       - "80:80"
       - "443:443"
@@ -295,6 +297,19 @@ services:
       - fence-service
       - portal-service
       - pidgin-service
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - certdata:/var/www/certbot/
+      - certs:/etc/letsencrypt/
+    depends_on:
+      - revproxy-service
+      - portal-service
+    command: >
+      certonly --webroot --webroot-path=/var/www/certbot
+      --email aced-admin@ohsu.edu --agree-tos --no-eff-email 
+      -d development.aced-idp.org 
 #  tube-service:
 #    image: "quay.io/cdis/tube:2021.03"
 #    container_name: tube-service
@@ -348,3 +363,5 @@ networks:
 volumes:
   psqldata:
   esdata:
+  certdata:
+  certs:
