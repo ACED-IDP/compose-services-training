@@ -20,8 +20,12 @@ ADD elasticsearch.yml /usr/elasticsearch-6.8.23/config/elasticsearch.yml
 # Add scripts
 ADD docker-entrypoint.sh /usr/local/bin
 
+# create an empty directory where docker compose will mount a data volume
+RUN mkdir /usr/elasticsearch-6.8.23/data
+
 RUN ln -s /usr/elasticsearch-6.8.23 /usr/elasticsearch
 RUN ln -s /usr/elasticsearch-6.8.23 /usr/share/elasticsearch
+
 
 RUN chown -R elasticuser: .
 USER elasticuser
@@ -35,9 +39,9 @@ RUN cd elasticsearch-6.8.23/bin
 RUN chown -R elasticuser: elasticsearch-6.8.23
 
 EXPOSE 9200 9300
-RUN ls -1 /usr/elasticsearch
-RUN ls -1 /usr/elasticsearch/config
-RUN cat /usr/share/elasticsearch/config/elasticsearch.yml
+#RUN ls -1 /usr/elasticsearch
+#RUN ls -1 /usr/elasticsearch/config
+#RUN cat /usr/share/elasticsearch/config/elasticsearch.yml
 
 CMD cd /usr/elasticsearch-6.8.23/bin/ && ./elasticsearch
 
