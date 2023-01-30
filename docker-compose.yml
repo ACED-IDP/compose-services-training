@@ -281,6 +281,9 @@ services:
       - ./minio.conf.staging:/etc/nginx/minio.conf
       - ./Secrets/TLS/service.crt:/etc/nginx/ssl/nginx.crt
       - ./Secrets/TLS/service.key:/etc/nginx/ssl/nginx.key
+      - certdata:/var/www/certbot/
+      - certs:/etc/letsencrypt/
+      - ./Secrets/.well-known:/etc/nginx/.well-known
     ports:
       - "80:80"
       - "443:443"
@@ -297,6 +300,18 @@ services:
       - fence-service
       - portal-service
       - pidgin-service
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - certdata:/var/www/certbot/
+      - certs:/etc/letsencrypt/
+    depends_on:
+      - revproxy-service
+      - portal-service
+    command: certonly --webroot --webroot-path=/var/www/certbot --email beckmanl@ohsu.edu --agree-tos --force-renewal --no-eff-email -d staging.aced-idp.org -d minio-default-staging.aced-idp.org  -d minio-ohsu-staging.aced-idp.org  -d minio-ucl-staging.aced-idp.org  -d minio-manchester-staging.aced-idp.org  -d minio-stanford-staging.aced-idp.org  -d minio-default-console-staging.aced-idp.org  -d minio-ohsu-console-staging.aced-idp.org  -d minio-ucl-console-staging.aced-idp.org  -d minio-manchester-console-staging.aced-idp.org   -d minio-stanford-console-staging.aced-idp.org
 #  tube-service:
 #    image: "quay.io/cdis/tube:2021.03"
 #    container_name: tube-service
@@ -350,3 +365,5 @@ networks:
 volumes:
   psqldata:
   esdata:
+  certdata:
+  certs:

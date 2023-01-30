@@ -1,4 +1,5 @@
 - [ACED specific changes](#aced-specific-changes)
+  - [New Data Model Setup](#new-data-model-setup)
   - [Fence (Authentication and Authorization)](#fence-authentication-and-authorization)
     - [Setup](#setup)
     - [Windmill's Auth Display](#windmills-auth-display)
@@ -16,6 +17,11 @@
     - [Local Object Store (Minio)](#local-object-store-minio)
   - [Let's Setup Discovery](#lets-setup-discovery)
   - [Enable jupyter notebooks](#enable-jupyter-notebooks)
+  - [Change the data dictionary](#change-the-data-dictionary)
+    - [Import data files from the study into gen3](#import-data-files-from-the-study-into-gen3)
+    - [Import metadata into gen3](#import-metadata-into-gen3)
+    - [Try some Graphql queries "Graph"](#try-some-graphql-queries-graph)
+    - [Test download](#test-download)
 - [Microservices Reference](#microservices-reference)
 
 # ACED specific changes
@@ -23,6 +29,106 @@
 > This document assumes you have completed setting up a 'stock' gen3 instance as described in https://github.com/uc-cdis/compose-services
 > 
 > Now that you've completed this task, let's explore some ACED specific customizations.
+
+## New Data Model Setup
+
+0. Update `/etc/hosts` to have the following entries:
+
+```
+##
+# Host Database
+#
+# localhost is used to configure the loopback interface
+# when the system is booting.  Do not change this entry.
+##
+127.0.0.1       localhost
+255.255.255.255 broadcasthost
+::1             localhost
+# Added by Docker Desktop
+# To allow the same kube context to work on the host and the container:
+127.0.0.1 kubernetes.docker.internal
+# End of section
+
+# ACED data portal
+127.0.0.1 aced-training.compbio.ohsu.edu
+
+# Minio storage
+127.0.0.1 minio.compbio.ohsu.edu
+127.0.0.1 minio-console.compbio.ohsu.edu
+127.0.0.1 minio-default.compbio.ohsu.edu
+127.0.0.1 minio-default-console.compbio.ohsu.edu
+127.0.0.1 minio-ohsu.compbio.ohsu.edu
+127.0.0.1 minio-ohsu-console.compbio.ohsu.edu
+127.0.0.1 minio-ucl.compbio.ohsu.edu
+127.0.0.1 minio-ucl-console.compbio.ohsu.edu
+127.0.0.1 minio-manchester.compbio.ohsu.edu
+127.0.0.1 minio-manchester-console.compbio.ohsu.edu
+127.0.0.1 minio-stanford.compbio.ohsu.edu
+127.0.0.1 minio-stanford-console.compbio.ohsu.edu
+```
+
+1. Fetch code
+```sh
+git clone git@github.com:ACED-IDP/compose-services-training.git
+cd compose-services-training
+bash ./creds_setup.sh aced-training.compbio.ohsu.edu
+```
+
+2. Copy contents of Secrets directory
+```sh
+cp example/Secrets
+```
+
+3. Copy google `client` values from `development.aced-idp.org` in `fence-config.yml`:
+```yaml
+  google:
+    client_id: ''
+    client_secret: ''
+```
+
+4. Copy `user.yaml` from staging (from Walsh) and replace e-mail address with the one logged into profile.
+
+5. Create new program and project with names in required fields:
+    - program name: aced
+    - project name: Alcoholism
+
+    The new project can then be accessed at:
+    https://aced-training.compbio.ohsu.edu/aced-Alcoholism
+
+
+6. Add to fence-config.yml (from Walsh):
+```yaml
+ALLOWED_DATA_UPLOAD_BUCKETS:
+  - aced-default
+  - aced-ohsu
+  - aced-ucl
+  - aced-manchester
+  - aced-stanford
+```
+
+7. Docker resource limits are insufficient as default. Change to the following and restart Docker engine:
+    - 7 CPUs
+    - 32.5 GB Memory
+    - 2 GB Swap
+    - 512 GB Disk image size
+
+8. Fix 403 for minio setup:
+```sh
+cat etl/setup-minio.sh | dc exec -T  etl-service  bash
+```
+
+9. Run following lines from `data_model/scripts/gen3_etl.sh`:
+```sh
+echo "Truncating gen3 tables."
+cat scripts/truncate_sheepdog_tables.sql |  docker exec -i  postgres psql -U postgres
+# clear existing data
+echo "Truncating buckets."
+cat scripts/truncate_indexd_tables.sql |  docker exec -i  postgres psql -U postgres
+cat scripts/truncate_buckets.sh |  docker exec -i  etl-service bash
+
+# upload will start multiple processes to submit files to bucket and update studies DocumentReferences
+nice -n 10 scripts/upload-files Alcoholism aced-ohsu
+```
 
 ## Fence (Authentication and Authorization)
 
@@ -382,7 +488,9 @@ ports:
 
 * Start the service
 
-```dc up -d ; dc logs -f minio-default```
+```sh
+dc up -d ; dc logs -f minio-default
+```
 
 * Setup minio
 ```yaml
@@ -428,6 +536,7 @@ minio1-service  | Documentation: https://docs.min.io
 ./etl/metadata --gen3_credentials_file Secrets/credentials.json  load --project MyFirstProject --program MyFirstProgram --data_directory tests/fixtures/projects/MyFirstProject/
 # re-create the elastic search indices
 bash ./guppy_setup.sh Secrets/credentials.json
+
 ```
 
 ## Let's Setup Discovery
