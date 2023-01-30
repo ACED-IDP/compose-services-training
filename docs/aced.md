@@ -384,6 +384,12 @@ ports:
 
 ```dc up -d ; dc logs -f minio-default```
 
+* Setup minio
+```yaml
+cat etl/setup-minio.sh |  docker exec -i  etl-service bash
+
+```
+
 * Examine logs
 
 ```sh
