@@ -25,7 +25,7 @@ log_fmt = "%(asctime)s %(name)s %(levelname)s : %(message)s"
 # set logging to warning, since gen3.submission logs a verbose INFO message on each call :-()
 logging.basicConfig(level=logging.WARNING, format=log_fmt)
 # set gen3's logger as well
-get_gen3_logger('__name__', log_level='warn', format=log_fmt)
+# get_gen3_logger('__name__', log_level='warn', format=log_fmt)
 
 
 def get_logger_(name):
