@@ -45,15 +45,12 @@
     #  MINIO S3 storage host(s)
     #
     server {
-        server_name  minio-default-staging.compbio.ohsu.edu;
-
+        server_name  minio-default-staging.aced-idp.org;
         listen       80;
         resolver 127.0.0.11;
         listen 443 ssl;
-
-        ssl_certificate /etc/nginx/ssl/nginx.crt;
-        ssl_certificate_key /etc/nginx/ssl/nginx.key;
-
+        ssl_certificate /etc/letsencrypt/live/staging.aced-idp.org/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/staging.aced-idp.org/privkey.pem;
 
         # To allow special characters in headers
         ignore_invalid_headers off;
@@ -78,17 +75,19 @@
 
             proxy_pass http://minio-default;
         }
+         location /.well-known/acme-challenge/ {
+             root /var/www/certbot;
+         }
     }
     server {
-        server_name  minio-ohsu-staging.compbio.ohsu.edu;
+        server_name  minio-ohsu-staging.aced-idp.org;
 
         listen       80;
         resolver 127.0.0.11;
         listen 443 ssl;
 
-        ssl_certificate /etc/nginx/ssl/nginx.crt;
-        ssl_certificate_key /etc/nginx/ssl/nginx.key;
-
+        ssl_certificate /etc/letsencrypt/live/staging.aced-idp.org/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/staging.aced-idp.org/privkey.pem;
 
         # To allow special characters in headers
         ignore_invalid_headers off;
@@ -113,17 +112,18 @@
 
             proxy_pass http://minio-ohsu;
         }
+         location /.well-known/acme-challenge/ {
+             root /var/www/certbot;
+         }
     }
     server {
-        server_name  minio-ucl-staging.compbio.ohsu.edu;
-
+        server_name  minio-ucl-staging.aced-idp.org;
         listen       80;
         resolver 127.0.0.11;
         listen 443 ssl;
 
-        ssl_certificate /etc/nginx/ssl/nginx.crt;
-        ssl_certificate_key /etc/nginx/ssl/nginx.key;
-
+        ssl_certificate /etc/letsencrypt/live/staging.aced-idp.org/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/staging.aced-idp.org/privkey.pem;
 
         # To allow special characters in headers
         ignore_invalid_headers off;
@@ -148,18 +148,19 @@
 
             proxy_pass http://minio-ucl;
         }
+         location /.well-known/acme-challenge/ {
+             root /var/www/certbot;
+         }
     }
     server {
-        server_name  minio-manchester-staging.compbio.ohsu.edu;
+        server_name  minio-manchester-staging.aced-idp.org;
 
         listen       80;
         resolver 127.0.0.11;
         listen 443 ssl;
 
-        ssl_certificate /etc/nginx/ssl/nginx.crt;
-        ssl_certificate_key /etc/nginx/ssl/nginx.key;
-
-
+        ssl_certificate /etc/letsencrypt/live/staging.aced-idp.org/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/staging.aced-idp.org/privkey.pem;
         # To allow special characters in headers
         ignore_invalid_headers off;
         # Allow any size file to be uploaded.
@@ -183,17 +184,19 @@
 
             proxy_pass http://minio-manchester;
         }
+         location /.well-known/acme-challenge/ {
+             root /var/www/certbot;
+         }
     }
     server {
-        server_name  minio-stanford-staging.compbio.ohsu.edu;
+        server_name  minio-stanford-staging.aced-idp.org;
 
         listen       80;
         resolver 127.0.0.11;
         listen 443 ssl;
 
-        ssl_certificate /etc/nginx/ssl/nginx.crt;
-        ssl_certificate_key /etc/nginx/ssl/nginx.key;
-
+        ssl_certificate /etc/letsencrypt/live/staging.aced-idp.org/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/staging.aced-idp.org/privkey.pem;
 
         # To allow special characters in headers
         ignore_invalid_headers off;
@@ -218,22 +221,24 @@
 
             proxy_pass http://minio-stanford;
         }
+         location /.well-known/acme-challenge/ {
+             root /var/www/certbot;
+         }
     }
 
     #
     #  MINIO S3 console host(s)
     #
     server {
-        server_name  minio-default-console-staging.compbio.ohsu.edu;
+        server_name  minio-default-console-staging.aced-idp.org;
 
         listen       80;
         resolver 127.0.0.11;
 
         listen 443 ssl;
 
-        ssl_certificate /etc/nginx/ssl/nginx.crt;
-        ssl_certificate_key /etc/nginx/ssl/nginx.key;
-
+        ssl_certificate /etc/letsencrypt/live/staging.aced-idp.org/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/staging.aced-idp.org/privkey.pem;
 
         # To allow special characters in headers
         ignore_invalid_headers off;
@@ -265,18 +270,20 @@
 
             proxy_pass http://minio-default-console;
         }
+         location /.well-known/acme-challenge/ {
+             root /var/www/certbot;
+         }
     }
     server {
-        server_name  minio-ohsu-console-staging.compbio.ohsu.edu;
+        server_name  minio-ohsu-console-staging.aced-idp.org;
 
         listen       80;
         resolver 127.0.0.11;
 
         listen 443 ssl;
 
-        ssl_certificate /etc/nginx/ssl/nginx.crt;
-        ssl_certificate_key /etc/nginx/ssl/nginx.key;
-
+        ssl_certificate /etc/letsencrypt/live/staging.aced-idp.org/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/staging.aced-idp.org/privkey.pem;
 
         # To allow special characters in headers
         ignore_invalid_headers off;
@@ -308,18 +315,20 @@
 
             proxy_pass http://minio-ohsu-console;
         }
+         location /.well-known/acme-challenge/ {
+             root /var/www/certbot;
+         }
     }
     server {
-        server_name  minio-ucl-console-staging.compbio.ohsu.edu;
+        server_name  minio-ucl-console-staging.aced-idp.org;
 
         listen       80;
         resolver 127.0.0.11;
 
         listen 443 ssl;
 
-        ssl_certificate /etc/nginx/ssl/nginx.crt;
-        ssl_certificate_key /etc/nginx/ssl/nginx.key;
-
+        ssl_certificate /etc/letsencrypt/live/staging.aced-idp.org/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/staging.aced-idp.org/privkey.pem;
 
         # To allow special characters in headers
         ignore_invalid_headers off;
@@ -351,18 +360,20 @@
 
             proxy_pass http://minio-ucl-console;
         }
+         location /.well-known/acme-challenge/ {
+             root /var/www/certbot;
+         }
     }
     server {
-        server_name  minio-manchester-console-staging.compbio.ohsu.edu;
+        server_name  minio-manchester-console-staging.aced-idp.org;
 
         listen       80;
         resolver 127.0.0.11;
 
         listen 443 ssl;
 
-        ssl_certificate /etc/nginx/ssl/nginx.crt;
-        ssl_certificate_key /etc/nginx/ssl/nginx.key;
-
+        ssl_certificate /etc/letsencrypt/live/staging.aced-idp.org/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/staging.aced-idp.org/privkey.pem;
 
         # To allow special characters in headers
         ignore_invalid_headers off;
@@ -394,18 +405,20 @@
 
             proxy_pass http://minio-manchester-console;
         }
+         location /.well-known/acme-challenge/ {
+             root /var/www/certbot;
+         }
     }
     server {
-        server_name  minio-stanford-console-staging.compbio.ohsu.edu;
+        server_name  minio-stanford-console-staging.aced-idp.org;
 
         listen       80;
         resolver 127.0.0.11;
 
         listen 443 ssl;
 
-        ssl_certificate /etc/nginx/ssl/nginx.crt;
-        ssl_certificate_key /etc/nginx/ssl/nginx.key;
-
+        ssl_certificate /etc/letsencrypt/live/staging.aced-idp.org/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/staging.aced-idp.org/privkey.pem;
 
         # To allow special characters in headers
         ignore_invalid_headers off;
@@ -437,5 +450,8 @@
 
             proxy_pass http://minio-stanford-console;
         }
+         location /.well-known/acme-challenge/ {
+             root /var/www/certbot;
+         }
     }
 

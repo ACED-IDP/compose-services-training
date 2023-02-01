@@ -24,7 +24,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
   indexd-service:
-    image: "quay.io/cdis/indexd:2022.09"
+    image: quay.io/cdis/indexd:2022.12 #"quay.io/cdis/indexd:2022.09"
     command: bash indexd_setup.sh
     container_name: indexd-service
     networks:
@@ -50,8 +50,7 @@ services:
       options:
         max-size: "10m"        
   fence-service:
-    image: "quay.io/cdis/fence:integration202211"
-    #build: fence
+    image: quay.io/cdis/fence:2023.01 #"quay.io/cdis/fence:integration202211"
     command: bash /var/www/fence/fence_setup.sh
     container_name: fence-service
     networks:
@@ -79,7 +78,7 @@ services:
       options:
         max-size: "10m"        
   arborist-service:
-    image: "quay.io/cdis/arborist:2021.03"
+    image: "quay.io/cdis/arborist:2022.12"
     container_name: arborist-service
     entrypoint: bash /go/src/github.com/uc-cdis/arborist/arborist_setup.sh
     networks:
@@ -108,7 +107,7 @@ services:
         max-size: "10m"        
   metadata-service:
     # update image
-    image: "quay.io/cdis/metadata-service:1.8.0"
+    image: quay.io/cdis/metadata-service:2.1.0 #"quay.io/cdis/metadata-service:1.8.0"
     container_name: metadata-service
     depends_on:
       - postgres
@@ -137,7 +136,7 @@ services:
       options:
         max-size: "10m"        
   peregrine-service:
-    image: "quay.io/cdis/peregrine:2021.03"
+    image: quay.io/cdis/peregrine:2023.01 #"quay.io/cdis/peregrine:2021.03"
     container_name: peregrine-service
     networks:
       - devnet
@@ -167,7 +166,7 @@ services:
       options:
         max-size: "10m"        
   sheepdog-service:
-    image: "quay.io/cdis/sheepdog:2021.03"
+    image: quay.io/cdis/sheepdog:2023.01 #"quay.io/cdis/sheepdog:2021.03"
     command: bash /sheepdog_setup.sh
     container_name: sheepdog-service
     networks:
@@ -192,7 +191,7 @@ services:
       options:
         max-size: "10m"        
   guppy-service:
-    image: "quay.io/cdis/guppy:2021.03"
+    image: quay.io/cdis/guppy:2023.01 #"quay.io/cdis/guppy:2021.03"
     container_name: guppy-service
     networks:
       - devnet
@@ -214,14 +213,14 @@ services:
       options:
         max-size: "10m"        
   esproxy-service:
-    image: quay.io/cdis/elasticsearch-oss:6.8.12
+    build: elasticsearch-mac
     container_name: esproxy-service
     environment:
       - cluster.name=elasticsearch-cluster
       - bootstrap.memory_lock=false
       # For apple silicon
       - bootstrap.system_call_filter=false
-      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
+      - "ES_JAVA_OPTS=-Xms6g -Xmx6g"
     entrypoint:
       - /bin/bash
     # mmapfs requires systemctl update - see https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules-store.html#mmapfs
@@ -255,7 +254,7 @@ services:
       options:
         max-size: "10m"        
   pidgin-service:
-    image: "quay.io/cdis/pidgin:2021.03"
+    image: quay.io/cdis/pidgin:2023.01 #"quay.io/cdis/pidgin:2021.03"
     container_name: pidgin-service
     networks:
       - devnet
@@ -274,7 +273,7 @@ services:
       options:
         max-size: "10m"        
   portal-service:
-    image: "quay.io/cdis/data-portal:5.1.0"  # 3.33.0"  # 2021.03
+    image: quay.io/cdis/data-portal:2023.01 #"quay.io/cdis/data-portal:3.33.0"  # 2021.03
     container_name: portal-service
     command: ["bash", "/var/www/data-portal/waitForContainers.sh"]
     deploy:
@@ -323,6 +322,7 @@ services:
     networks:
       - devnet
     environment:
+      # - FRAME_ANCESTORS=https://aced-training.compbio.ohsu.edu
       - FRAME_ANCESTORS=http://staging.aced-idp.org
     restart: unless-stopped
     logging:
@@ -330,7 +330,7 @@ services:
       options:
         max-size: "10m"        
   revproxy-service:
-    image: "quay.io/cdis/nginx:2021.03"
+    image: quay.io/cdis/nginx:2023.01 #"quay.io/cdis/nginx:2021.03"
     container_name: revproxy-service
     networks:
       - devnet
@@ -339,6 +339,9 @@ services:
       - ./minio.conf.staging:/etc/nginx/minio.conf
       - ./Secrets/TLS/service.crt:/etc/nginx/ssl/nginx.crt
       - ./Secrets/TLS/service.key:/etc/nginx/ssl/nginx.key
+      - certdata:/var/www/certbot/
+      - certs:/etc/letsencrypt/
+      - ./Secrets/.well-known:/etc/nginx/.well-known
     ports:
       - "80:80"
       - "443:443"
@@ -355,11 +358,18 @@ services:
       - fence-service
       - portal-service
       - pidgin-service
-    restart: unless-stopped
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"        
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - certdata:/var/www/certbot/
+      - certs:/etc/letsencrypt/
+    depends_on:
+      - revproxy-service
+      - portal-service
+    command: certonly --webroot --webroot-path=/var/www/certbot --email beckmanl@ohsu.edu --agree-tos --force-renewal --no-eff-email -d staging.aced-idp.org -d minio-default-staging.aced-idp.org  -d minio-ohsu-staging.aced-idp.org  -d minio-ucl-staging.aced-idp.org  -d minio-manchester-staging.aced-idp.org  -d minio-stanford-staging.aced-idp.org  -d minio-default-console-staging.aced-idp.org  -d minio-ohsu-console-staging.aced-idp.org  -d minio-ucl-console-staging.aced-idp.org  -d minio-manchester-console-staging.aced-idp.org   -d minio-stanford-console-staging.aced-idp.org
   kibana-service:
     image: quay.io/cdis/kibana-oss:6.5.4
     container_name: kibana-service
@@ -377,3 +387,5 @@ networks:
 volumes:
   psqldata:
   esdata:
+  certdata:
+  certs:

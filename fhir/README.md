@@ -1,0 +1,22 @@
+
+# create database in postgres
+
+```
+DROP DATABASE hapi ;  CREATE DATABASE hapi owner fhir_user ;
+```
+
+# delete all data in all tables
+
+```
+\c  hapi;
+DO $$ DECLARE
+    r RECORD;
+BEGIN
+    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP
+        EXECUTE 'TRUNCATE TABLE ' || quote_ident(r.tablename) || ' CASCADE ';
+    END LOOP;
+END $$;
+
+```
+
+

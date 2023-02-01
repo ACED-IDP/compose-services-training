@@ -3,6 +3,8 @@ Click
 jsonpath-ng
 certifi
 faker-biology
+elasticsearch==6.8.2
+more-itertools
 
 
 # "stock" gen3 - the version on https://pypi.org/project/gen3/ 4.14.0 does not have the bucket change
