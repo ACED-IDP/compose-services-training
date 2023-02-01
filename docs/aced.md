@@ -14,7 +14,7 @@
     - [Re-Enable Guppy](#re-enable-guppy)
     - [Expose the Kibana Service](#expose-the-kibana-service)
     - [Refactor the Spark and Tube Services](#refactor-the-spark-and-tube-services)
-    - [Local Object Store (Minio)](#local-object-store-minio)
+  - [Minio (Local Object Store)](#minio-local-object-store)
   - [Let's Setup Discovery](#lets-setup-discovery)
   - [Enable jupyter notebooks](#enable-jupyter-notebooks)
   - [Change the data dictionary](#change-the-data-dictionary)
@@ -27,7 +27,7 @@
 # ACED specific changes
 
 > This document assumes you have completed setting up a 'stock' gen3 instance as described in https://github.com/uc-cdis/compose-services
-> 
+>
 > Now that you've completed this task, let's explore some ACED specific customizations.
 
 ## New Data Model Setup
@@ -200,7 +200,7 @@ To test locally, update your `/etc/hosts` file.
 127.0.0.1 minio-console.compbio.ohsu.edu
 ```
 ### Windmill's Auth Display
-  
+
 add to Secrets/gitops.json
 ```json
 "showArboristAuthzOnProfile": true,
@@ -267,6 +267,11 @@ https://github.com/uc-cdis/fence/pull/1048
 > These steps assume the PRs have _not_ been merged to main.
 
 * Clone fence in the compose-services dir. checkout the `alternate-data_upload_bucket` branch  
+
+```sh
+git clone git@github.com:uc-cdis/fence.git
+```
+
 * Alter docker-compose.
 
 ```diff
@@ -306,6 +311,12 @@ mkdir -p "$TEST_DATA_PATH"
 
 docker run -it -v "${TEST_DATA_PATH}:/mnt/data" --rm --name=dsim --entrypoint=data-simulator quay.io/cdis/data-simulator:master simulate --url https://s3.amazonaws.com/dictionary-artifacts/datadictionary/develop/schema.json --path /mnt/data --program MyFirstProgram --project MyFirstProject --max_samples 10
 ```
+* Let's run setup-minio.sh
+```sh
+docker compose exec -it etl-service bash
+#copy paste the contents of /etl/setup-minio.#!/bin/sh and press enter
+# then press control d to exit the container ssh
+```
 
 * Now, let's generate corresponding data files
 
@@ -341,7 +352,7 @@ This may be a good time to examine the Gen3 API.  You will need an API key first
 
 For example, view the `metadata` script, where `credentials.json` is the key file downloaded above.
 
-List the schema entities: 
+List the schema entities:
 
 ```sh
 ./etl/metadata --gen3_credentials_file Secrets/credentials.json ls  | jq .
@@ -500,7 +511,9 @@ docker container start guppy-service
 
 ![image](portal-tube-results.png)
 
-### Local Object Store (Minio)
+## Minio (Local Object Store)
+
+Root credentials for the Minio consoles are stored within environmental variables defined in the `.env` file. Docker passes these values to the Minio services upon the `docker-compose up` command. If the values are changed simply rerun `docker-compose up` and the updated values will be passed to the Minio services.
 
 * Add the following to `/etc/hosts` for local host testing.
 
@@ -535,7 +548,7 @@ volumes:
 ports:
 ```
 
-* Add the minio configuration to `docker-compose-override.yml` 
+* Add the minio configuration to `docker-compose-override.yml`
 
 * Start the service
 
@@ -569,7 +582,7 @@ minio1-service  | Documentation: https://docs.min.io
 
 * Verify connection
 
-* `curl http://minio-default.compbio.ohsu.edu/minio/health/live`
+* `curl -I http://minio-default.compbio.ohsu.edu/minio/health/live`
 * open http://minio-default-console.compbio.ohsu.edu
 * repeat for other minio-* servers
 
@@ -641,10 +654,10 @@ revproxy-service:
   #  copy the resulting datadictionary/aced.json  to S3
   # verify you can read https://aced-public.s3.us-west-2.amazonaws.com/aced.json
 ```
- 
+
 * Set the new datadictionary URL in docker-compose
 ```commandline
-git diff docker-compose.yml 
+git diff docker-compose.yml
 diff --git a/docker-compose.yml b/docker-compose.yml
 index 7d139a0..6280178 100644
 --- a/docker-compose.yml
@@ -658,11 +671,11 @@ index 7d139a0..6280178 100644
 
 ```
 
-* add custom graphql section to 
+* add custom graphql section to
 * Review services
   * restart services as necessary, typically peregrine, sheepdog and portal
-    * comment out guppy in nginx.conf until we re-build guppy 
-  * see https://github.com/uc-cdis/compose-services/blob/master/docs/using_the_commons.md#changing-the-data-dictionary* 
+    * comment out guppy in nginx.conf until we re-build guppy
+  * see https://github.com/uc-cdis/compose-services/blob/master/docs/using_the_commons.md#changing-the-data-dictionary*
 
 
 ### Import data files from the study into gen3
@@ -810,8 +823,39 @@ $ python3 etl/file --gen3_credentials_file  credentials-aced-training-local.json
 
 # Microservices Reference
 
-- Sheepdog: Handles the submitting and downloading of metadata to and from the GraphQL database.
-- Peregrine: Sends GraphQL queries to the PostgreSQL backend and returns results in JSON format.
-- Fence: Authenticates (AuthN) and authorizes (AuthZ) users. Generates tokens in `credentials.json`.
-- Indexd: Creates permanent ID's (GUID) for every newly submitted data object.
-- Windmill: Frontend for the exploration, submission, and downloading of data.
+- `Sheepdog`: Handles the submitting and downloading of metadata to and from the GraphQL database.
+- `Peregrine`: Sends GraphQL queries to the PostgreSQL backend and returns results in JSON format.
+- `Fence`: Authenticates (AuthN) and authorizes (AuthZ) users. Generates tokens in `credentials.json`.
+- `Indexd`: Creates permanent ID's (GUID) for every newly submitted data object.
+- `Windmill`: Frontend for the exploration, submission, and downloading of data.
+
+# Let's Encrypt Certification
+
+To obtain SSL certificates for the `aced-idp.org` domains we'll run the following `certbot` command:
+
+```sh
+sudo certbot certonly --server https://acme-v02.api.letsencrypt.org/directory --manual --preferred-challenges dns -d 'aced-idp.org,*.aced-idp.org'
+```
+
+`certbot` may ask that one or more `TXT` records be deployed by the DNS provider in order to verify domain ownership. Proceed with the deployments and if all goes well the certificate files will be created in the `/etc/letsencrypt/live/aced-idp.org/` directory.
+
+`docker-compose` expects these certificate files to be in the `Secrets/TLS` directory so we'll copy and change ownership to the `ubuntu` user:
+
+```sh
+cd compose-services-training
+sudo cp /etc/letsencrypt/live/aced-idp.org/privkey.pem Secrets/TLS/service.key
+sudo cp /etc/letsencrypt/live/aced-idp.org/fullchain.pem Secrets/TLS/service.crt
+sudo chown ubuntu:ubuntu Secrets/TLS/service.{crt,key}
+```
+
+We're ready to start the project with `docker-compose`:
+
+```sh
+docker-compose up -d
+```
+
+Once all services are running the SSL certificates should be inspected to verify the correct domains and information were used.
+
+![Firefox SSL certificate](ssl-firefox.png)
+
+Make a note of the `Validity` value as a renewal will be required before that date to keep the HTTPS certification active for the domains. Unfortunately the manual configuration outlined above prevents us from using the automatic `certbot renew` command. Future work may focus on automating the `certbot` commands in a `cron` or `systemd` framework to allow for easier deployments.

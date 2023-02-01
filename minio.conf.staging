@@ -46,11 +46,9 @@
     #
     server {
         server_name  minio-default-staging.aced-idp.org;
-
         listen       80;
         resolver 127.0.0.11;
         listen 443 ssl;
-
         ssl_certificate /etc/letsencrypt/live/staging.aced-idp.org/fullchain.pem;
         ssl_certificate_key /etc/letsencrypt/live/staging.aced-idp.org/privkey.pem;
 
@@ -120,7 +118,6 @@
     }
     server {
         server_name  minio-ucl-staging.aced-idp.org;
-
         listen       80;
         resolver 127.0.0.11;
         listen 443 ssl;
@@ -164,7 +161,6 @@
 
         ssl_certificate /etc/letsencrypt/live/staging.aced-idp.org/fullchain.pem;
         ssl_certificate_key /etc/letsencrypt/live/staging.aced-idp.org/privkey.pem;
-
         # To allow special characters in headers
         ignore_invalid_headers off;
         # Allow any size file to be uploaded.

@@ -1,7 +1,7 @@
 export MINIO_TEST_USER=test
 export MINIO_TEST_PASSWORD=testtest
 export MINIO_ADMIN_USER=minioadmin
-export MINIO_ADMIN_PASSWORD=minioadmin
+export MINIO_ADMIN_PASSWORD=minio\$1234
 
 # setup aliases
 mc alias set default http://minio-default:9000 $MINIO_ADMIN_USER $MINIO_ADMIN_PASSWORD
