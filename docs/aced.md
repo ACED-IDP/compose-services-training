@@ -67,6 +67,13 @@
 127.0.0.1 minio-stanford-console.compbio.ohsu.edu
 ```
 
+Docker resource limits are insufficient as default. Change to the following and restart Docker engine:
+- 7 CPUs
+- 32.5 GB Memory
+- 2 GB Swap
+- 512 GB Disk image size
+
+
 1. Fetch code
 ```sh
 git clone git@github.com:ACED-IDP/compose-services-training.git
@@ -74,25 +81,86 @@ cd compose-services-training
 bash ./creds_setup.sh aced-training.compbio.ohsu.edu
 ```
 
+From the staging environment, make the following changes to run locally.
+
+```sh
+
+diff --git a/docker-compose.yml b/docker-compose.yml
+index 06380cb..17b9e4c 100644
+--- a/docker-compose.yml
++++ b/docker-compose.yml
+@@ -278,12 +278,14 @@ services:
+       - devnet
+     volumes:
+       - ./nginx.conf:/etc/nginx/nginx.conf
+-      - ./minio.conf.staging:/etc/nginx/minio.conf
+       - ./Secrets/TLS/service.crt:/etc/nginx/ssl/nginx.crt
+       - ./Secrets/TLS/service.key:/etc/nginx/ssl/nginx.key
+-      - certdata:/var/www/certbot/
+-      - certs:/etc/letsencrypt/
+       - ./Secrets/.well-known:/etc/nginx/.well-known
++      # use `minio.conf` for local desktop dev
++      - ./minio.conf:/etc/nginx/minio.conf
++      # comment out for local desktop dev
++#      - certdata:/var/www/certbot/
++#      - certs:/etc/letsencrypt/
+     ports:
+       - "80:80"
+       - "443:443"
+
+
+diff --git a/nginx.conf b/nginx.conf
+index 2c12722..b7224fa 100644
+--- a/nginx.conf
++++ b/nginx.conf
+@@ -38,13 +38,13 @@ http {
+ 
+         listen 443 ssl;
+ 
+-        # Original certificates
+-        # ssl_certificate /etc/nginx/ssl/nginx.crt;
+-        # ssl_certificate_key /etc/nginx/ssl/nginx.key;
++#         Original certificates - uncomment for desktop development
++        ssl_certificate /etc/nginx/ssl/nginx.crt;
++        ssl_certificate_key /etc/nginx/ssl/nginx.key;
+ 
+-        # New Certbot certificates
+-        ssl_certificate /etc/letsencrypt/live/staging.aced-idp.org/fullchain.pem;
+-        ssl_certificate_key /etc/letsencrypt/live/staging.aced-idp.org/privkey.pem;
++#         # New Certbot certificates
++#         ssl_certificate /etc/letsencrypt/live/staging.aced-idp.org/fullchain.pem;
++#         ssl_certificate_key /etc/letsencrypt/live/staging.aced-idp.org/privkey.pem;
+ 
+         set $access_token "";
+         set $csrf_check "ok-tokenauth";
+
+```
+
 2. Copy contents of Secrets directory
 ```sh
 cp example/Secrets
 ```
 
-3. Copy google `client` values from `development.aced-idp.org` in `fence-config.yml`:
+3. Copy google, microsoft `client` values from `development.aced-idp.org` in `fence-config.yml`:
 ```yaml
   google:
     client_id: ''
     client_secret: ''
+  microsoft:
+    client_id: ''
+    client_secret: ''
 ```
 
-4. Copy `user.yaml` from staging (from Walsh) and replace e-mail address with the one logged into profile.
+Logon to user-training.compbio.ohsu.edu/profile, create a credentials.json file, save it in Secrets 
 
-5. Create new program and project with names in required fields:
-    - program name: aced
-    - project name: Alcoholism
+4. Copy `user.yaml` from staging and replace e-mail address with the one logged into profile.
 
-    The new project can then be accessed at:
+5. Create new program and projects from the projects defined in user.yaml
+
+```sh
+    python scripts/load.py init --gen3_credentials_file ../compose-services/Secrets/credentials.json --user_path ../compose-services/Secrets/user.yaml
+```
+
     https://aced-training.compbio.ohsu.edu/aced-Alcoholism
 
 
@@ -106,29 +174,12 @@ ALLOWED_DATA_UPLOAD_BUCKETS:
   - aced-stanford
 ```
 
-7. Docker resource limits are insufficient as default. Change to the following and restart Docker engine:
-    - 7 CPUs
-    - 32.5 GB Memory
-    - 2 GB Swap
-    - 512 GB Disk image size
-
-8. Fix 403 for minio setup:
+7. Setup minio:
 ```sh
 cat etl/setup-minio.sh | dc exec -T  etl-service  bash
 ```
 
-9. Run following lines from `data_model/scripts/gen3_etl.sh`:
-```sh
-echo "Truncating gen3 tables."
-cat scripts/truncate_sheepdog_tables.sql |  docker exec -i  postgres psql -U postgres
-# clear existing data
-echo "Truncating buckets."
-cat scripts/truncate_indexd_tables.sql |  docker exec -i  postgres psql -U postgres
-cat scripts/truncate_buckets.sh |  docker exec -i  etl-service bash
-
-# upload will start multiple processes to submit files to bucket and update studies DocumentReferences
-nice -n 10 scripts/upload-files Alcoholism aced-ohsu
-```
+9. See  `data_model/scripts/gen3_etl.sh` for instructions on how to load the data:
 
 ## Fence (Authentication and Authorization)
 
@@ -613,7 +664,36 @@ index 7d139a0..6280178 100644
     * comment out guppy in nginx.conf until we re-build guppy 
   * see https://github.com/uc-cdis/compose-services/blob/master/docs/using_the_commons.md#changing-the-data-dictionary* 
 
+
 ### Import data files from the study into gen3
+
+Make sure you have created all minio buckets.
+
+```
+cat etl/setup-minio.sh |  docker exec -i  etl-service bash
+
+>>> Added `default` successfully.
+Added `ohsu` successfully.
+Added `ucl` successfully.
+Added `manchester` successfully.
+Added `stanford` successfully.
+Bucket created successfully `default/aced-default`.
+Bucket created successfully `default/aced-public`.
+Bucket created successfully `ohsu/aced-ohsu`.
+Bucket created successfully `ucl/aced-ucl`.
+Bucket created successfully `manchester/aced-manchester`.
+Bucket created successfully `stanford/aced-stanford`.
+...
+Added user `test` successfully.
+...
+Policy `readwrite` is set on user `test`
+...
+Access permission for `default/aced-public` is set to `public`
+...
+Successfully added arn:minio:sqs::PRIMARY:webhook
+
+
+```
 
 ```commandline
  python3 etl/file --gen3_credentials_file  Secrets/credentials.json upload-pfb  --pfb_path output/research_study_Alzheimers.pfb > file-object_ids.ndjson
