@@ -1,0 +1,466 @@
+
+#  #. Drill down hierarchy
+# {
+#   program {
+#     projects {
+#       id
+#       project_ResearchStudies {
+#         title
+#         study_ResearchSubjects {
+#           individual_Patient {
+#             id
+#             multipleBirthBoolean
+#             multipleBirthInteger
+#             birthDate
+#             deceasedBoolean
+#             gender
+#             subject_Specimen {
+#               id
+#             }
+#             subject_Observations {
+#               id
+#             }
+#             subject_DiagnosticReports {
+#               id
+#             }
+#           }
+#         }
+#       }
+#     }
+#   }
+# }
+
+# # this works
+# {
+#   Specimen {
+#     subject_Patient {
+#       id
+#     }
+#   }
+# }
+
+# query by parent edge
+# # Patients with maritalStatus
+# {
+#   Patient(with_links_any:"maritalStatus_CodeableConcept") {
+#     maritalStatus_CodeableConcept {
+#       coding_0_code
+#     }
+#   }
+# }
+
+# # query by child edge
+# # Patients with specimens
+# {
+#   Patient(with_links_any:"subject_Specimen") {
+#     subject_Specimen {
+#       id
+#     }
+#   }
+# }
+
+# # Patients with specimens and observations
+# {
+#   Patient(with_links_any:"subject_Specimen", with_links:"subject_Observations", first:1) {
+#     subject_Specimen(first:1) {
+#       id
+#     }
+#     subject_Observations(first:1) {
+#       id
+#       status
+#       state
+#     }
+#   }
+# }
+
+# #codes with observations
+# {
+#   CodeableConcept(first:1, with_links_any:"code_Observations") {
+#     id
+#     coding_0_display
+# 		code_Observations{
+#       id
+#     }
+#   }
+# }
+
+# #observations with codes
+# {
+#   Observation(id:"e8f791cf-e2b2-6db2-b527-861f2fd57a93") {
+#     id
+#     code_CodeableConcept {
+#       id
+#     }
+#   }
+# }
+
+
+
+# {
+#   Observation(with_links_any:"subject_Patient") {
+#     id
+#     subject_Patient {id}
+#   }
+# }
+
+# {
+#   Patient(first:1) {
+#     _subject_Observations_count
+#     subject_Observations {
+#       id
+#       category {
+#         id
+#       }
+#     }
+#   }
+# }
+
+# {
+#   Observation(id:"00b9e3b8-e877-b1e8-e12b-c88759053781") {
+#     id
+#     type
+#   }
+# }
+
+# #"Total Cholesterol"
+# {
+#   CodeableConcept(id:"f16d1c2b-5ff4-39c5-9152-054a6cb4c4ea") {
+#     id
+#     coding_0_display
+#   }
+# }
+
+# {
+# 	Condition {
+#     Patient
+#   }
+# }
+
+# # condition with code
+# {
+#   Condition(id:"5aaa2f7c-77fd-15fb-9dc9-030c325f7c64") {
+#     code{id}
+#     category{id}
+#   }
+# }
+
+# #  code with condition
+# {
+#   CodeableConcept(with_links_any:"code_Conditions") {
+#     id
+#     coding_0_display
+#     code_Conditions(first:1) {
+# 			id
+#     }
+#   }
+# }
+
+
+# {
+#   DiagnosticReport(id:"242fa5aa-6187-c328-39e5-97bcca40490d") {
+#     conclusion
+#     encounter_Encounter {
+#       _encounter_Observations_count
+#     }
+#     _result_Observation_count
+#     _specimen_Specimen_count
+#     _subject_Patient_count
+#   }
+# }
+
+# {
+#   Patient {
+#     _subject_DiagnosticReports_count
+#   }
+# }
+
+
+# {
+#   CodeableConcept(id: "f12977c2-a689-3b08-876b-26bb05050586") {
+# 		id
+#     coding_0_code
+#     coding_0_system
+#     clinicalStatus_Conditions(id:"c407e64d-f0ac-bbef-18a1-38890973ce43") {
+#       id
+#       code_CodeableConcept {
+#         id
+#       }
+#       bodySite_CodeableConcept {
+#         id
+#       }
+#       onsetDateTime
+#     }
+
+#   }
+# }
+
+# {
+# 	CodeableConcept(id: "c4fbc26f-c4bd-3406-9427-c195084059a6")   {
+#     id
+#     coding_0_code
+#     coding_0_display
+#     code_Conditions(id:"c407e64d-f0ac-bbef-18a1-38890973ce43") {
+#       id
+#     }
+#   }
+# }
+
+
+# THIS WORKS:get a document reference, and it's code
+# {
+#   DocumentReference(first:1) {
+#     id
+#     type_CodeableConcept {
+#       id
+#       coding_0_display
+#     }
+#     category_CodeableConcept {
+#       id
+#       coding_0_display
+#     }
+#   }
+# }
+# returns
+# DocumentReference "id": 990de556-dfb4-45c4-f119-73c979720201"
+# CodeableConcept "id": "6e1f3684-e1cd-39fe-b4a5-cb1119bbaae8"
+
+# {
+#   DocumentReference(first:1, offset:0) {
+# 		id
+#     project_id
+#     object_id
+#     type_CodeableConcept {
+#       coding_0_display
+#     }
+#     subject_Patient {
+#       id
+#     }
+#     content_0_attachment_url
+#   }
+# }
+
+# # THIS FAILS:
+# {
+#   CodeableConcept(id: "6e1f3684-e1cd-39fe-b4a5-cb1119bbaae8") {
+#     id
+#     category_DocumentReferences(id: "990de556-dfb4-45c4-f119-73c979720201"){id}
+#   }
+# }
+# # should return DocumentReference "id": "990de556-dfb4-45c4-f119-73c979720201" returns []
+
+# {
+#   CodeableConcept(id: "6e1f3684-e1cd-39fe-b4a5-cb1119bbaae8") {
+#     id
+#     coding_0_display
+#     category_DocumentReferences(id:"990de556-dfb4-45c4-f119-73c979720201"){
+#       id
+#     }
+#   }
+# }
+
+
+# # actual codable concept
+# {
+#   CodeableConcept(id: "14dbf741-d496-372e-8a6e-0a66f4f08916") {
+#     id
+#     _type_DocumentReferences_count
+#   }
+# }
+# # returns 48354 _type_DocumentReferences_count
+
+# # get a diagnostic report
+# {
+#   DiagnosticReport(first:1) {
+#     id
+#     category_CodeableConcept{id, coding_0_display}
+#     code_CodeableConcept{id, coding_0_display}
+#   }
+# }
+# # CodeableConcept "14dbf741-d496-372e-8a6e-0a66f4f08916"
+# # DiagnosticReport "00074d49-3a71-27d0-1e08-2418a566fed5"
+
+# # this works
+# {
+#   CodeableConcept(id:"14dbf741-d496-372e-8a6e-0a66f4f08916")
+#   	{
+#   		code_DiagnosticReports(id: "00074d49-3a71-27d0-1e08-2418a566fed5") {
+#         id
+#       }
+#       category_DiagnosticReports(id: "00074d49-3a71-27d0-1e08-2418a566fed5") {
+#         id
+#       }
+# 		}
+# }
+
+
+# {
+#   node(id:"14dbf741-d496-372e-8a6e-0a66f4f08916") {
+#     id
+#     type
+#   }
+# }
+
+# The psqlgraph information
+# {
+#   "label": "DocumentReference_type_CodeableConcept",
+#   "tablename": "edge_5942e705_DoDotyCoCo",
+#   "srcclass": "Documentreference",
+#   "dstclass": "Codeableconcept",
+#   "srcdstassoc": "type_CodeableConcept",
+#   "dstsrcassoc": "type_DocumentReferences",
+#   "srctable": "node_DocumentReference",
+#   "dsttable": "node_CodeableConcept"
+# }
+
+
+
+
+
+# {
+#   Condition(id:"c407e64d-f0ac-bbef-18a1-38890973ce43") {
+#     id
+#     code_CodeableConcept(id: "c4fbc26f-c4bd-3406-9427-c195084059a6") {
+#       id
+#     }
+#   }
+# }
+
+
+# #From parent, the Patient  "6f60d183-2b8d-8c3c-77d0-2b684653651e"
+# # Retrieve the child, the Specimen "00c2c6f1-8c41-5b12-a63f-24f358e85a19"
+# {
+#   Patient(id:"6f60d183-2b8d-8c3c-77d0-2b684653651e") {
+#     id
+#     subject_Specimen {
+#       id
+#     }
+#   }
+# }
+
+#From child, the Specimen "00c2c6f1-8c41-5b12-a63f-24f358e85a19"
+# Retrieve the parent, the Patient  "6f60d183-2b8d-8c3c-77d0-2b684653651e"
+# {
+#   Specimen(id: "00c2c6f1-8c41-5b12-a63f-24f358e85a19") {
+#     id
+#     subject_Patient {
+#       id
+#     }
+#   }
+# }
+
+
+#From child, the Specimen "00c2c6f1-8c41-5b12-a63f-24f358e85a19"
+# Retrieve the parent, the CodeableConcept
+# {
+#   Specimen(id: "00c2c6f1-8c41-5b12-a63f-24f358e85a19") {
+#     id
+#     #returns empty list
+#     type_CodeableConcept {
+#       id
+#     }
+#     #returns empty list
+#     condition_CodeableConcept {
+#       id
+#     }
+#   }
+# }
+
+# # From the parent, the CodeableConcept
+# {
+#   CodeableConcept(with_links_any: "type_Specimen") {
+#     type_Specimen{id}
+#   }
+# }
+
+# Works: child->parent
+# {
+#   Condition(id:"47a56aed-fe69-df4c-3448-eaec0f0906c6") {
+#     id
+#     subject_Patient {
+#       id  # "6f60d183-2b8d-8c3c-77d0-2b684653651e"
+#     }
+#   }
+# }
+
+# # Works: parent->child
+# {
+#   Patient(id: "6f60d183-2b8d-8c3c-77d0-2b684653651e") {
+#     subject_Conditions(id:"47a56aed-fe69-df4c-3448-eaec0f0906c6") {
+#       id
+#     }
+#   }
+# }
+
+
+# Fails: child->parent
+# {
+#   Condition(id:"47a56aed-fe69-df4c-3448-eaec0f0906c6") {
+#     id
+#     #returns empty list
+#     code_CodeableConcept {
+#       id
+#     }
+#     #returns empty list
+#     category_CodeableConcept {
+#       id
+#     }
+#   }
+# }
+
+# # Works
+# {
+#   CodeableConcept(id: "c11b07a0-7288-3973-9659-b4e2aeeefebe") {
+#     code_Conditions(id: "47a56aed-fe69-df4c-3448-eaec0f0906c6") {
+#       id
+#     }
+#   }
+# }
+
+
+# {
+#   CodeableConcept(id: "55fa011b-3d22-3d9a-bf1d-a434810ff966") {
+#     category_Conditions(id: "47a56aed-fe69-df4c-3448-eaec0f0906c6") {
+#       id
+#     }
+#   }
+# }
+
+
+# # THIS WORKS:get a document reference, and it's code
+# {
+#   DocumentReference(first:1) {
+#     id
+#     type_CodeableConcept {
+#       id
+#       coding_0_display
+#     }
+#     category_CodeableConcept {
+#       id
+#       coding_0_display
+#     }
+#   }
+# }
+
+#This fails
+# {
+#   Procedure(id:"50b0c419-23ea-5ac2-426e-b5f4c4387cda") {
+#     code_CodeableConcept {id}
+#     category_CodeableConcept {id}
+#     id
+#   }
+# }
+
+
+
+{
+  Condition(first:1){
+    id
+    verificationStatus_coding_0_display
+    clinicalStatus_coding_0_display
+    code_coding_0_display
+    category_0_coding_0_display
+  }
+}
+
+
+

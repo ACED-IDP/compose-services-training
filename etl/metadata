@@ -1,0 +1,541 @@
+#!/usr/bin/env python3
+import csv
+import gzip
+import io
+import json
+import os
+import itertools
+import logging
+from collections import defaultdict
+from glob import glob
+
+import fastavro
+from gen3.auth import Gen3Auth
+from gen3.metadata import Gen3Metadata
+from gen3.submission import Gen3Submission
+import click
+import jwt
+import yaml
+
+from cdislogging import get_logger as get_gen3_logger
+from dictionary import init_dictionary, DataDictionaryTraversal, convert_to_node
+
+log_fmt = "%(asctime)s %(name)s %(levelname)s : %(message)s"
+
+# set logging to warning, since gen3.submission logs a verbose INFO message on each call :-()
+logging.basicConfig(level=logging.WARNING, format=log_fmt)
+# set gen3's logger as well
+# get_gen3_logger('__name__', log_level='warn', format=log_fmt)
+
+
+def get_logger_(name):
+    """Return logger with level set to info"""
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.INFO)
+    return logger
+
+
+def delete_all(submission_client, program, project, batch_size=200, types=[]):
+    """Delete all nodes in types hierarchy, skips program and project."""
+    for t in types:
+        try:
+            if t in ['program', 'project']:
+                continue
+            delete_type(submission_client, program, project, batch_size, t)
+        except Exception as e:
+            print(e)
+            raise e
+
+
+def delete_type(submission_client, program, project, batch_size, t):
+    """Delete all instances of a type."""
+    logger = get_logger_("delete_type")
+    response = submission_client.export_node(program, project, node_type=t, fileformat='json')
+    # # pool = mp.Pool(mp.cpu_count())
+
+    def collect_result(delete_response):
+        delete_response = delete_response.json()
+        assert delete_response['code'] == 200, delete_response
+        # logger.info('deleted {} {}'.format(t, delete_response['message']))
+
+    if 'data' not in response or len(response['data']) == 0:
+        logger.warning(f'No {t} to delete {response}')
+    else:
+        for ids in grouper(batch_size, [n['id'] for n in response['data']]):
+            logger.info(f'deleting {program}-{project}.{t} {len(ids)} items.')
+            ids = ','.join(ids)
+            collect_result(submission_client.delete_record(program, project, ids))
+            # # pool.apply_async(submission_client.delete_record, args=(program, project, ids), callback=collect_result)
+        # Close Pool and let all the processes complete
+        # postpones the execution of next line of code until all processes in the queue are done
+        # # pool.close()
+        # # pool.join()
+
+
+class JsonReader:
+    """Read json and return dict iterator."""
+
+    def __init__(self, path):
+        """Open file."""
+        if path.endswith(".json.gz"):
+            self.fp = io.TextIOWrapper(io.BufferedReader(gzip.GzipFile(path)))
+        else:
+            self.fp = open(path, "r", encoding='utf-8')
+        self.items = None
+
+    def __iter__(self):
+        """Return self."""
+        return self
+
+    def __next__(self):
+        """Iterate to next row."""
+        try:
+            if self.items and len(self.items) > 0:
+                return self.items.pop(0)
+            if self.items:
+                raise IndexError()
+            line = self.fp.readline()
+            if len(line) < 1:
+                raise IndexError()
+            return json.loads(line)
+        except json.decoder.JSONDecodeError:
+            self.fp.seek(0, 0)
+            obj_ = json.load(self.fp)
+            self.items = obj_
+            if not isinstance(self.items, list):
+                self.items = [self.items]
+            return self.items.pop(0)
+        except IndexError:
+            raise StopIteration()
+
+
+def reader(path, **kwargs):
+    """Wrap gzip if necessary."""
+    if path.endswith(".json.gz"):
+        return JsonReader(path)
+    elif path.endswith(".gz"):
+        return io.TextIOWrapper(
+            io.BufferedReader(gzip.GzipFile(path))
+        )
+    elif path.endswith(".csv"):
+        return csv.DictReader(open(path, "r", encoding='utf-8'), **kwargs)
+    elif path.endswith(".tsv"):
+        return csv.DictReader(open(path, "r", encoding='utf-8'), delimiter="\t", **kwargs)
+    elif path.endswith(".json"):
+        return JsonReader(path)
+    elif path.endswith(".ndjson"):
+        return JsonReader(path)
+    else:
+        return open(path, "r", encoding='utf-8')
+
+
+def grouper(n, iterable):
+    """Chunk iterable into n size chunks."""
+    it = iter(iterable)
+    while True:
+        chunk = tuple(itertools.islice(it, n))
+        if not chunk:
+            return
+        yield chunk
+
+
+def create_node(submission_client, program_name, project_code, node):
+    """Create node(s)."""
+    logger = get_logger_("create_node")
+
+    try:
+        nodes = node
+        if not isinstance(node, (list,)):
+            nodes = [node]
+        response = None
+        response = submission_client.submit_record(program_name, project_code, nodes)
+        return response
+    except Exception as e:
+        logger.error(f"create_node: error {e}")
+        logger.error(f"create_node: error {nodes}")
+        if response:
+            for entity in response.get('entities', []):
+                for error in entity.get('errors', []):
+                    logger.error('{} {} {}'.format(error['type'], entity['type'], entity))
+            for error in response.get('transactional_errors', []):
+                logger.error(' transactional_error {}'.format(error))
+                logger.error(json.dumps(response))
+        raise e
+
+
+@click.group()
+@click.option('--gen3_credentials_file', default='Secrets/credentials.json', show_default=True,
+              help='API credentials file downloaded from gen3 profile.')
+@click.pass_context
+def cli(ctx, gen3_credentials_file):
+    """Metadata loader."""
+
+    endpoint = extract_endpoint(gen3_credentials_file)
+    get_logger_("cli").debug(f"Read {gen3_credentials_file} endpoint {endpoint}")
+    auth = Gen3Auth(endpoint, refresh_file=gen3_credentials_file)
+    submission_client = Gen3Submission(endpoint, auth)
+    ctx.ensure_object(dict)
+    ctx.obj['submission_client'] = submission_client
+    ctx.obj['discovery_client'] = Gen3Metadata(endpoint, auth)
+    ctx.obj['endpoint'] = endpoint
+    ctx.obj['programs'] = [link.split('/')[-1] for link in submission_client.get_programs()['links']]
+
+
+@cli.command()
+@click.option('--pfb_path', default=None, required=True, show_default=True,
+              help='directory that contains research_studyXXXX.pfb')
+@click.option('--program', default=None, show_default=True,
+              help='Gen3 "program"')
+@click.option('--project', default=None, show_default=True,
+              help='Gen3 "project"')
+@click.option('--batch_size', default=10, show_default=True,
+              help='number of records to process per call')
+@click.pass_context
+def load_pfb(ctx, pfb_path, program, project, batch_size):
+    """Loads metadata into project"""
+    logger = get_logger_("load_pfb")
+    submission_client = ctx.obj['submission_client']
+    dictionary, model = init_dictionary(url='https://aced-public.s3.us-west-2.amazonaws.com/aced.json')
+    ddt = DataDictionaryTraversal(model)
+    node_table_by_label = ddt.get_node_table_by_label()
+    # {'root': 'node_root', 'data_release': 'node_datarelease', 'DocumentReference': 'node_DocumentReference',
+    #  'Observation': 'node_Observation', 'Patient': 'node_Patient', 'Practitioner': 'node_Practitioner',
+    #  'MedicationRequest': 'node_MedicationRequest', 'program': 'node_program', 'project': 'node_project',
+    #  'DiagnosticReport': 'node_DiagnosticReport', 'Task': 'node_Task', 'Condition': 'node_Condition',
+    #  'Location': 'node_Location', 'Encounter': 'node_Encounter', 'Procedure': 'node_Procedure',
+    #  'Organization': 'node_Organization', 'ImagingStudy': 'node_ImagingStudy', 'ResearchStudy': 'node_ResearchStudy',
+    #  'Specimen': 'node_Specimen', 'Medication': 'node_Medication', 'ResearchSubject': 'node_ResearchSubject',
+    #  'core_metadata_collection': 'node_coremetadatacollection'}
+    edge_table_by_labels = ddt.get_edge_table_by_labels()
+    # {('data_release', 'root'): 'edge_datareleasedescribesroot',
+    #  ('DocumentReference', 'Patient'): 'edge_DocumentReferencePatientsPatient',
+    #  ('DocumentReference', 'Organization'): 'edge_ec062b7b_DoOrOr',
+    #  ('Observation', 'ResearchStudy'): 'edge_0b10b6fb_ObReRe',
+    #  ('Observation', 'Specimen'): 'edge_ObservationSpecimenSpecimen',
+    #  ('Observation', 'Patient'): 'edge_ObservationPatientsPatient',
+    #  ('Observation', 'Encounter'): 'edge_ObservationEncountersEncounter',
+    #  ('Patient', 'Organization'): 'edge_PatientOrganizationsOrganization',
+    #  ('MedicationRequest', 'Patient'): 'edge_MedicationRequestPatientsPatient',
+    #  ('MedicationRequest', 'Encounter'): 'edge_8ffbdcaa_MeEnEn',
+    #  ('MedicationRequest', 'Medication'): 'edge_df7c93a6_MeMeMe', ('project', 'program'): 'edge_projectmemberofprogram',
+    #  ('DiagnosticReport', 'Patient'): 'edge_DiagnosticReportPatientsPatient',
+    #  ('DiagnosticReport', 'Encounter'): 'edge_DiagnosticReportEncountersEncounter',
+    #  ('DiagnosticReport', 'Practitioner'): 'edge_398dc3a8_DiPrPr', ('Task', 'Patient'): 'edge_TaskPatientsPatient',
+    #  ('Task', 'Specimen'): 'edge_TaskSpecimenSpecimen', ('Task', 'DocumentReference'): 'edge_42e2e26b_TaDoDo',
+    #  ('Condition', 'Patient'): 'edge_ConditionPatientsPatient',
+    #  ('Condition', 'Encounter'): 'edge_ConditionEncountersEncounter',
+    #  ('Location', 'Organization'): 'edge_LocationOrganizationsOrganization',
+    #  ('Encounter', 'Patient'): 'edge_EncounterPatientsPatient',
+    #  ('Procedure', 'Patient'): 'edge_ProcedurePatientsPatient',
+    #  ('Procedure', 'Encounter'): 'edge_ProcedureEncountersEncounter',
+    #  ('Organization', 'Organization'): 'edge_85f2b993_OrOrOr',
+    #  ('ImagingStudy', 'Patient'): 'edge_ImagingStudyPatientsPatient',
+    #  ('ImagingStudy', 'Encounter'): 'edge_ImagingStudyEncountersEncounter',
+    #  ('ResearchStudy', 'ResearchStudy'): 'edge_e2d4f866_ReReRe',
+    #  ('ResearchStudy', 'Practitioner'): 'edge_876d23c4_RePrPr',
+    #  ('ResearchStudy', 'Organization'): 'edge_8abff393_ReOrOr',
+    #  ('ResearchStudy', 'project'): 'edge_ResearchStudyprojectsproject',
+    #  ('Specimen', 'Patient'): 'edge_SpecimenPatientsPatient',
+    #  ('ResearchSubject', 'Patient'): 'edge_ResearchSubjectPatientsPatient',
+    #  ('ResearchSubject', 'ResearchStudy'): 'edge_7ecdea32_ReReRe',
+    #  ('core_metadata_collection', 'project'): 'edge_9197510c_comecodafrpr'}
+
+    for records in grouper(batch_size, pfb_reader(pfb_path)):
+        nodes = []
+        for record in records:
+            if record['name'] == 'Metadata':
+                continue
+            print(record['name'], record['id'], record)
+            convert_to_node(record)
+            break
+        break
+        # collect_result(create_node(submission_client, program, project, nodes))
+
+
+def pfb_reader(pfb_path):
+    """Yields records from pfb."""
+    reader_ = fastavro.read.reader
+    with open(pfb_path, 'rb') as fo:
+        for record in reader_(fo):
+            yield record
+
+
+def upload_metadata(path, program, project, submission_client, batch_size):
+    """Read gen3 json and write to gen3."""
+
+    logger = get_logger_("upload_metadata")
+
+    def collect_result(response_):
+        is_error = False
+        for entity in response_['entities']:
+            for error in entity.get('errors', []):
+                logger.error('{} {} {}'.format(error['type'], entity['type'], entity))
+                is_error = True
+        for error in response_['transactional_errors']:
+            logger.error('transactional_error {}'.format(error))
+            logger.error(json.dumps(response_))
+            is_error = True
+        if is_error:
+            logger.debug(response_)
+
+    for p in glob(path):
+        logger.info(f"Uploading {p}")
+        for lines in grouper(batch_size, reader(p)):
+            nodes = [line for line in lines]
+
+            if nodes[0]['type'] == 'project':
+                for node in nodes:
+                    logger.debug('creating program')
+                    response = submission_client.create_program(
+                        {'name': program, 'dbgap_accession_number': program, 'type': 'program'})
+                    assert response, 'could not parse response {}'.format(response)
+                    # assert 'code' in response, f'Unexpected response {response}'
+                    # assert response['code'] == 200, 'could not create {} program'.format(response)
+                    assert 'id' in response, 'could not create {} program'.format(response)
+                    assert program in response['name'], 'could not create {} program'.format(response)
+
+                    response = submission_client.create_project(program, node)
+                    assert response, 'could not parse response'
+                    assert 'code' in response, f'Unexpected response {response}'
+                    assert response['code'] == 200, 'could not create {} {}'.format(nodes[0]['type'], response)
+                    assert 'successful' in response['message'], 'could not create {} {}'.format(nodes[0]['type'],
+                                                                                                response)
+                    logger.info('Created project {}'.format(node['code']))
+                continue
+
+            # if nodes[0]['type'] == 'experiment':
+            #     project = nodes[0]['projects'][0]['code']
+
+            collect_result(create_node(submission_client, program, project, nodes))
+
+
+def get_schema(submission_client):
+    """Returns gen3 schema."""
+    schema = submission_client.get_dictionary_all()
+    return schema
+
+
+def nodes_in_load_order(submission_client):
+    """Introspects schema and returns types in order of db load."""
+    schema = get_schema(submission_client)
+    loaded = {}
+
+    def process(current_, depth):
+        loaded[current_['id']] = depth
+
+    def traverse(current_, depth=0, depth_limit=1):
+        if depth > depth_limit:
+            return
+        process(current_, depth)
+        target_type = current_['id']
+        for k in schema.keys():
+            n = schema[k]
+            if 'links' not in n or len(n['links']) == 0:
+                continue
+            links = n['links']
+            if 'subgroup' in links[0]:
+                links = links[0]['subgroup']
+            for link in links:
+                if 'target_type' in link and link['target_type'] == target_type:
+                    process(schema[n['id']], depth)
+            for link in links:
+                if 'target_type' in link and link['target_type'] == target_type:
+                    traverse(schema[n['id']], depth + 1, depth_limit)
+            depth_limit += 1
+
+    schema_keys = [k for k in schema.keys() if
+                   not k.startswith('_') and not schema[k].get('category', None) == 'internal']
+    schema_keys = [schema[schema_key] for schema_key in schema_keys if schema[schema_key].get('links', None) == []][0]
+    traverse(schema_keys)
+
+    load_order_ = []
+    levels = set([v for k, v in loaded.items()])
+    for i in sorted(levels):
+        for k, v in loaded.items():
+            if v == i:
+                load_order_.append(k)
+    return load_order_
+
+
+def extract_endpoint(gen3_credentials_file):
+    """Get base url of jwt issuer claim."""
+    with open(gen3_credentials_file) as input_stream:
+        api_key = json.load(input_stream)['api_key']
+        claims = jwt.decode(api_key, options={"verify_signature": False})
+        assert 'iss' in claims
+        return claims['iss'].replace('/user', '')
+
+
+@cli.command()
+@click.pass_context
+def ls(ctx):
+    """Introspects schema and returns types in order."""
+    submission_client = ctx.obj['submission_client']
+    contents = {'programs': defaultdict(list)}
+
+    programs = submission_client.get_programs()
+
+    for program in ctx.obj['programs']:
+        contents['programs'][program] = [link.split('/')[-1] for link in submission_client.get_projects(program)['links']]
+    contents['entities'] = nodes_in_load_order(submission_client)
+    print(json.dumps(contents))
+
+
+@cli.command()
+@click.option('--program', show_default=True,
+              help='Gen3 "program"')
+@click.option('--project', show_default=True,
+              help='Gen3 "project"')
+@click.option('--batch_size', default=10, show_default=True,
+              help='number of records to process per call')
+@click.pass_context
+def empty(ctx, batch_size, program, project):
+    """Empties project, deletes all metadata."""
+    submission_client = ctx.obj['submission_client']
+    nodes = nodes_in_load_order(submission_client)
+    delete_all(submission_client, program, project, types=reversed(nodes), batch_size=batch_size)
+
+
+@cli.command()
+@click.option('--program', show_default=True,
+              help='Gen3 "program"')
+@click.option('--project', show_default=True,
+              help='Gen3 "project"')
+@click.pass_context
+def drop_project(ctx, program, project):
+    """Drops empty project"""
+    submission_client = ctx.obj['submission_client']
+    submission_client.delete_project(program, project)
+    get_logger_("drop+_project").info(f"Dropped {project}")
+
+
+@cli.command()
+@click.option('--program', show_default=True,
+              help='Gen3 "program"')
+# @click.option('--project', show_default=True,
+#               help='Gen3 "project"')
+# @click.option('--data_directory', default=None, required=True, show_default=True,
+#               help='Path to project.json')
+@click.pass_context
+def discovery(ctx, program):
+    """Writes project information to discovery metadata-service"""
+    discovery_client = ctx.obj['discovery_client']
+    discovery_descriptions = """
+Alcoholism~9300~Patients from 'Coherent Data Set' https://www.mdpi.com/2079-9292/11/8/1199/htm that were diagnosed with condition(s) of: Alcoholism.  Data hosted by: aced-ohsu~aced-ohsu
+Alzheimers~45306~Patients from 'Coherent Data Set' https://www.mdpi.com/2079-9292/11/8/1199/htm that were diagnosed with condition(s) of: Alzheimer's, Familial Alzheimer's.  Data hosted by: aced-ucl~aced-ucl
+Breast_Cancer~7105~Patients from 'Coherent Data Set' https://www.mdpi.com/2079-9292/11/8/1199/htm that were diagnosed with condition(s) of: Malignant neoplasm of breast (disorder).  Data hosted by: aced-manchester~aced-manchester
+Colon_Cancer~25355~Patients from 'Coherent Data Set' https://www.mdpi.com/2079-9292/11/8/1199/htm that were diagnosed with condition(s) of: Malignant tumor of colon,  Polyp of colon.  Data hosted by: aced-stanford~aced-stanford
+Diabetes~65051~Patients from 'Coherent Data Set' https://www.mdpi.com/2079-9292/11/8/1199/htm that were diagnosed with condition(s) of: Diabetes.  Data hosted by: aced-ucl~aced-ucl
+Lung_Cancer~25355~Patients from 'Coherent Data Set' https://www.mdpi.com/2079-9292/11/8/1199/htm that were diagnosed with condition(s) of: Non-small cell carcinoma of lung,TNM stage 1,  Non-small cell lung cancer, Suspected lung cancer.  Data hosted by: aced-manchester~aced-manchester
+Prostate_Cancer~35488~Patients from 'Coherent Data Set' https://www.mdpi.com/2079-9292/11/8/1199/htm that were diagnosed with condition(s) of: Metastasis from malignant tumor of prostate, Neoplasm of prostate, arcinoma in situ of prostate.  Data hosted by: aced-stanford~aced-stanford""".split('\n')
+    
+    for line in discovery_descriptions:
+        if len(line) == 0:
+            continue
+        print(line)
+        (name, _subjects_count, description, location, ) = line.split('~')
+        gen3_discovery = {}
+        # {
+        #     "availability_mechanism": "061e83cedc",
+        #     "availability_type": "Restricted",
+        #     "code": "MyFirstProject",
+        #     "date_collected": "b556077e00",
+        #     "dbgap_accession_number": "phs-jenkins",
+        #     "investigator_affiliation": "2395ceacf1",
+        #     "investigator_name": "fd0174c590",
+        #     "name": "bf0c3e26f3",
+        #     "support_id": "155461fbb9",
+        #     "support_source": "0343f459a1",
+        #     "type": "project"
+        # }
+        gen3_discovery['tags'] = [
+            {"name": program, "category": "Program"},
+            {"name": f"aced_{name}", "category": "Study Registration"},
+            {"name": location, "category": "Study Location"},
+
+        ]
+        gen3_discovery['name'] = name
+        gen3_discovery['full_name'] = name
+        gen3_discovery['study_description'] = description
+
+        guid = f"aced_{name}"
+
+        gen3_discovery['commons'] = "ACED"
+        gen3_discovery['commons_name'] = "ACED Commons"
+        gen3_discovery['commons_url'] = 'staging.aced-idp.org'
+        gen3_discovery['__manifest'] = 0
+        gen3_discovery['_research_subject_count'] = int(_subjects_count)
+        gen3_discovery['_unique_id'] = guid
+        gen3_discovery['study_id'] = guid
+        discoverable_data = dict(_guid_type="discovery_metadata", gen3_discovery=gen3_discovery)
+        discovery_client.create(guid, discoverable_data, aliases=None, overwrite=True)
+        get_logger_("discovery").info(f"Added {name}")
+
+
+@cli.command()
+@click.option('--program', show_default=True,
+              help='Gen3 "program"')
+def drop_program(ctx, data_directory, program):
+    """Drops empty program"""
+    submission_client = ctx.obj['submission_client']
+    submission_client.delete_progranm(program)
+
+
+@cli.command()
+@click.option('--program', show_default=True, required=True,
+              help='Gen3 "program"')
+@click.option('--manifest', show_default=True,  required=True,
+              help='Study names, conditions, expected counts, etc. e.g. coherent_studies.manifest.yaml')
+@click.pass_context
+def create_program(ctx, program, manifest):
+    """Creates program and projects."""
+    submission_client = ctx.obj['submission_client']
+    response = submission_client.create_program({'name': program, 'dbgap_accession_number': program, 'type': 'program'})
+    get_logger_('create_program').info(response)
+    study_manifests = yaml.load(open(manifest), yaml.SafeLoader)
+    for name, values in study_manifests.items():
+        response = submission_client.create_project(program, {
+            "type": "project",
+            "code": name,
+            "dbgap_accession_number": name,
+            "name": name
+        })
+        get_logger_('create_program').info(response)
+
+
+@cli.command()
+@click.option('--data_directory', default=None, required=True, show_default=True,
+              help='directory that contains <entity>.json')
+@click.option('--program', default=None, show_default=True,
+              help='Gen3 "program"')
+@click.option('--project', default=None, show_default=True,
+              help='Gen3 "project"')
+@click.option('--batch_size', default=10, show_default=True,
+              help='number of records to process per call')
+@click.pass_context
+def load(ctx, data_directory, program, project, batch_size):
+    """Loads metadata into project"""
+
+    submission_client = ctx.obj['submission_client']
+    if not program:
+        assert len(ctx.obj['programs']) == 1, f"No program provided and multiple programs {ctx.obj['programs']}"
+        program = ctx.obj['programs'][0]
+    if not project:
+        projects = [link.split('/')[-1] for link in submission_client.get_projects(program)['links']]
+        if len(projects) == 1:
+            project = projects[0]
+        else:
+            get_logger_('load').warning(f"No program provided and multiple programs {ctx.obj['programs']} {projects}")
+
+    nodes = nodes_in_load_order(submission_client)
+
+    for entity in nodes:
+        filename = f"{data_directory}/{entity}.json"
+        if os.path.isfile(filename):
+            upload_metadata(submission_client=submission_client, path=filename, program=program, project=project,
+                            batch_size=batch_size)
+
+
+if __name__ == '__main__':
+    cli()
+

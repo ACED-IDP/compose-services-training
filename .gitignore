@@ -1,4 +1,3 @@
-Secrets/
 *.lock*
 *.env
 *.bak
@@ -10,4 +9,14 @@ Secrets/
 *.pytest_cache
 *.cache
 *pyc
-docker-compose.override.yml
+#docker-compose.override.yml
+# for local dev
+credential*.json
+venv/
+.idea/
+
+/fence/
+
+/output/
+
+

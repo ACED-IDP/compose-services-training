@@ -1,0 +1,162 @@
+[
+    {
+        "consent_codes": [],
+        "core_metadata_collections": {
+            "submitter_id": "core_metadata_collection_720bb339f9"
+        },
+        "data_category": "aee953a96d",
+        "data_format": "91f86dd1b4",
+        "data_type": "684139cae1",
+        "experimental_strategy": "2e39dca6af",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/f9aecde49a",
+        "file_size": 7924,
+        "md5sum": "b6164c931344a932dd5776a72b9e0b42",
+        "submitter_id": "submitted_copy_number_6f3cf67a90",
+        "type": "submitted_copy_number",
+        "object_id": "FOOBAR:2bace6a2-4188-4c9a-9ddb-995e84534ded"
+    },
+    {
+        "consent_codes": [],
+        "core_metadata_collections": {
+            "submitter_id": "core_metadata_collection_3591879daa"
+        },
+        "data_category": "3b4e810eef",
+        "data_format": "3ae5b38cde",
+        "data_type": "1197acf028",
+        "experimental_strategy": "856df4142e",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/758278b648",
+        "file_size": 15020,
+        "md5sum": "98de074af47284d27b679ad3f5d9c5bd",
+        "submitter_id": "submitted_copy_number_de4fe987b3",
+        "type": "submitted_copy_number",
+        "object_id": "FOOBAR:60872e3c-d082-448e-b82f-6a71eeff3843"
+    },
+    {
+        "consent_codes": [],
+        "core_metadata_collections": {
+            "submitter_id": "core_metadata_collection_d702b6ecd1"
+        },
+        "data_category": "3b185b992c",
+        "data_format": "b3d0ea3e3e",
+        "data_type": "c1a0480d16",
+        "experimental_strategy": "6efea9f16f",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/1e05043b2f",
+        "file_size": 16804,
+        "md5sum": "41b50211e823c3b684761fa8df533810",
+        "submitter_id": "submitted_copy_number_063a4e14cd",
+        "type": "submitted_copy_number",
+        "object_id": "FOOBAR:f2c53628-a4a8-4849-a787-58bcffa14f7d"
+    },
+    {
+        "consent_codes": [],
+        "core_metadata_collections": {
+            "submitter_id": "core_metadata_collection_d4dac94074"
+        },
+        "data_category": "0c4bdf4a44",
+        "data_format": "eea98e125c",
+        "data_type": "9f16bd1b2c",
+        "experimental_strategy": "b5870e5f98",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/e66679582f",
+        "file_size": 5841,
+        "md5sum": "918478066d0ea3fd942f872c581ca7d1",
+        "submitter_id": "submitted_copy_number_cc81c5b825",
+        "type": "submitted_copy_number",
+        "object_id": "FOOBAR:18d066b1-9d68-4d11-a90b-1f99c73834b0"
+    },
+    {
+        "consent_codes": [],
+        "core_metadata_collections": {
+            "submitter_id": "core_metadata_collection_ab86fe4091"
+        },
+        "data_category": "332a73c908",
+        "data_format": "0528e9d1d7",
+        "data_type": "00cfe2d112",
+        "experimental_strategy": "8323efd54f",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/04aeca2317",
+        "file_size": 8318,
+        "md5sum": "c03a7188f3cf7ea8972e7e1049bc9e25",
+        "submitter_id": "submitted_copy_number_09b9b48272",
+        "type": "submitted_copy_number",
+        "object_id": "FOOBAR:d8eb8b17-e97b-4ec8-bd19-37319247904d"
+    },
+    {
+        "consent_codes": [],
+        "core_metadata_collections": {
+            "submitter_id": "core_metadata_collection_44ee8e6f6f"
+        },
+        "data_category": "48556aac87",
+        "data_format": "daeeb69a15",
+        "data_type": "f032afd3ad",
+        "experimental_strategy": "fc76e93c28",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/fa0d844727",
+        "file_size": 14813,
+        "md5sum": "c9a9057b4840b3ce628df6103eae5cfc",
+        "submitter_id": "submitted_copy_number_c5a8182460",
+        "type": "submitted_copy_number",
+        "object_id": "FOOBAR:8e721774-3437-4c65-9010-6d59d513e96a"
+    },
+    {
+        "consent_codes": [],
+        "core_metadata_collections": {
+            "submitter_id": "core_metadata_collection_0f98580fa6"
+        },
+        "data_category": "6cadf4d97b",
+        "data_format": "72eef52ab7",
+        "data_type": "822bb1f103",
+        "experimental_strategy": "513e0682aa",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/8cfd48f2c9",
+        "file_size": 12090,
+        "md5sum": "b8a2feb79b1d397d5913fc96c5298ba7",
+        "submitter_id": "submitted_copy_number_0e1d0ca14c",
+        "type": "submitted_copy_number",
+        "object_id": "FOOBAR:05a38e01-d9a0-4334-a8bf-6095ce2940da"
+    },
+    {
+        "consent_codes": [],
+        "core_metadata_collections": {
+            "submitter_id": "core_metadata_collection_315432598b"
+        },
+        "data_category": "a8734bd2ed",
+        "data_format": "9a8eede948",
+        "data_type": "0c2156544a",
+        "experimental_strategy": "6d4e271bfd",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/c6ab404f1f",
+        "file_size": 7823,
+        "md5sum": "1c350412bc2d585fb14d5db957de2b0e",
+        "submitter_id": "submitted_copy_number_b6e038cfff",
+        "type": "submitted_copy_number",
+        "object_id": "FOOBAR:ae3f9400-f2a8-47ee-a041-eefcb9d8eea8"
+    },
+    {
+        "consent_codes": [],
+        "core_metadata_collections": {
+            "submitter_id": "core_metadata_collection_5f161a9bac"
+        },
+        "data_category": "2701546206",
+        "data_format": "2271bc824a",
+        "data_type": "4e243c1279",
+        "experimental_strategy": "0d7a809560",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/36638f6c97",
+        "file_size": 14373,
+        "md5sum": "134146ac3c3230119fd8b99676e7765e",
+        "submitter_id": "submitted_copy_number_41899d190a",
+        "type": "submitted_copy_number",
+        "object_id": "FOOBAR:745abf83-52fc-4b97-adc7-5c58a79056c3"
+    },
+    {
+        "consent_codes": [],
+        "core_metadata_collections": {
+            "submitter_id": "core_metadata_collection_a78394a6c5"
+        },
+        "data_category": "dac09c2852",
+        "data_format": "197c76da15",
+        "data_type": "7c6a840787",
+        "experimental_strategy": "6ee59f44ec",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/9ed239b024",
+        "file_size": 14775,
+        "md5sum": "bd3a30fcc33a8cfea6ffdb1941c4300d",
+        "submitter_id": "submitted_copy_number_f835488fa4",
+        "type": "submitted_copy_number",
+        "object_id": "FOOBAR:3f287675-c436-4dd0-b6ba-1f18f70db123"
+    }
+]

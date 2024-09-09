@@ -1,0 +1,81 @@
+#!/usr/bin/env python3
+import json
+import os
+import logging
+from pathlib import Path
+from random import randint
+import pathlib
+import click
+
+
+from faker import Faker
+from faker_biology.bioseq import Bioseq
+from cdislogging import get_logger as get_gen3_logger
+
+
+fake = Faker()
+fake.add_provider(Bioseq)
+
+
+def get_logger_(name):
+    """Return logger with level set to info"""
+    logger = logging.getLogger(name)
+    # logger.setLevel(logging.INFO)
+    return logger
+
+
+def file_attributes(file_name):
+    """Calculate the hash and size."""
+    import hashlib
+
+    md5_hash = hashlib.md5()
+
+    with open(file_name, "rb") as f:
+        # Read and update hash in chunks of 4K
+        for byte_block in iter(lambda: f.read(4096), b""):
+            md5_hash.update(byte_block)
+
+    return md5_hash.hexdigest(), os.lstat(file_name).st_size
+
+
+@click.command()
+@click.option('--project_path', required=True, default=None, show_default=True,
+              help='Path to synthetic data')
+@click.option('--output_path', required=True, default=None, show_default=True,
+              help='Path to synthetic data')
+@click.pass_context
+def cli(ctx, project_path, output_path):
+    """Read synthetic meta data, generate synthetic data file for indexd,
+     updates datanode with file_name, _size and md5."""
+    ctx.ensure_object(dict)
+    project_path = Path(project_path)
+    pathlib.Path(output_path).mkdir(parents=True, exist_ok=True)
+    for synthetic_data_path in list(project_path.glob('**/*.json')):
+        updated_records = []
+        for record in json.load(open(synthetic_data_path, "r")):
+            if 'file_name' not in record:
+                break
+            synthetic_file_path = f"{record['file_name'].replace('tests/fixtures/projects/MyFirstProject/DATA/', '')}"
+            if output_path not in synthetic_file_path:
+                synthetic_file_path = f"{output_path}/{synthetic_file_path}".replace('//', '/')
+            with open(synthetic_file_path, "w") as fp:
+                # write random number of lines of dna of random length
+                fp.writelines([fake.dna(randint(80, 256)) for x in range(randint(20, 100))])
+            md5, file_size = file_attributes(synthetic_file_path)
+            record["md5sum"] = md5
+            record["file_size"] = file_size
+            record["file_name"] = synthetic_file_path
+            updated_records.append(record)
+        if len(updated_records) > 0:
+            with open(synthetic_data_path, "w") as fp:
+                json.dump(updated_records, fp, indent=4)
+                print(f"Created synthetic files for records in {synthetic_data_path}")
+
+
+if __name__ == '__main__':
+    # set logging to warning, since gen3.submission logs a verbose INFO message on each call :-()
+    log_fmt = "%(asctime)s %(name)s %(levelname)s : %(message)s"
+    logging.basicConfig(level=logging.WARNING, format=log_fmt)
+    # set gen3's logger as well
+    get_gen3_logger('__name__', log_level='warn', format=log_fmt)
+    cli()

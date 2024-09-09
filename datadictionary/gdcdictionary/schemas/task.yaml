@@ -1,0 +1,1635 @@
+$schema: http://json-schema.org/draft-04/schema#
+additionalProperties: false
+category: Analysis
+description: " A task to be performed.\n     http://hl7.org/fhir/task"
+id: task
+links:
+- backref: tasks
+  label: Task_focus_specimen
+  multiplicity: many_to_many
+  name: focus_specimen
+  required: false
+  target_type: specimen
+- backref: tasks
+  label: Task_for_patient
+  multiplicity: many_to_many
+  name: for_patient
+  required: true
+  target_type: patient
+- backref: tasks
+  label: Task_output_document_reference
+  multiplicity: many_to_many
+  name: output_document_reference
+  required: true
+  target_type: document_reference
+namespace: http://hl7.org/fhir
+program: '*'
+project: '*'
+properties:
+  authoredOn:
+    description: Task Creation Date.
+    type:
+    - string
+    - 'null'
+  businessStatus_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  businessStatus_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  businessStatus_coding_0_system:
+    description: E.g. "Specimen collected", "IV prepped".. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  code_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  code_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  code_coding_0_system:
+    description: A name or code (or both) briefly describing what the task involves..
+      Code defined by a terminology system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  created_datetime:
+    $ref: _definitions.yaml#/datetime
+  description:
+    description: Human-readable explanation of task.
+    type:
+    - string
+    - 'null'
+  executionPeriod_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  executionPeriod_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  groupIdentifier_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  groupIdentifier_use:
+    description: Requisition or grouper id.. The purpose of this identifier.. http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: Requisition or grouper id.. The purpose of this identifier.. http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  groupIdentifier_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  id:
+    description: Logical id of this artifact.
+    type:
+    - string
+    - 'null'
+  identifier_0_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  identifier_0_use:
+    description: Task Instance Identifier.. The purpose of this identifier.. http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: Task Instance Identifier.. The purpose of this identifier.. http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  identifier_0_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  input_0_type_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  input_0_type_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  input_0_type_coding_0_system:
+    description: Label for the input.. Code defined by a terminology system.. Identity
+      of the terminology system.
+    type:
+    - string
+    - 'null'
+  input_0_valueAttachment_contentType:
+    description: Mime type of the content, with charset etc..
+    type:
+    - string
+    - 'null'
+  input_0_valueAttachment_creation:
+    description: Date attachment was first created.
+    type:
+    - string
+    - 'null'
+  input_0_valueAttachment_data:
+    description: Data inline, base64ed.
+    type:
+    - string
+    - 'null'
+  input_0_valueAttachment_hash:
+    description: Hash of the data (sha-1, base64ed).
+    type:
+    - string
+    - 'null'
+  input_0_valueAttachment_language:
+    description: Human language of the content (BCP-47).
+    type:
+    - string
+    - 'null'
+  input_0_valueAttachment_size:
+    description: Number of bytes of content (if url provided).
+    type:
+    - number
+    - 'null'
+  input_0_valueAttachment_title:
+    description: Label to display in place of the data.
+    type:
+    - string
+    - 'null'
+  input_0_valueAttachment_url:
+    description: Uri where the data can be found.
+    type:
+    - string
+    - 'null'
+  input_0_valueBase64Binary:
+    description: Content to use in performing the task.
+    type:
+    - string
+  input_0_valueBoolean:
+    description: Content to use in performing the task.
+    type:
+    - boolean
+  input_0_valueCanonical:
+    description: Content to use in performing the task.
+    type:
+    - string
+  input_0_valueCode:
+    description: Content to use in performing the task.
+    type:
+    - string
+  input_0_valueCodeableConcept_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  input_0_valueCodeableConcept_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  input_0_valueCodeableConcept_coding_0_system:
+    description: Content to use in performing the task.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  input_0_valueCoding_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  input_0_valueCoding_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  input_0_valueCoding_system:
+    description: Content to use in performing the task.. Identity of the terminology
+      system.
+    type:
+    - string
+    - 'null'
+  input_0_valueContactDetail_name:
+    description: Name of an individual to contact.
+    type:
+    - string
+    - 'null'
+  input_0_valueContributor_contact_0_name:
+    description: Name of an individual to contact.
+    type:
+    - string
+    - 'null'
+  input_0_valueContributor_name:
+    description: Who contributed the content.
+    type:
+    - string
+  input_0_valueContributor_type:
+    description: The type of contributor.. http://hl7.org/fhir/contributor-type
+    enum:
+    - author
+    - editor
+    - reviewer
+    - endorser
+    term:
+      description: The type of contributor.. http://hl7.org/fhir/contributor-type
+      termDef:
+        cde_id: http://hl7.org/fhir/contributor-type
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/contributor-type
+        term_url: http://hl7.org/fhir/contributor-type
+  input_0_valueCount_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  input_0_valueCount_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.
+    type:
+    - string
+    - 'null'
+  input_0_valueCount_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  input_0_valueCount_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  input_0_valueCount_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  input_0_valueDataRequirement_codeFilter_0_path:
+    description: A code-valued attribute to filter on.
+    type:
+    - string
+    - 'null'
+  input_0_valueDataRequirement_codeFilter_0_searchParam:
+    description: A coded (token) parameter to search on.
+    type:
+    - string
+    - 'null'
+  input_0_valueDataRequirement_codeFilter_0_valueSet:
+    description: Valueset for the filter.
+    type:
+    - string
+    - 'null'
+  input_0_valueDataRequirement_dateFilter_0_path:
+    description: A date-valued attribute to filter on.
+    type:
+    - string
+    - 'null'
+  input_0_valueDataRequirement_dateFilter_0_searchParam:
+    description: A date valued parameter to search on.
+    type:
+    - string
+    - 'null'
+  input_0_valueDataRequirement_dateFilter_0_valueDateTime:
+    description: The value of the filter, as a Period, DateTime, or Duration value.
+    type:
+    - string
+    - 'null'
+  input_0_valueDataRequirement_limit:
+    description: Number of results.
+    type:
+    - number
+    - 'null'
+  input_0_valueDataRequirement_mustSupport:
+    description: Indicates specific structure elements that are referenced by the
+      knowledge module.
+    type:
+    - string
+    - 'null'
+  input_0_valueDataRequirement_profile:
+    description: The profile of the required data.
+    type:
+    - string
+    - 'null'
+  input_0_valueDataRequirement_sort_0_direction:
+    description: The direction of the sort, ascending or descending.. http://hl7.org/fhir/sort-direction
+    enum:
+    - ascending
+    - descending
+    term:
+      description: The direction of the sort, ascending or descending.. http://hl7.org/fhir/sort-direction
+      termDef:
+        cde_id: http://hl7.org/fhir/sort-direction
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/sort-direction
+        term_url: http://hl7.org/fhir/sort-direction
+  input_0_valueDataRequirement_sort_0_path:
+    description: The name of the attribute to perform the sort.
+    type:
+    - string
+  input_0_valueDataRequirement_subjectReference_reference:
+    description: E.g. Patient, Practitioner, RelatedPerson, Organization, Location,
+      Device.. Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  input_0_valueDataRequirement_subjectReference_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  input_0_valueDataRequirement_type:
+    description: The type of the required data.
+    type:
+    - string
+  input_0_valueDate:
+    description: Content to use in performing the task.
+    type:
+    - string
+  input_0_valueDateTime:
+    description: Content to use in performing the task.
+    type:
+    - string
+  input_0_valueDecimal:
+    description: Content to use in performing the task.
+    type:
+    - number
+  input_0_valueDistance_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  input_0_valueDistance_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.
+    type:
+    - string
+    - 'null'
+  input_0_valueDistance_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  input_0_valueDistance_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  input_0_valueDistance_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  input_0_valueDosage_asNeededBoolean:
+    description: Take "as needed" (for x).
+    type:
+    - boolean
+    - 'null'
+  input_0_valueDosage_maxDosePerAdministration_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  input_0_valueDosage_maxDosePerAdministration_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  input_0_valueDosage_maxDosePerAdministration_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  input_0_valueDosage_maxDosePerAdministration_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  input_0_valueDosage_maxDosePerAdministration_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  input_0_valueDosage_maxDosePerLifetime_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  input_0_valueDosage_maxDosePerLifetime_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  input_0_valueDosage_maxDosePerLifetime_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  input_0_valueDosage_maxDosePerLifetime_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  input_0_valueDosage_maxDosePerLifetime_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  input_0_valueDosage_patientInstruction:
+    description: Patient or consumer oriented instructions.
+    type:
+    - string
+    - 'null'
+  input_0_valueDosage_sequence:
+    description: The order of the dosage instructions.
+    type:
+    - number
+    - 'null'
+  input_0_valueDosage_text:
+    description: Free text dosage instructions e.g. SIG.
+    type:
+    - string
+    - 'null'
+  input_0_valueDosage_timing_event:
+    description: When the event occurs.
+    type:
+    - string
+    - 'null'
+  input_0_valueDuration_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  input_0_valueDuration_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.
+    type:
+    - string
+    - 'null'
+  input_0_valueDuration_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  input_0_valueDuration_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  input_0_valueDuration_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  input_0_valueExpression_description:
+    description: Natural language description of the condition.
+    type:
+    - string
+    - 'null'
+  input_0_valueExpression_expression:
+    description: Expression in specified language.
+    type:
+    - string
+    - 'null'
+  input_0_valueExpression_language:
+    description: The media type of the language for the expression.. http://hl7.org/fhir/expression-language
+      text/cql|text/fhirpath|application/x-fhir-query
+    term:
+      description: The media type of the language for the expression.. http://hl7.org/fhir/expression-language
+        text/cql|text/fhirpath|application/x-fhir-query
+      termDef:
+        cde_id: http://hl7.org/fhir/expression-language
+        cde_version: null
+        source: fhir
+        strength: extensible
+        term: http://hl7.org/fhir/expression-language
+        term_url: http://hl7.org/fhir/expression-language
+    type:
+    - string
+  input_0_valueExpression_name:
+    description: Short name assigned to expression for reuse.
+    type:
+    - string
+    - 'null'
+  input_0_valueExpression_reference:
+    description: Where the expression is found.
+    type:
+    - string
+    - 'null'
+  input_0_valueId:
+    description: Content to use in performing the task.
+    type:
+    - string
+  input_0_valueIdentifier_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  input_0_valueIdentifier_use:
+    description: Content to use in performing the task.. The purpose of this identifier..
+      http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: Content to use in performing the task.. The purpose of this identifier..
+        http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  input_0_valueIdentifier_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  input_0_valueInstant:
+    description: Content to use in performing the task.
+    type:
+    - string
+  input_0_valueInteger:
+    description: Content to use in performing the task.
+    type:
+    - number
+  input_0_valueMarkdown:
+    description: Content to use in performing the task.
+    type:
+    - string
+  input_0_valueMeta_lastUpdated:
+    description: When the resource version last changed.
+    type:
+    - string
+    - 'null'
+  input_0_valueMeta_profile:
+    description: Profiles this resource claims to conform to.
+    type:
+    - string
+    - 'null'
+  input_0_valueMeta_security_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  input_0_valueMeta_security_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  input_0_valueMeta_security_0_system:
+    description: Security Labels applied to this resource.. Identity of the terminology
+      system.
+    type:
+    - string
+    - 'null'
+  input_0_valueMeta_source:
+    description: Identifies where the resource comes from.
+    type:
+    - string
+    - 'null'
+  input_0_valueMeta_tag_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  input_0_valueMeta_tag_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  input_0_valueMeta_tag_0_system:
+    description: Tags applied to this resource.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  input_0_valueMeta_versionId:
+    description: Version specific identifier.
+    type:
+    - string
+    - 'null'
+  input_0_valueMoney_currency:
+    description: ISO 4217 Currency Code.
+    type:
+    - string
+    - 'null'
+  input_0_valueMoney_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  input_0_valueOid:
+    description: Content to use in performing the task.
+    type:
+    - string
+  input_0_valueParameterDefinition_documentation:
+    description: A brief description of the parameter.
+    type:
+    - string
+    - 'null'
+  input_0_valueParameterDefinition_max:
+    description: Maximum cardinality (a number of *).
+    type:
+    - string
+    - 'null'
+  input_0_valueParameterDefinition_min:
+    description: Minimum cardinality.
+    type:
+    - number
+    - 'null'
+  input_0_valueParameterDefinition_name:
+    description: Name used to access the parameter value.
+    type:
+    - string
+    - 'null'
+  input_0_valueParameterDefinition_profile:
+    description: What profile the value is expected to be.
+    type:
+    - string
+    - 'null'
+  input_0_valueParameterDefinition_type:
+    description: What type of value.
+    type:
+    - string
+  input_0_valueParameterDefinition_use:
+    description: Whether the parameter is input or output for the module.. http://hl7.org/fhir/operation-parameter-use
+    enum:
+    - in
+    - out
+    term:
+      description: Whether the parameter is input or output for the module.. http://hl7.org/fhir/operation-parameter-use
+      termDef:
+        cde_id: http://hl7.org/fhir/operation-parameter-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/operation-parameter-use
+        term_url: http://hl7.org/fhir/operation-parameter-use
+  input_0_valuePeriod_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  input_0_valuePeriod_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  input_0_valuePositiveInt:
+    description: Content to use in performing the task.
+    type:
+    - number
+  input_0_valueQuantity_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  input_0_valueQuantity_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  input_0_valueQuantity_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  input_0_valueQuantity_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  input_0_valueQuantity_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  input_0_valueRange_high_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  input_0_valueRange_high_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  input_0_valueRange_high_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  input_0_valueRange_high_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  input_0_valueRange_high_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  input_0_valueRange_low_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  input_0_valueRange_low_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  input_0_valueRange_low_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  input_0_valueRange_low_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  input_0_valueRange_low_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  input_0_valueRatio_denominator_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  input_0_valueRatio_denominator_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  input_0_valueRatio_denominator_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  input_0_valueRatio_denominator_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  input_0_valueRatio_denominator_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  input_0_valueRatio_numerator_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  input_0_valueRatio_numerator_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  input_0_valueRatio_numerator_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  input_0_valueRatio_numerator_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  input_0_valueRatio_numerator_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  input_0_valueReference_reference:
+    description: Content to use in performing the task.. Literal reference, Relative,
+      internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  input_0_valueReference_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  input_0_valueRelatedArtifact_citation:
+    description: Bibliographic citation for the artifact.
+    type:
+    - string
+    - 'null'
+  input_0_valueRelatedArtifact_display:
+    description: Brief description of the related artifact.
+    type:
+    - string
+    - 'null'
+  input_0_valueRelatedArtifact_document_contentType:
+    description: Mime type of the content, with charset etc..
+    type:
+    - string
+    - 'null'
+  input_0_valueRelatedArtifact_document_creation:
+    description: Date attachment was first created.
+    type:
+    - string
+    - 'null'
+  input_0_valueRelatedArtifact_document_data:
+    description: Data inline, base64ed.
+    type:
+    - string
+    - 'null'
+  input_0_valueRelatedArtifact_document_hash:
+    description: Hash of the data (sha-1, base64ed).
+    type:
+    - string
+    - 'null'
+  input_0_valueRelatedArtifact_document_language:
+    description: Human language of the content (BCP-47).
+    type:
+    - string
+    - 'null'
+  input_0_valueRelatedArtifact_document_size:
+    description: Number of bytes of content (if url provided).
+    type:
+    - number
+    - 'null'
+  input_0_valueRelatedArtifact_document_title:
+    description: Label to display in place of the data.
+    type:
+    - string
+    - 'null'
+  input_0_valueRelatedArtifact_document_url:
+    description: Uri where the data can be found.
+    type:
+    - string
+    - 'null'
+  input_0_valueRelatedArtifact_label:
+    description: Short label.
+    type:
+    - string
+    - 'null'
+  input_0_valueRelatedArtifact_resource:
+    description: What resource is being referenced.
+    type:
+    - string
+    - 'null'
+  input_0_valueRelatedArtifact_type:
+    description: The type of relationship to the related artifact.. http://hl7.org/fhir/related-artifact-type
+    enum:
+    - documentation
+    - justification
+    - citation
+    - predecessor
+    - successor
+    - derived-from
+    - depends-on
+    - composed-of
+    term:
+      description: The type of relationship to the related artifact.. http://hl7.org/fhir/related-artifact-type
+      termDef:
+        cde_id: http://hl7.org/fhir/related-artifact-type
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/related-artifact-type
+        term_url: http://hl7.org/fhir/related-artifact-type
+  input_0_valueRelatedArtifact_url:
+    description: Where the artifact can be accessed.
+    type:
+    - string
+    - 'null'
+  input_0_valueSampledData_data:
+    description: Decimal values with spaces, or "E" | "U" | "L".
+    type:
+    - string
+    - 'null'
+  input_0_valueSampledData_dimensions:
+    description: Number of sample points at each time point.
+    type:
+    - number
+  input_0_valueSampledData_factor:
+    description: Multiply data by this before adding to origin.
+    type:
+    - number
+    - 'null'
+  input_0_valueSampledData_lowerLimit:
+    description: Lower limit of detection.
+    type:
+    - number
+    - 'null'
+  input_0_valueSampledData_origin_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  input_0_valueSampledData_origin_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  input_0_valueSampledData_origin_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  input_0_valueSampledData_origin_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  input_0_valueSampledData_origin_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  input_0_valueSampledData_period:
+    description: Number of milliseconds between samples.
+    type:
+    - number
+  input_0_valueSampledData_upperLimit:
+    description: Upper limit of detection.
+    type:
+    - number
+    - 'null'
+  input_0_valueSignature_data:
+    description: The actual signature content (XML DigSig. JWS, picture, etc.).
+    type:
+    - string
+    - 'null'
+  input_0_valueSignature_onBehalfOf_reference:
+    description: The party represented.. Literal reference, Relative, internal or
+      absolute URL.
+    type:
+    - string
+    - 'null'
+  input_0_valueSignature_onBehalfOf_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  input_0_valueSignature_sigFormat:
+    description: The technical format of the signature.
+    type:
+    - string
+    - 'null'
+  input_0_valueSignature_targetFormat:
+    description: The technical format of the signed resources.
+    type:
+    - string
+    - 'null'
+  input_0_valueSignature_type_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  input_0_valueSignature_type_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  input_0_valueSignature_type_0_system:
+    description: Indication of the reason the entity signed the object(s).. Identity
+      of the terminology system.
+    type:
+    - string
+    - 'null'
+  input_0_valueSignature_when:
+    description: When the signature was created.
+    type:
+    - string
+  input_0_valueSignature_who_reference:
+    description: Who signed.. Literal reference, Relative, internal or absolute URL.
+    type:
+    - string
+    - 'null'
+  input_0_valueSignature_who_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  input_0_valueString:
+    description: Content to use in performing the task.
+    type:
+    - string
+  input_0_valueTime:
+    description: Content to use in performing the task.
+    type:
+    - string
+  input_0_valueTiming_event:
+    description: When the event occurs.
+    type:
+    - string
+    - 'null'
+  input_0_valueTiming_repeat_count:
+    description: Number of times to repeat.
+    type:
+    - number
+    - 'null'
+  input_0_valueTiming_repeat_countMax:
+    description: Maximum number of times to repeat.
+    type:
+    - number
+    - 'null'
+  input_0_valueTiming_repeat_dayOfWeek:
+    description: If one or more days of week is provided, then the action happens
+      only on the specified day(s).. http://hl7.org/fhir/days-of-week
+    enum:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+    - sat
+    - sun
+    term:
+      description: If one or more days of week is provided, then the action happens
+        only on the specified day(s).. http://hl7.org/fhir/days-of-week
+      termDef:
+        cde_id: http://hl7.org/fhir/days-of-week
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/days-of-week
+        term_url: http://hl7.org/fhir/days-of-week
+  input_0_valueTiming_repeat_duration:
+    description: How long when it happens.
+    type:
+    - number
+    - 'null'
+  input_0_valueTiming_repeat_durationMax:
+    description: How long when it happens (Max).
+    type:
+    - number
+    - 'null'
+  input_0_valueTiming_repeat_durationUnit:
+    description: s | min | h | d | wk | mo | a - unit of time (UCUM).
+    type:
+    - string
+    - 'null'
+  input_0_valueTiming_repeat_frequency:
+    description: Event occurs frequency times per period.
+    type:
+    - number
+    - 'null'
+  input_0_valueTiming_repeat_frequencyMax:
+    description: Event occurs up to frequencyMax times per period.
+    type:
+    - number
+    - 'null'
+  input_0_valueTiming_repeat_offset:
+    description: Minutes from event (before or after).
+    type:
+    - number
+    - 'null'
+  input_0_valueTiming_repeat_period:
+    description: Event occurs frequency times per period.
+    type:
+    - number
+    - 'null'
+  input_0_valueTiming_repeat_periodMax:
+    description: Upper limit of period (3-4 hours).
+    type:
+    - number
+    - 'null'
+  input_0_valueTiming_repeat_periodUnit:
+    description: s | min | h | d | wk | mo | a - unit of time (UCUM).
+    type:
+    - string
+    - 'null'
+  input_0_valueTiming_repeat_timeOfDay:
+    description: Time of day for action.
+    type:
+    - string
+    - 'null'
+  input_0_valueTiming_repeat_when:
+    description: Code for time period of occurrence.
+    type:
+    - string
+    - 'null'
+  input_0_valueTriggerDefinition_condition_description:
+    description: Natural language description of the condition.
+    type:
+    - string
+    - 'null'
+  input_0_valueTriggerDefinition_condition_expression:
+    description: Expression in specified language.
+    type:
+    - string
+    - 'null'
+  input_0_valueTriggerDefinition_condition_language:
+    description: The media type of the language for the expression.. http://hl7.org/fhir/expression-language
+      text/cql|text/fhirpath|application/x-fhir-query
+    term:
+      description: The media type of the language for the expression.. http://hl7.org/fhir/expression-language
+        text/cql|text/fhirpath|application/x-fhir-query
+      termDef:
+        cde_id: http://hl7.org/fhir/expression-language
+        cde_version: null
+        source: fhir
+        strength: extensible
+        term: http://hl7.org/fhir/expression-language
+        term_url: http://hl7.org/fhir/expression-language
+    type:
+    - string
+  input_0_valueTriggerDefinition_condition_name:
+    description: Short name assigned to expression for reuse.
+    type:
+    - string
+    - 'null'
+  input_0_valueTriggerDefinition_condition_reference:
+    description: Where the expression is found.
+    type:
+    - string
+    - 'null'
+  input_0_valueTriggerDefinition_data_0_limit:
+    description: Number of results.
+    type:
+    - number
+    - 'null'
+  input_0_valueTriggerDefinition_data_0_mustSupport:
+    description: Indicates specific structure elements that are referenced by the
+      knowledge module.
+    type:
+    - string
+    - 'null'
+  input_0_valueTriggerDefinition_data_0_profile:
+    description: The profile of the required data.
+    type:
+    - string
+    - 'null'
+  input_0_valueTriggerDefinition_data_0_type:
+    description: The type of the required data.
+    type:
+    - string
+  input_0_valueTriggerDefinition_name:
+    description: Name or URI that identifies the event.
+    type:
+    - string
+    - 'null'
+  input_0_valueTriggerDefinition_timingDate:
+    description: Timing of the event.
+    type:
+    - string
+    - 'null'
+  input_0_valueTriggerDefinition_timingDateTime:
+    description: Timing of the event.
+    type:
+    - string
+    - 'null'
+  input_0_valueTriggerDefinition_timingReference_reference:
+    description: Timing of the event.. Literal reference, Relative, internal or absolute
+      URL.
+    type:
+    - string
+    - 'null'
+  input_0_valueTriggerDefinition_timingReference_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  input_0_valueTriggerDefinition_timingTiming_event:
+    description: When the event occurs.
+    type:
+    - string
+    - 'null'
+  input_0_valueTriggerDefinition_type:
+    description: The type of triggering event.. http://hl7.org/fhir/trigger-type
+    enum:
+    - named-event
+    - periodic
+    - data-changed
+    - data-added
+    - data-modified
+    - data-removed
+    - data-accessed
+    - data-access-ended
+    term:
+      description: The type of triggering event.. http://hl7.org/fhir/trigger-type
+      termDef:
+        cde_id: http://hl7.org/fhir/trigger-type
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/trigger-type
+        term_url: http://hl7.org/fhir/trigger-type
+  input_0_valueUnsignedInt:
+    description: Content to use in performing the task.
+    type:
+    - number
+  input_0_valueUri:
+    description: Content to use in performing the task.
+    type:
+    - string
+  input_0_valueUrl:
+    description: Content to use in performing the task.
+    type:
+    - string
+  input_0_valueUsageContext_code_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  input_0_valueUsageContext_code_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  input_0_valueUsageContext_code_system:
+    description: Type of context being specified.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  input_0_valueUsageContext_valueQuantity_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  input_0_valueUsageContext_valueQuantity_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  input_0_valueUsageContext_valueQuantity_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  input_0_valueUsageContext_valueQuantity_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  input_0_valueUsageContext_valueQuantity_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  input_0_valueUsageContext_valueReference_reference:
+    description: Value that defines the context.. Literal reference, Relative, internal
+      or absolute URL.
+    type:
+    - string
+    - 'null'
+  input_0_valueUsageContext_valueReference_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  input_0_valueUuid:
+    description: Content to use in performing the task.
+    type:
+    - string
+  instantiatesCanonical:
+    description: Formal definition of task.
+    type:
+    - string
+    - 'null'
+  instantiatesUri:
+    description: Formal definition of task.
+    type:
+    - string
+    - 'null'
+  intent:
+    description: unknown | proposal | plan | order | original-order | reflex-order
+      | filler-order | instance-order | option.
+    type:
+    - string
+  language:
+    description: Language of the resource content.
+    type:
+    - string
+    - 'null'
+  lastModified:
+    description: Task Last Modified Date.
+    type:
+    - string
+    - 'null'
+  performerType_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  performerType_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  performerType_0_coding_0_system:
+    description: Requested performer.. Code defined by a terminology system.. Identity
+      of the terminology system.
+    type:
+    - string
+    - 'null'
+  priority:
+    description: Indicates how quickly the Task should be addressed with respect to
+      other requests.. http://hl7.org/fhir/request-priority
+    enum:
+    - routine
+    - urgent
+    - asap
+    - stat
+    term:
+      description: Indicates how quickly the Task should be addressed with respect
+        to other requests.. http://hl7.org/fhir/request-priority
+      termDef:
+        cde_id: http://hl7.org/fhir/request-priority
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/request-priority
+        term_url: http://hl7.org/fhir/request-priority
+  project_id:
+    $ref: _definitions.yaml#/project_id
+  reasonCode_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  reasonCode_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  reasonCode_coding_0_system:
+    description: Why task is needed.. Code defined by a terminology system.. Identity
+      of the terminology system.
+    type:
+    - string
+    - 'null'
+  resource_type:
+    description: ''
+    type:
+    - string
+    - 'null'
+  restriction_period_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  restriction_period_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  restriction_recipient_0_reference:
+    description: For whom is fulfillment sought?.. Literal reference, Relative, internal
+      or absolute URL.
+    type:
+    - string
+    - 'null'
+  restriction_recipient_0_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  restriction_repetitions:
+    description: How many times to repeat.
+    type:
+    - number
+    - 'null'
+  state:
+    $ref: _definitions.yaml#/state
+  status:
+    description: The current status of the task.. http://hl7.org/fhir/task-status
+    enum:
+    - draft
+    - requested
+    - received
+    - accepted
+    - rejected
+    - ready
+    - cancelled
+    - in-progress
+    - on-hold
+    - failed
+    - completed
+    - entered-in-error
+    term:
+      description: The current status of the task.. http://hl7.org/fhir/task-status
+      termDef:
+        cde_id: http://hl7.org/fhir/task-status
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/task-status
+        term_url: http://hl7.org/fhir/task-status
+  statusReason_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  statusReason_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  statusReason_coding_0_system:
+    description: Reason for current status.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  submitter_id:
+    type:
+    - string
+    - 'null'
+  updated_datetime:
+    $ref: _definitions.yaml#/datetime
+required:
+- submitter_id
+- status
+- intent
+submittable: true
+systemProperties:
+- id
+- project_id
+- created_datetime
+- updated_datetime
+- state
+title: Task
+type: object
+uniqueKeys:
+- - id
+- - project_id
+  - submitter_id
+validators: null

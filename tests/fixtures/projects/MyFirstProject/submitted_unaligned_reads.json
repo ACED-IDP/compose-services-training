@@ -1,0 +1,162 @@
+[
+    {
+        "consent_codes": [],
+        "data_category": "Sequencing Reads",
+        "data_format": "BAM",
+        "data_type": "Unaligned Reads",
+        "experimental_strategy": "Low Pass WGS",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/bd1b4ff3a2",
+        "file_size": 15730,
+        "md5sum": "9b8ba49b069a0d58eef817dc6d59a5b0",
+        "read_groups": {
+            "submitter_id": "read_group_f0cf62050c"
+        },
+        "submitter_id": "submitted_unaligned_reads_40a83db5ed",
+        "type": "submitted_unaligned_reads",
+        "object_id": "FOOBAR:7eebcd8c-0827-4c19-9aa9-bc257b76e368"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Raw Sequencing Data",
+        "data_format": "BAM",
+        "data_type": "Unaligned Reads",
+        "experimental_strategy": "WXS",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/d680a469fa",
+        "file_size": 12120,
+        "md5sum": "ad06662d151939637f66aabd25a92b80",
+        "read_groups": {
+            "submitter_id": "read_group_d60aefd861"
+        },
+        "submitter_id": "submitted_unaligned_reads_ffe6241984",
+        "type": "submitted_unaligned_reads",
+        "object_id": "FOOBAR:384aada5-f05a-46af-b402-d3895b8b115e"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Raw Sequencing Data",
+        "data_format": "FASTQ",
+        "data_type": "Unaligned Reads",
+        "experimental_strategy": "WGS",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/f2c6a324a9",
+        "file_size": 15967,
+        "md5sum": "7f989788fc0685a67a9b7682e0c4b7a6",
+        "read_groups": {
+            "submitter_id": "read_group_97b9f3a09c"
+        },
+        "submitter_id": "submitted_unaligned_reads_974543499c",
+        "type": "submitted_unaligned_reads",
+        "object_id": "FOOBAR:3b7133af-73a3-46e0-a7da-4421916aff34"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Sequencing Data",
+        "data_format": "BAM",
+        "data_type": "Unaligned Reads",
+        "experimental_strategy": "DNA Panel",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/5d9a7b5526",
+        "file_size": 14933,
+        "md5sum": "991f0331d52745efe1b5127a63791971",
+        "read_groups": {
+            "submitter_id": "read_group_87934435e4"
+        },
+        "submitter_id": "submitted_unaligned_reads_679c62ebc5",
+        "type": "submitted_unaligned_reads",
+        "object_id": "FOOBAR:90d5d8ab-5e6b-4764-abb3-94b4e6f1248c"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Sequencing Data",
+        "data_format": "FASTQ",
+        "data_type": "Unaligned Reads",
+        "experimental_strategy": "Validation",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/170a3f2151",
+        "file_size": 6337,
+        "md5sum": "18a94cdd1a1c4168f5970e737874a9de",
+        "read_groups": {
+            "submitter_id": "read_group_46efa8704d"
+        },
+        "submitter_id": "submitted_unaligned_reads_8302bf514e",
+        "type": "submitted_unaligned_reads",
+        "object_id": "FOOBAR:71960e9b-9e2b-4d40-8c2c-4d04c186b6ad"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Sequencing Data",
+        "data_format": "FASTQ",
+        "data_type": "Unaligned Reads",
+        "experimental_strategy": "Validation",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/9bc8bbd8b5",
+        "file_size": 9699,
+        "md5sum": "096e902184a20a244d0890f34963f829",
+        "read_groups": {
+            "submitter_id": "read_group_13370d92c6"
+        },
+        "submitter_id": "submitted_unaligned_reads_406f9bbed3",
+        "type": "submitted_unaligned_reads",
+        "object_id": "FOOBAR:2b7298eb-020f-4ab5-bf99-5cd871cefd6f"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Sequencing Reads",
+        "data_format": "FASTQ",
+        "data_type": "Unaligned Reads",
+        "experimental_strategy": "Total RNA-Seq",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/b48f1f33e6",
+        "file_size": 10812,
+        "md5sum": "e60cab31b5c3eeae90cf1ab7a56630cd",
+        "read_groups": {
+            "submitter_id": "read_group_d8f57d6e60"
+        },
+        "submitter_id": "submitted_unaligned_reads_06bd6d8849",
+        "type": "submitted_unaligned_reads",
+        "object_id": "FOOBAR:f1c2a870-07e5-4d6c-87a1-1cfccff50523"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Sequencing Data",
+        "data_format": "FASTQ",
+        "data_type": "Unaligned Reads",
+        "experimental_strategy": "miRNA-Seq",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/eb76ad1e47",
+        "file_size": 7051,
+        "md5sum": "f406adf12488a33c9250a0b997dd44b2",
+        "read_groups": {
+            "submitter_id": "read_group_fda909e6d3"
+        },
+        "submitter_id": "submitted_unaligned_reads_d44a55bf88",
+        "type": "submitted_unaligned_reads",
+        "object_id": "FOOBAR:776671aa-dc0f-47c5-98da-97e73a97d6f2"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Sequencing Reads",
+        "data_format": "FASTQ",
+        "data_type": "Unaligned Reads",
+        "experimental_strategy": "DNA Panel",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/e416b66d05",
+        "file_size": 10036,
+        "md5sum": "cd8db33533d1091a2b58133e1de089da",
+        "read_groups": {
+            "submitter_id": "read_group_8d4f758280"
+        },
+        "submitter_id": "submitted_unaligned_reads_9063462325",
+        "type": "submitted_unaligned_reads",
+        "object_id": "FOOBAR:ad39d83e-e294-4364-9074-fe49fbc5e034"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Sequencing Reads",
+        "data_format": "BAM",
+        "data_type": "Unaligned Reads",
+        "experimental_strategy": "Total RNA-Seq",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/e5d267b854",
+        "file_size": 12997,
+        "md5sum": "fc1d4bc4306f479f2959f5706173c1cc",
+        "read_groups": {
+            "submitter_id": "read_group_c8a6fa2d29"
+        },
+        "submitter_id": "submitted_unaligned_reads_593e312dde",
+        "type": "submitted_unaligned_reads",
+        "object_id": "FOOBAR:9a60c94d-a4ae-4d20-a9d8-ce7388057ec4"
+    }
+]

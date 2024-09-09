@@ -1,0 +1,179 @@
+version: '3'
+
+
+# Settings and configurations that are common for all minio containers
+x-minio-common: &minio-common
+  image: quay.io/minio/minio:RELEASE.2022-09-01T23-53-36Z
+  expose:
+    - "9000"
+    - "9001"
+  environment:
+     MINIO_ROOT_USER: "${MINIO_ROOT_USER}"
+     MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD}"
+     MINIO_NOTIFY_WEBHOOK_ENABLE_PRIMARY: on
+     MINIO_NOTIFY_WEBHOOK_ENDPOINT_PRIMARY: http://minio-webhook:3000/file-uploaded
+
+  networks:
+    - devnet
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+    interval: 30s
+    timeout: 20s
+    retries: 3
+
+services:
+# starts 5 docker containers running minio server instances.
+# using nginx reverse proxy, load balancing, you can access
+# it through port 9000.
+  minio-default:
+    <<: *minio-common
+    hostname: minio-default
+    container_name: minio-default
+    command: server --console-address ":9001" http://minio-default/data{1...2}
+    volumes:
+      - data1-1:/data1
+      - data1-2:/data2
+
+  minio-ohsu:
+    <<: *minio-common
+    hostname: minio-ohsu
+    container_name: minio-ohsu
+    command: server --console-address ":9001" http://minio-ohsu/data{1...2}
+    volumes:
+      - data2-1:/data1
+      - data2-2:/data2
+
+  minio-ucl:
+    <<: *minio-common
+    hostname: minio-ucl
+    container_name: minio-ucl
+    command: server --console-address ":9001" http://minio-ucl/data{1...2}
+    volumes:
+      - data3-1:/data1
+      - data3-2:/data2
+
+  minio-manchester:
+    <<: *minio-common
+    hostname: minio-manchester
+    container_name: minio-manchester
+    command: server --console-address ":9001" http://minio-manchester/data{1...2}
+    volumes:
+      - data4-1:/data1
+      - data4-2:/data2
+
+  minio-stanford:
+    <<: *minio-common
+    hostname: minio-stanford
+    container_name: minio-stanford
+    command: server --console-address ":9001" http://minio-stanford/data{1...2}
+    volumes:
+      - data5-1:/data1
+      - data5-2:/data2
+
+
+  #
+  # adds minio dependencies to revproxy
+  #
+  revproxy-service:
+    depends_on:
+      - arborist-service
+      - indexd-service
+      - peregrine-service
+      - sheepdog-service
+      - fence-service
+      - portal-service
+      - pidgin-service
+      - minio-default
+      - minio-ohsu
+      - minio-ucl
+      - minio-manchester
+      - minio-stanford
+
+## create an etl container to hold our command line tools
+  etl-service:
+    build: etl
+    hostname: etl-service
+    container_name: etl-service
+    command: tail -f /dev/null
+    networks:
+      - devnet
+    depends_on:
+      - minio-default
+      - minio-ohsu
+      - minio-ucl
+      - minio-manchester
+      - minio-stanford
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+## create a web-hook container handle events
+  minio-webhook:
+    build: minio-webhook
+    hostname: minio-webhook
+    container_name: minio-webhook
+    expose:
+      - "3000"
+    command: uvicorn main:app --reload --host 0.0.0.0 --port 3000
+    networks:
+      - devnet
+    volumes:
+      - ./minio-webhook:/minio-webhook
+    depends_on:
+      - minio-default
+      - minio-ohsu
+      - minio-ucl
+      - minio-manchester
+      - minio-stanford
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+
+# expose postgres to host os
+
+  postgres:
+    ports:
+      - 5432:5432
+
+# adds fhir service
+  fhir-service:
+    image: "hapiproject/hapi:v6.1.0"
+    ports:
+      - "8090:8080"
+    volumes:
+      - ./fhir/data:/data/hapi
+    environment:
+      SPRING_CONFIG_LOCATION: 'file:///data/hapi/application.yaml'
+    networks:
+      - devnet
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"         
+
+  dash-service:
+    build: dash
+    container_name: dash-service
+    ports:
+      - "8050:8050"  # HOST:CONTAINER
+    environment:
+      - DASH_URL_BASE_PATHNAME=/dash/proxy/
+    networks:
+      - devnet
+
+## By default this config uses default local driver,
+## For custom volumes replace with volume driver configuration.
+volumes:
+  data1-1:
+  data1-2:
+  data2-1:
+  data2-2:
+  data3-1:
+  data3-2:
+  data4-1:
+  data4-2:
+  data5-1:
+  data5-2:

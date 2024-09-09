@@ -1,0 +1,978 @@
+$schema: http://json-schema.org/draft-04/schema#
+additionalProperties: false
+category: Clinical
+description: " Ordering of medication for patient or group.\n    \n    An order or\
+  \ request for both supply of the medication and the instructions\n    for administration\
+  \ of the medication to a patient. The resource is called\n    \"MedicationRequest\"\
+  \ rather than \"MedicationPrescription\" or\n    \"MedicationOrder\" to generalize\
+  \ the use across inpatient and outpatient\n    settings, including care plans, etc.,\
+  \ and to harmonize with workflow\n    patterns.\n     http://hl7.org/fhir/medicationrequest"
+id: medication_request
+links:
+- backref: medication_requests
+  label: MedicationRequest_encounter_encounter
+  multiplicity: many_to_many
+  name: encounter_encounter
+  required: false
+  target_type: encounter
+- backref: medication_requests
+  label: MedicationRequest_medicationReference_medication
+  multiplicity: many_to_many
+  name: medicationReference_medication
+  required: false
+  target_type: medication
+- backref: medication_requests
+  label: MedicationRequest_subject_patient
+  multiplicity: many_to_many
+  name: subject_patient
+  required: false
+  target_type: patient
+namespace: http://hl7.org/fhir
+program: '*'
+project: '*'
+properties:
+  authoredOn:
+    description: When request was initially authored.
+    type:
+    - string
+    - 'null'
+  category_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  category_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  category_0_coding_0_system:
+    description: Indicates the type of medication request (for example, where the
+      medication is expected to be consumed or administered (i.e. inpatient or outpatient))..
+      Code defined by a terminology system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  courseOfTherapyType_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  courseOfTherapyType_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  courseOfTherapyType_coding_0_system:
+    description: The description of the overall patte3rn of the administration of
+      the medication to the patient.. Code defined by a terminology system.. Identity
+      of the terminology system.
+    type:
+    - string
+    - 'null'
+  created_datetime:
+    $ref: _definitions.yaml#/datetime
+  dispenseRequest_dispenseInterval_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_dispenseInterval_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_dispenseInterval_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_dispenseInterval_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_dispenseInterval_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  dispenseRequest_expectedSupplyDuration_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_expectedSupplyDuration_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_expectedSupplyDuration_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_expectedSupplyDuration_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_expectedSupplyDuration_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  dispenseRequest_initialFill_duration_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_initialFill_duration_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_initialFill_duration_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_initialFill_duration_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_initialFill_duration_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  dispenseRequest_initialFill_quantity_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_initialFill_quantity_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  dispenseRequest_initialFill_quantity_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_initialFill_quantity_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_initialFill_quantity_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  dispenseRequest_numberOfRepeatsAllowed:
+    description: Number of refills authorized.
+    type:
+    - number
+    - 'null'
+  dispenseRequest_performer_reference:
+    description: Intended dispenser.. Literal reference, Relative, internal or absolute
+      URL.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_performer_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  dispenseRequest_quantity_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_quantity_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  dispenseRequest_quantity_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_quantity_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_quantity_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  dispenseRequest_validityPeriod_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  dispenseRequest_validityPeriod_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  doNotPerform:
+    description: True if request is prohibiting action.
+    type:
+    - boolean
+    - 'null'
+  dosageInstruction_0_additionalInstruction_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_additionalInstruction_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_additionalInstruction_0_coding_0_system:
+    description: Supplemental instruction or warnings to the patient - e.g. "with
+      meals", "may cause drowsiness".. Code defined by a terminology system.. Identity
+      of the terminology system.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_asNeededBoolean:
+    description: Take "as needed" (for x).
+    type:
+    - boolean
+    - 'null'
+  dosageInstruction_0_asNeededCodeableConcept_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_asNeededCodeableConcept_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_asNeededCodeableConcept_coding_0_system:
+    description: Take "as needed" (for x).. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_doseAndRate_0_doseQuantity_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_doseAndRate_0_doseQuantity_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  dosageInstruction_0_doseAndRate_0_doseQuantity_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_doseAndRate_0_doseQuantity_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_doseAndRate_0_doseQuantity_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  dosageInstruction_0_doseAndRate_0_rateQuantity_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_doseAndRate_0_rateQuantity_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  dosageInstruction_0_doseAndRate_0_rateQuantity_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_doseAndRate_0_rateQuantity_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_doseAndRate_0_rateQuantity_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  dosageInstruction_0_maxDosePerAdministration_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_maxDosePerAdministration_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  dosageInstruction_0_maxDosePerAdministration_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_maxDosePerAdministration_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_maxDosePerAdministration_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  dosageInstruction_0_maxDosePerLifetime_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_maxDosePerLifetime_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  dosageInstruction_0_maxDosePerLifetime_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_maxDosePerLifetime_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_maxDosePerLifetime_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  dosageInstruction_0_maxDosePerPeriod_denominator_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_maxDosePerPeriod_denominator_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  dosageInstruction_0_maxDosePerPeriod_denominator_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_maxDosePerPeriod_denominator_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_maxDosePerPeriod_denominator_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  dosageInstruction_0_maxDosePerPeriod_numerator_code:
+    description: Coded form of the unit.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_maxDosePerPeriod_numerator_comparator:
+    description: How the value should be understood and represented - whether the
+      actual value is greater or less than the stated value due to measurement issues;
+      e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+    enum:
+    - <
+    - <=
+    - '>='
+    - '>'
+    term:
+      description: How the value should be understood and represented - whether the
+        actual value is greater or less than the stated value due to measurement issues;
+        e.g. if the comparator is "<" , then the real value is < stated value.. http://hl7.org/fhir/quantity-comparator
+      termDef:
+        cde_id: http://hl7.org/fhir/quantity-comparator
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/quantity-comparator
+        term_url: http://hl7.org/fhir/quantity-comparator
+  dosageInstruction_0_maxDosePerPeriod_numerator_system:
+    description: System that defines coded unit form.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_maxDosePerPeriod_numerator_unit:
+    description: Unit representation.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_maxDosePerPeriod_numerator_value:
+    description: Numerical value (with implicit precision).
+    type:
+    - number
+    - 'null'
+  dosageInstruction_0_method_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_method_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_method_coding_0_system:
+    description: Technique for administering medication.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_patientInstruction:
+    description: Patient or consumer oriented instructions.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_route_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_route_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_route_coding_0_system:
+    description: How drug should enter body.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_sequence:
+    description: The order of the dosage instructions.
+    type:
+    - number
+    - 'null'
+  dosageInstruction_0_site_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_site_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_site_coding_0_system:
+    description: Body site to administer to.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_text:
+    description: Free text dosage instructions e.g. SIG.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_timing_event:
+    description: When the event occurs.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_timing_repeat_count:
+    description: Number of times to repeat.
+    type:
+    - number
+    - 'null'
+  dosageInstruction_0_timing_repeat_countMax:
+    description: Maximum number of times to repeat.
+    type:
+    - number
+    - 'null'
+  dosageInstruction_0_timing_repeat_dayOfWeek:
+    description: If one or more days of week is provided, then the action happens
+      only on the specified day(s).. http://hl7.org/fhir/days-of-week
+    enum:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+    - sat
+    - sun
+    term:
+      description: If one or more days of week is provided, then the action happens
+        only on the specified day(s).. http://hl7.org/fhir/days-of-week
+      termDef:
+        cde_id: http://hl7.org/fhir/days-of-week
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/days-of-week
+        term_url: http://hl7.org/fhir/days-of-week
+  dosageInstruction_0_timing_repeat_duration:
+    description: How long when it happens.
+    type:
+    - number
+    - 'null'
+  dosageInstruction_0_timing_repeat_durationMax:
+    description: How long when it happens (Max).
+    type:
+    - number
+    - 'null'
+  dosageInstruction_0_timing_repeat_durationUnit:
+    description: s | min | h | d | wk | mo | a - unit of time (UCUM).
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_timing_repeat_frequency:
+    description: Event occurs frequency times per period.
+    type:
+    - number
+    - 'null'
+  dosageInstruction_0_timing_repeat_frequencyMax:
+    description: Event occurs up to frequencyMax times per period.
+    type:
+    - number
+    - 'null'
+  dosageInstruction_0_timing_repeat_offset:
+    description: Minutes from event (before or after).
+    type:
+    - number
+    - 'null'
+  dosageInstruction_0_timing_repeat_period:
+    description: Event occurs frequency times per period.
+    type:
+    - number
+    - 'null'
+  dosageInstruction_0_timing_repeat_periodMax:
+    description: Upper limit of period (3-4 hours).
+    type:
+    - number
+    - 'null'
+  dosageInstruction_0_timing_repeat_periodUnit:
+    description: s | min | h | d | wk | mo | a - unit of time (UCUM).
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_timing_repeat_timeOfDay:
+    description: Time of day for action.
+    type:
+    - string
+    - 'null'
+  dosageInstruction_0_timing_repeat_when:
+    description: Code for time period of occurrence.
+    type:
+    - string
+    - 'null'
+  groupIdentifier_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  groupIdentifier_use:
+    description: Composite request this is part of.. The purpose of this identifier..
+      http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: Composite request this is part of.. The purpose of this identifier..
+        http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  groupIdentifier_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  id:
+    description: Logical id of this artifact.
+    type:
+    - string
+    - 'null'
+  identifier_0_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  identifier_0_use:
+    description: External ids for this request.. The purpose of this identifier..
+      http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: External ids for this request.. The purpose of this identifier..
+        http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  identifier_0_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  instantiatesCanonical:
+    description: Instantiates FHIR protocol or definition.
+    type:
+    - string
+    - 'null'
+  instantiatesUri:
+    description: Instantiates external protocol or definition.
+    type:
+    - string
+    - 'null'
+  intent:
+    description: Whether the request is a proposal, plan, or an original order.. http://hl7.org/fhir/CodeSystem/medicationrequest-intent
+    enum:
+    - proposal
+    - plan
+    - order
+    - original-order
+    - reflex-order
+    - filler-order
+    - instance-order
+    - option
+    term:
+      description: Whether the request is a proposal, plan, or an original order..
+        http://hl7.org/fhir/CodeSystem/medicationrequest-intent
+      termDef:
+        cde_id: http://hl7.org/fhir/CodeSystem/medicationrequest-intent
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/CodeSystem/medicationrequest-intent
+        term_url: http://hl7.org/fhir/CodeSystem/medicationrequest-intent
+  language:
+    description: Language of the resource content.
+    type:
+    - string
+    - 'null'
+  medicationCodeableConcept_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  medicationCodeableConcept_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  medicationCodeableConcept_coding_0_system:
+    description: Medication to be taken.. Code defined by a terminology system.. Identity
+      of the terminology system.
+    type:
+    - string
+    - 'null'
+  performerType_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  performerType_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  performerType_coding_0_system:
+    description: Desired kind of performer of the medication administration.. Code
+      defined by a terminology system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  priority:
+    description: Indicates how quickly the Medication Request should be addressed
+      with respect to other requests.. http://hl7.org/fhir/request-priority
+    enum:
+    - routine
+    - urgent
+    - asap
+    - stat
+    term:
+      description: Indicates how quickly the Medication Request should be addressed
+        with respect to other requests.. http://hl7.org/fhir/request-priority
+      termDef:
+        cde_id: http://hl7.org/fhir/request-priority
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/request-priority
+        term_url: http://hl7.org/fhir/request-priority
+  project_id:
+    $ref: _definitions.yaml#/project_id
+  reasonCode_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  reasonCode_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  reasonCode_0_coding_0_system:
+    description: Reason or indication for ordering or not ordering the medication..
+      Code defined by a terminology system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  reportedBoolean:
+    description: Reported rather than primary record.
+    type:
+    - boolean
+    - 'null'
+  resource_type:
+    description: ''
+    type:
+    - string
+    - 'null'
+  state:
+    $ref: _definitions.yaml#/state
+  status:
+    description: A code specifying the current state of the order.  Generally, this
+      will be active or completed state.. http://hl7.org/fhir/CodeSystem/medicationrequest-status
+    enum:
+    - active
+    - on-hold
+    - cancelled
+    - completed
+    - entered-in-error
+    - stopped
+    - draft
+    - unknown
+    term:
+      description: A code specifying the current state of the order.  Generally, this
+        will be active or completed state.. http://hl7.org/fhir/CodeSystem/medicationrequest-status
+      termDef:
+        cde_id: http://hl7.org/fhir/CodeSystem/medicationrequest-status
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/CodeSystem/medicationrequest-status
+        term_url: http://hl7.org/fhir/CodeSystem/medicationrequest-status
+  statusReason_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  statusReason_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  statusReason_coding_0_system:
+    description: Captures the reason for the current state of the MedicationRequest..
+      Code defined by a terminology system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  submitter_id:
+    type:
+    - string
+    - 'null'
+  substitution_allowedBoolean:
+    description: Whether substitution is allowed or not.
+    type:
+    - boolean
+  substitution_allowedCodeableConcept_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  substitution_allowedCodeableConcept_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  substitution_allowedCodeableConcept_coding_0_system:
+    description: Whether substitution is allowed or not.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  substitution_reason_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  substitution_reason_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  substitution_reason_coding_0_system:
+    description: Why should (not) substitution be made.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  updated_datetime:
+    $ref: _definitions.yaml#/datetime
+required:
+- submitter_id
+- status
+- intent
+- medicationCodeableConcept
+- medicationReference
+- subject
+submittable: true
+systemProperties:
+- id
+- project_id
+- created_datetime
+- updated_datetime
+- state
+title: MedicationRequest
+type: object
+uniqueKeys:
+- - id
+- - project_id
+  - submitter_id
+validators: null

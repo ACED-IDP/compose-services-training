@@ -1,0 +1,152 @@
+[
+    {
+        "consent_codes": [],
+        "data_category": "Sequencing Data",
+        "data_format": "BAI",
+        "data_type": "Aligned Reads Index",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/5eb9c4ad8d",
+        "file_size": 6001,
+        "md5sum": "7da039fc74771f16ea748f94d800e7b5",
+        "submitted_aligned_reads_files": {
+            "submitter_id": "submitted_aligned_reads_0a797b970e"
+        },
+        "submitter_id": "aligned_reads_index_ea6dd7db91",
+        "type": "aligned_reads_index",
+        "object_id": "FOOBAR:4517e29d-c6b5-4d23-b417-cf2b750e799d"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Raw Sequencing Data",
+        "data_format": "BAI",
+        "data_type": "Aligned Reads Index",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/dcd6874983",
+        "file_size": 11649,
+        "md5sum": "265b29b5beb41eb8a86c1961bf62352c",
+        "submitted_aligned_reads_files": {
+            "submitter_id": "submitted_aligned_reads_13f9aad254"
+        },
+        "submitter_id": "aligned_reads_index_3ada163d22",
+        "type": "aligned_reads_index",
+        "object_id": "FOOBAR:49c4896d-6b69-4ee3-a29e-a560bbb38079"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Raw Sequencing Data",
+        "data_format": "BAI",
+        "data_type": "Aligned Reads Index",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/d53c566b27",
+        "file_size": 4636,
+        "md5sum": "9cdec25f3a4ed423c2c368cd57437152",
+        "submitted_aligned_reads_files": {
+            "submitter_id": "submitted_aligned_reads_8f7bf3ca00"
+        },
+        "submitter_id": "aligned_reads_index_38882ff1c7",
+        "type": "aligned_reads_index",
+        "object_id": "FOOBAR:efc7c8b5-4cec-424a-b799-c48f6f3f05ba"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Sequencing Reads",
+        "data_format": "BAI",
+        "data_type": "Aligned Reads Index",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/1d233257e2",
+        "file_size": 13764,
+        "md5sum": "43e1cd3d67f8abc9f4b23c8a5b600854",
+        "submitted_aligned_reads_files": {
+            "submitter_id": "submitted_aligned_reads_96e8945551"
+        },
+        "submitter_id": "aligned_reads_index_1abb365592",
+        "type": "aligned_reads_index",
+        "object_id": "FOOBAR:8063733a-a4ee-42cf-a603-7e22119b9bb5"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Sequencing Reads",
+        "data_format": "BAI",
+        "data_type": "Aligned Reads Index",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/990558eb33",
+        "file_size": 15996,
+        "md5sum": "880c0229c40b6e569280b6389086e740",
+        "submitted_aligned_reads_files": {
+            "submitter_id": "submitted_aligned_reads_52ac721961"
+        },
+        "submitter_id": "aligned_reads_index_ebdcc238c7",
+        "type": "aligned_reads_index",
+        "object_id": "FOOBAR:54c232fc-dd13-492f-92cb-a36ade29bd43"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Sequencing Data",
+        "data_format": "BAI",
+        "data_type": "Aligned Reads Index",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/959b6afb96",
+        "file_size": 6830,
+        "md5sum": "385df4e54cef9b0cf154bcfa56eebbee",
+        "submitted_aligned_reads_files": {
+            "submitter_id": "submitted_aligned_reads_e26545035e"
+        },
+        "submitter_id": "aligned_reads_index_306d07c5ea",
+        "type": "aligned_reads_index",
+        "object_id": "FOOBAR:cc6d003f-e8b4-40b7-ae53-4b34ce99291e"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Raw Sequencing Data",
+        "data_format": "BAI",
+        "data_type": "Aligned Reads Index",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/86620a67db",
+        "file_size": 9119,
+        "md5sum": "94a283d914ce6716025c1d207e73949c",
+        "submitted_aligned_reads_files": {
+            "submitter_id": "submitted_aligned_reads_7f2052ab73"
+        },
+        "submitter_id": "aligned_reads_index_33ed56c510",
+        "type": "aligned_reads_index",
+        "object_id": "FOOBAR:b923b6a2-1e7f-44ab-83ad-10302ac4f34b"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Sequencing Reads",
+        "data_format": "BAI",
+        "data_type": "Aligned Reads Index",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/0055424b4f",
+        "file_size": 10925,
+        "md5sum": "d73b6fd93591400e154adf1ec2269b77",
+        "submitted_aligned_reads_files": {
+            "submitter_id": "submitted_aligned_reads_4475802174"
+        },
+        "submitter_id": "aligned_reads_index_1deb8c8fb2",
+        "type": "aligned_reads_index",
+        "object_id": "FOOBAR:1549ca89-5981-4d8f-afcf-18d7d219cf38"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Sequencing Data",
+        "data_format": "BAI",
+        "data_type": "Aligned Reads Index",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/7121a81e18",
+        "file_size": 3987,
+        "md5sum": "06a9f4fa3997c2a96cb0ff639a08fcd0",
+        "submitted_aligned_reads_files": {
+            "submitter_id": "submitted_aligned_reads_31bdbd137f"
+        },
+        "submitter_id": "aligned_reads_index_cd549a481b",
+        "type": "aligned_reads_index",
+        "object_id": "FOOBAR:b47cae32-d9f1-4197-b026-431fe03e0790"
+    },
+    {
+        "consent_codes": [],
+        "data_category": "Raw Sequencing Data",
+        "data_format": "BAI",
+        "data_type": "Aligned Reads Index",
+        "file_name": "tests/fixtures/projects/MyFirstProject/DATA/000b1ac937",
+        "file_size": 13264,
+        "md5sum": "d460a01138ab3d81f0f501c193630c56",
+        "submitted_aligned_reads_files": {
+            "submitter_id": "submitted_aligned_reads_46b03cdbc1"
+        },
+        "submitter_id": "aligned_reads_index_9877280e1e",
+        "type": "aligned_reads_index",
+        "object_id": "FOOBAR:6d50aa5b-cdf8-40b9-9764-5e7ba2f9feca"
+    }
+]

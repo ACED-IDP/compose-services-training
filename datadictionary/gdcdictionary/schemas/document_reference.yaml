@@ -1,0 +1,374 @@
+$schema: http://json-schema.org/draft-04/schema#
+additionalProperties: false
+category: data_file
+description: " A reference to a document.\n    \n    A reference to a document of\
+  \ any kind for any purpose. Provides metadata\n    about the document so that the\
+  \ document can be discovered and managed. The\n    scope of a document is any seralized\
+  \ object with a mime-type, so includes\n    formal patient centric documents (CDA),\
+  \ cliical notes, scanned paper, and\n    non-patient specific documents like policy\
+  \ text.\n     http://hl7.org/fhir/documentreference"
+id: document_reference
+links:
+- backref: document_references
+  label: DocumentReference_subject_patient
+  multiplicity: many_to_many
+  name: subject_patient
+  required: false
+  target_type: patient
+namespace: http://hl7.org/fhir
+program: '*'
+project: '*'
+properties:
+  $ref: _definitions.yaml#/data_file_properties
+  category_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  category_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  category_0_coding_0_system:
+    description: Categorization of document.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  content_0_attachment_contentType:
+    description: Mime type of the content, with charset etc..
+    type:
+    - string
+    - 'null'
+  content_0_attachment_creation:
+    description: Date attachment was first created.
+    type:
+    - string
+    - 'null'
+  content_0_attachment_data:
+    description: Data inline, base64ed.
+    type:
+    - string
+    - 'null'
+  content_0_attachment_hash:
+    description: Hash of the data (sha-1, base64ed).
+    type:
+    - string
+    - 'null'
+  content_0_attachment_language:
+    description: Human language of the content (BCP-47).
+    type:
+    - string
+    - 'null'
+  content_0_attachment_size:
+    description: Number of bytes of content (if url provided).
+    type:
+    - number
+    - 'null'
+  content_0_attachment_title:
+    description: Label to display in place of the data.
+    type:
+    - string
+    - 'null'
+  content_0_attachment_url:
+    description: Uri where the data can be found.
+    type:
+    - string
+    - 'null'
+  content_0_format_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  content_0_format_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  content_0_format_system:
+    description: Format/content rules for the document.. Identity of the terminology
+      system.
+    type:
+    - string
+    - 'null'
+  context_encounter_0_reference:
+    description: Context of the document  content.. Literal reference, Relative, internal
+      or absolute URL.
+    type:
+    - string
+    - 'null'
+  context_encounter_0_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  context_event_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  context_event_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  context_event_0_coding_0_system:
+    description: Main clinical acts documented.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  context_facilityType_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  context_facilityType_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  context_facilityType_coding_0_system:
+    description: Kind of facility where patient was seen.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  context_period_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  context_period_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  context_practiceSetting_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  context_practiceSetting_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  context_practiceSetting_coding_0_system:
+    description: Additional details about where the content was created (e.g. clinical
+      specialty).. Code defined by a terminology system.. Identity of the terminology
+      system.
+    type:
+    - string
+    - 'null'
+  context_related_0_reference:
+    description: Related identifiers or resources.. Literal reference, Relative, internal
+      or absolute URL.
+    type:
+    - string
+    - 'null'
+  context_related_0_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  context_sourcePatientInfo_reference:
+    description: Patient demographics from source.. Literal reference, Relative, internal
+      or absolute URL.
+    type:
+    - string
+    - 'null'
+  context_sourcePatientInfo_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  created_datetime:
+    $ref: _definitions.yaml#/datetime
+  data_category:
+    term:
+      $ref: _terms.yaml#/data_category
+    type: string
+  data_format:
+    term:
+      $ref: _terms.yaml#/data_format
+    type: string
+  data_type:
+    term:
+      $ref: _terms.yaml#/data_type
+    type: string
+  date:
+    description: When this document reference was created.
+    type:
+    - string
+    - 'null'
+  description:
+    description: Human-readable description.
+    type:
+    - string
+    - 'null'
+  docStatus:
+    description: The status of the underlying document.. http://hl7.org/fhir/composition-status
+    enum:
+    - preliminary
+    - final
+    - amended
+    - entered-in-error
+    term:
+      description: The status of the underlying document.. http://hl7.org/fhir/composition-status
+      termDef:
+        cde_id: http://hl7.org/fhir/composition-status
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/composition-status
+        term_url: http://hl7.org/fhir/composition-status
+  id:
+    description: Logical id of this artifact.
+    type:
+    - string
+    - 'null'
+  identifier_0_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  identifier_0_use:
+    description: Other identifiers for the document.. The purpose of this identifier..
+      http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: Other identifiers for the document.. The purpose of this identifier..
+        http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  identifier_0_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  language:
+    description: Language of the resource content.
+    type:
+    - string
+    - 'null'
+  masterIdentifier_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  masterIdentifier_use:
+    description: Master Version Specific Identifier.. The purpose of this identifier..
+      http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: Master Version Specific Identifier.. The purpose of this identifier..
+        http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  masterIdentifier_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  project_id:
+    $ref: _definitions.yaml#/project_id
+  resource_type:
+    description: ''
+    type:
+    - string
+    - 'null'
+  securityLabel_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  securityLabel_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  securityLabel_0_coding_0_system:
+    description: Document security-tags.. Code defined by a terminology system.. Identity
+      of the terminology system.
+    type:
+    - string
+    - 'null'
+  state:
+    $ref: _definitions.yaml#/state
+  status:
+    description: The status of this document reference.. http://hl7.org/fhir/document-reference-status
+    enum:
+    - current
+    - superseded
+    - entered-in-error
+    term:
+      description: The status of this document reference.. http://hl7.org/fhir/document-reference-status
+      termDef:
+        cde_id: http://hl7.org/fhir/document-reference-status
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/document-reference-status
+        term_url: http://hl7.org/fhir/document-reference-status
+  submitter_id:
+    type:
+    - string
+    - 'null'
+  type_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  type_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  type_coding_0_system:
+    description: Kind of document (LOINC if possible).. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  updated_datetime:
+    $ref: _definitions.yaml#/datetime
+required:
+- submitter_id
+- status
+- content
+submittable: true
+systemProperties:
+- id
+- project_id
+- created_datetime
+- updated_datetime
+- state
+title: DocumentReference
+type: object
+uniqueKeys:
+- - id
+- - project_id
+  - submitter_id
+validators: null

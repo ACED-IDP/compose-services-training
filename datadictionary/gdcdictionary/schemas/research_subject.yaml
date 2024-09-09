@@ -1,0 +1,144 @@
+$schema: http://json-schema.org/draft-04/schema#
+additionalProperties: false
+category: Administrative
+description: " Physical entity which is the primary unit of interest in the study.\n\
+  \    \n    A physical entity which is the primary unit of operational and/or\n \
+  \   administrative interest in a study.\n     http://hl7.org/fhir/researchsubject"
+id: research_subject
+links:
+- backref: research_subjects
+  label: ResearchSubject_individual_patient
+  multiplicity: many_to_many
+  name: individual_patient
+  required: false
+  target_type: patient
+- backref: research_subjects
+  label: ResearchSubject_study_research_study
+  multiplicity: many_to_many
+  name: study_research_study
+  required: false
+  target_type: research_study
+namespace: http://hl7.org/fhir
+program: '*'
+project: '*'
+properties:
+  actualArm:
+    description: What path was followed.
+    type:
+    - string
+    - 'null'
+  assignedArm:
+    description: What path should be followed.
+    type:
+    - string
+    - 'null'
+  created_datetime:
+    $ref: _definitions.yaml#/datetime
+  id:
+    description: Logical id of this artifact.
+    type:
+    - string
+    - 'null'
+  identifier_0_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  identifier_0_use:
+    description: Business Identifier for research subject in a study.. The purpose
+      of this identifier.. http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: Business Identifier for research subject in a study.. The purpose
+        of this identifier.. http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  identifier_0_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  language:
+    description: Language of the resource content.
+    type:
+    - string
+    - 'null'
+  period_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  period_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  project_id:
+    $ref: _definitions.yaml#/project_id
+  resource_type:
+    description: ''
+    type:
+    - string
+    - 'null'
+  state:
+    $ref: _definitions.yaml#/state
+  status:
+    description: The current state of the subject.. http://hl7.org/fhir/research-subject-status
+    enum:
+    - candidate
+    - eligible
+    - follow-up
+    - ineligible
+    - not-registered
+    - off-study
+    - on-study
+    - on-study-intervention
+    - on-study-observation
+    - pending-on-study
+    - potential-candidate
+    - screening
+    - withdrawn
+    term:
+      description: The current state of the subject.. http://hl7.org/fhir/research-subject-status
+      termDef:
+        cde_id: http://hl7.org/fhir/research-subject-status
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/research-subject-status
+        term_url: http://hl7.org/fhir/research-subject-status
+  submitter_id:
+    type:
+    - string
+    - 'null'
+  updated_datetime:
+    $ref: _definitions.yaml#/datetime
+required:
+- submitter_id
+- status
+- study
+- individual
+submittable: true
+systemProperties:
+- id
+- project_id
+- created_datetime
+- updated_datetime
+- state
+title: ResearchSubject
+type: object
+uniqueKeys:
+- - id
+- - project_id
+  - submitter_id
+validators: null

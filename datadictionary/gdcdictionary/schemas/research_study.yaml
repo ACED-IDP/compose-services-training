@@ -1,0 +1,405 @@
+$schema: http://json-schema.org/draft-04/schema#
+additionalProperties: false
+category: Administrative
+description: " Investigation to increase healthcare-related patient-independent knowledge.\n\
+  \    \n    A process where a researcher or organization plans and then executes\
+  \ a\n    series of steps intended to increase the field of healthcare-related\n\
+  \    knowledge.  This includes studies of safety, efficacy, comparative\n    effectiveness\
+  \ and other information about medications, devices, therapies\n    and other interventional\
+  \ and investigative techniques.  A ResearchStudy\n    involves the gathering of\
+  \ information about human or animal subjects.\n     http://hl7.org/fhir/researchstudy"
+id: research_study
+links:
+- backref: research_studies
+  label: ResearchStudy_project_project
+  multiplicity: many_to_many
+  name: project_project
+  required: true
+  target_type: project
+namespace: http://hl7.org/fhir
+program: '*'
+project: '*'
+properties:
+  arm_0_description:
+    description: Short explanation of study path.
+    type:
+    - string
+    - 'null'
+  arm_0_name:
+    description: Label for study arm.
+    type:
+    - string
+  arm_0_type_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  arm_0_type_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  arm_0_type_coding_0_system:
+    description: Categorization of study arm.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  category_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  category_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  category_0_coding_0_system:
+    description: Classifications for the study.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  condition_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  condition_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  condition_0_coding_0_system:
+    description: Condition being studied.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  contact_0_name:
+    description: Name of an individual to contact.
+    type:
+    - string
+    - 'null'
+  created_datetime:
+    $ref: _definitions.yaml#/datetime
+  description:
+    description: What this is study doing.
+    type:
+    - string
+    - 'null'
+  focus_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  focus_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  focus_0_coding_0_system:
+    description: Drugs, devices, etc. under study.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  id:
+    description: Logical id of this artifact.
+    type:
+    - string
+    - 'null'
+  identifier_0_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  identifier_0_use:
+    description: Business Identifier for study.. The purpose of this identifier..
+      http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: Business Identifier for study.. The purpose of this identifier..
+        http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  identifier_0_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  keyword_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  keyword_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  keyword_0_coding_0_system:
+    description: Used to search for the study.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  language:
+    description: Language of the resource content.
+    type:
+    - string
+    - 'null'
+  location_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  location_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  location_0_coding_0_system:
+    description: Geographic region(s) for study.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  objective_0_name:
+    description: Label for the objective.
+    type:
+    - string
+    - 'null'
+  objective_0_type_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  objective_0_type_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  objective_0_type_coding_0_system:
+    description: The kind of study objective.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  period_end:
+    description: End time with inclusive boundary, if not ongoing.
+    type:
+    - string
+    - 'null'
+  period_start:
+    description: Starting time with inclusive boundary.
+    type:
+    - string
+    - 'null'
+  phase_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  phase_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  phase_coding_0_system:
+    description: The stage in the progression of a therapy from initial experimental
+      use in humans in clinical trials to post-market evaluation.. Code defined by
+      a terminology system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  primaryPurposeType_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  primaryPurposeType_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  primaryPurposeType_coding_0_system:
+    description: The type of study based upon the intent of the study's activities.
+      A classification of the intent of the study.. Code defined by a terminology
+      system.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  project_id:
+    $ref: _definitions.yaml#/project_id
+  reasonStopped_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  reasonStopped_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  reasonStopped_coding_0_system:
+    description: A description and/or code explaining the premature termination of
+      the study.. Code defined by a terminology system.. Identity of the terminology
+      system.
+    type:
+    - string
+    - 'null'
+  relatedArtifact_0_citation:
+    description: Bibliographic citation for the artifact.
+    type:
+    - string
+    - 'null'
+  relatedArtifact_0_display:
+    description: Brief description of the related artifact.
+    type:
+    - string
+    - 'null'
+  relatedArtifact_0_document_contentType:
+    description: Mime type of the content, with charset etc..
+    type:
+    - string
+    - 'null'
+  relatedArtifact_0_document_creation:
+    description: Date attachment was first created.
+    type:
+    - string
+    - 'null'
+  relatedArtifact_0_document_data:
+    description: Data inline, base64ed.
+    type:
+    - string
+    - 'null'
+  relatedArtifact_0_document_hash:
+    description: Hash of the data (sha-1, base64ed).
+    type:
+    - string
+    - 'null'
+  relatedArtifact_0_document_language:
+    description: Human language of the content (BCP-47).
+    type:
+    - string
+    - 'null'
+  relatedArtifact_0_document_size:
+    description: Number of bytes of content (if url provided).
+    type:
+    - number
+    - 'null'
+  relatedArtifact_0_document_title:
+    description: Label to display in place of the data.
+    type:
+    - string
+    - 'null'
+  relatedArtifact_0_document_url:
+    description: Uri where the data can be found.
+    type:
+    - string
+    - 'null'
+  relatedArtifact_0_label:
+    description: Short label.
+    type:
+    - string
+    - 'null'
+  relatedArtifact_0_resource:
+    description: What resource is being referenced.
+    type:
+    - string
+    - 'null'
+  relatedArtifact_0_type:
+    description: The type of relationship to the related artifact.. http://hl7.org/fhir/related-artifact-type
+    enum:
+    - documentation
+    - justification
+    - citation
+    - predecessor
+    - successor
+    - derived-from
+    - depends-on
+    - composed-of
+    term:
+      description: The type of relationship to the related artifact.. http://hl7.org/fhir/related-artifact-type
+      termDef:
+        cde_id: http://hl7.org/fhir/related-artifact-type
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/related-artifact-type
+        term_url: http://hl7.org/fhir/related-artifact-type
+  relatedArtifact_0_url:
+    description: Where the artifact can be accessed.
+    type:
+    - string
+    - 'null'
+  resource_type:
+    description: ''
+    type:
+    - string
+    - 'null'
+  state:
+    $ref: _definitions.yaml#/state
+  status:
+    description: The current state of the study.. http://hl7.org/fhir/research-study-status
+    enum:
+    - active
+    - administratively-completed
+    - approved
+    - closed-to-accrual
+    - closed-to-accrual-and-intervention
+    - completed
+    - disapproved
+    - in-review
+    - temporarily-closed-to-accrual
+    - temporarily-closed-to-accrual-and-intervention
+    - withdrawn
+    term:
+      description: The current state of the study.. http://hl7.org/fhir/research-study-status
+      termDef:
+        cde_id: http://hl7.org/fhir/research-study-status
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/research-study-status
+        term_url: http://hl7.org/fhir/research-study-status
+  submitter_id:
+    type:
+    - string
+    - 'null'
+  title:
+    description: Name for this study.
+    type:
+    - string
+    - 'null'
+  updated_datetime:
+    $ref: _definitions.yaml#/datetime
+required:
+- submitter_id
+- status
+submittable: true
+systemProperties:
+- id
+- project_id
+- created_datetime
+- updated_datetime
+- state
+title: ResearchStudy
+type: object
+uniqueKeys:
+- - id
+- - project_id
+  - submitter_id
+validators: null

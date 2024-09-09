@@ -1,0 +1,307 @@
+$schema: http://json-schema.org/draft-04/schema#
+additionalProperties: false
+category: Clinical
+description: " A set of images produced in single study (one or more series of references\n\
+  \    images).\n    \n    Representation of the content produced in a DICOM imaging\
+  \ study. A study\n    comprises a set of series, each of which includes a set of\
+  \ Service-Object\n    Pair Instances (SOP Instances - images or other data) acquired\
+  \ or produced\n    in a common context.  A series is of only one modality (e.g.\
+  \ X-ray, CT, MR,\n    ultrasound), but a study may have multiple series of different\
+  \ modalities.\n     http://hl7.org/fhir/imagingstudy"
+id: imaging_study
+links: []
+namespace: http://hl7.org/fhir
+program: '*'
+project: '*'
+properties:
+  created_datetime:
+    $ref: _definitions.yaml#/datetime
+  description:
+    description: Institution-generated description.
+    type:
+    - string
+    - 'null'
+  id:
+    description: Logical id of this artifact.
+    type:
+    - string
+    - 'null'
+  identifier_0_system:
+    description: The namespace for the identifier value.
+    type:
+    - string
+    - 'null'
+  identifier_0_use:
+    description: Identifiers for the whole study.. The purpose of this identifier..
+      http://hl7.org/fhir/identifier-use
+    enum:
+    - usual
+    - official
+    - temp
+    - secondary
+    - old
+    term:
+      description: Identifiers for the whole study.. The purpose of this identifier..
+        http://hl7.org/fhir/identifier-use
+      termDef:
+        cde_id: http://hl7.org/fhir/identifier-use
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/identifier-use
+        term_url: http://hl7.org/fhir/identifier-use
+  identifier_0_value:
+    description: The value that is unique.
+    type:
+    - string
+    - 'null'
+  language:
+    description: Language of the resource content.
+    type:
+    - string
+    - 'null'
+  modality_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  modality_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  modality_0_system:
+    description: All series modality if actual acquisition modalities.. Identity of
+      the terminology system.
+    type:
+    - string
+    - 'null'
+  numberOfInstances:
+    description: Number of Study Related Instances.
+    type:
+    - number
+    - 'null'
+  numberOfSeries:
+    description: Number of Study Related Series.
+    type:
+    - number
+    - 'null'
+  procedureCode_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  procedureCode_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  procedureCode_0_coding_0_system:
+    description: The performed procedure code.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  project_id:
+    $ref: _definitions.yaml#/project_id
+  reasonCode_0_coding_0_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  reasonCode_0_coding_0_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  reasonCode_0_coding_0_system:
+    description: Why the study was requested.. Code defined by a terminology system..
+      Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  resource_type:
+    description: ''
+    type:
+    - string
+    - 'null'
+  series_0_bodySite_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  series_0_bodySite_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  series_0_bodySite_system:
+    description: Body part examined.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  series_0_description:
+    description: A short human readable summary of the series.
+    type:
+    - string
+    - 'null'
+  series_0_endpoint_0_reference:
+    description: Series access endpoint.. Literal reference, Relative, internal or
+      absolute URL.
+    type:
+    - string
+    - 'null'
+  series_0_endpoint_0_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  series_0_instance_0_number:
+    description: The number of this instance in the series.
+    type:
+    - number
+    - 'null'
+  series_0_instance_0_sopClass_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  series_0_instance_0_sopClass_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  series_0_instance_0_sopClass_system:
+    description: DICOM class type.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  series_0_instance_0_title:
+    description: Description of instance.
+    type:
+    - string
+    - 'null'
+  series_0_instance_0_uid:
+    description: DICOM SOP Instance UID.
+    type:
+    - string
+  series_0_laterality_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  series_0_laterality_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  series_0_laterality_system:
+    description: Body part laterality.. Identity of the terminology system.
+    type:
+    - string
+    - 'null'
+  series_0_modality_code:
+    description: Symbol in syntax defined by the system.
+    type:
+    - string
+    - 'null'
+  series_0_modality_display:
+    description: Representation defined by the system.
+    type:
+    - string
+    - 'null'
+  series_0_modality_system:
+    description: The modality of the instances in the series.. Identity of the terminology
+      system.
+    type:
+    - string
+    - 'null'
+  series_0_number:
+    description: Numeric identifier of this series.
+    type:
+    - number
+    - 'null'
+  series_0_numberOfInstances:
+    description: Number of Series Related Instances.
+    type:
+    - number
+    - 'null'
+  series_0_performer_0_actor_reference:
+    description: Who performed the series.. Literal reference, Relative, internal
+      or absolute URL.
+    type:
+    - string
+    - 'null'
+  series_0_performer_0_actor_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  series_0_specimen_0_reference:
+    description: Specimen imaged.. Literal reference, Relative, internal or absolute
+      URL.
+    type:
+    - string
+    - 'null'
+  series_0_specimen_0_type:
+    description: Type the reference refers to (e.g. "Patient").
+    type:
+    - string
+    - 'null'
+  series_0_started:
+    description: When the series started.
+    type:
+    - string
+    - 'null'
+  series_0_uid:
+    description: DICOM Series Instance UID for the series.
+    type:
+    - string
+  started:
+    description: When the study was started.
+    type:
+    - string
+    - 'null'
+  state:
+    $ref: _definitions.yaml#/state
+  status:
+    description: The current state of the ImagingStudy.. http://hl7.org/fhir/imagingstudy-status
+    enum:
+    - registered
+    - available
+    - cancelled
+    - entered-in-error
+    - unknown
+    term:
+      description: The current state of the ImagingStudy.. http://hl7.org/fhir/imagingstudy-status
+      termDef:
+        cde_id: http://hl7.org/fhir/imagingstudy-status
+        cde_version: null
+        source: fhir
+        strength: required
+        term: http://hl7.org/fhir/imagingstudy-status
+        term_url: http://hl7.org/fhir/imagingstudy-status
+  submitter_id:
+    type:
+    - string
+    - 'null'
+  updated_datetime:
+    $ref: _definitions.yaml#/datetime
+required:
+- submitter_id
+- status
+- subject
+submittable: true
+systemProperties:
+- id
+- project_id
+- created_datetime
+- updated_datetime
+- state
+title: ImagingStudy
+type: object
+uniqueKeys:
+- - id
+- - project_id
+  - submitter_id
+validators: null

@@ -1,0 +1,698 @@
+#!/usr/bin/env python3
+
+"""A lightweight replacement for gen3's spark/tube."""
+
+from datetime import datetime
+
+import click
+import requests
+from elasticsearch import Elasticsearch
+from elasticsearch.helpers import bulk
+from gen3.auth import Gen3Auth
+from gen3.submission import Gen3Submission
+from jsonpath_ng import parse
+from more_itertools import peekable
+import logging
+
+FORMAT = '%(name)s %(process)d %(asctime)s %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO)
+logger = logging.getLogger("root")
+
+DEFAULT_ELASTIC = "http://esproxy-service:9200"
+DEFAULT_NAMESPACE = "gen3.aced.io"
+
+# gen3 graph-model query
+
+# graphql for FILE
+
+# performance improvement: only retrieve what we need in the index (coordinate with gitops.json)
+FILE_PROPERTIES = """
+    file_id: id
+    project_id
+    data_type
+    data_format
+    file_name
+    file_size
+    object_id
+    ga4gh_drs_uri
+    date
+    md5sum
+    state
+    submitter_id    
+    file_category: category_0_coding_0_display
+    content_0_attachment_url
+    content_0_attachment_size
+"""
+
+# performance improvement: only retrieve what we need in the index (coordinate with gitops.json)
+PATIENT_PROPERTIES = """
+    id
+    submitter_id
+    project_id
+    gender
+    maritalStatus_coding_0_display
+    deceasedBoolean
+    deceasedDateTime
+    birthDate
+    patient_resource_type: resource_type  
+    submitter_id
+    ombCategory: extension_0_extension_0_valueCoding_display
+    ombCategory_detail: extension_1_extension_0_valueCoding_display
+    us_core_birthsex: extension_3_valueCode
+    disability_adjusted_life_years: extension_5_valueDecimal
+    quality_adjusted_life_years: extension_6_valueDecimal
+    
+"""
+
+FILE_GRAPHQL = """
+query ($first: Int!, $offset: Int!) {
+    patient(first: $first, offset: $offset)  {
+        $PATIENT_PROPERTIES
+        document_references(first:1000) {
+            $FILE_PROPERTIES            
+        }
+    }
+}
+""".replace('$FILE_PROPERTIES', FILE_PROPERTIES)\
+    .replace('$PATIENT_PROPERTIES', PATIENT_PROPERTIES)
+
+#   graphql query for CASE
+# PATIENT_GRAPHQL = """
+# query ($first: Int!, $offset: Int!) {
+#   patient(first: $first, offset: $offset) {
+#     $PATIENT_PROPERTIES
+#   }
+# }
+# """.replace('$PATIENT_PROPERTIES', PATIENT_PROPERTIES)\
+#     .replace('$FILE_PROPERTIES', FILE_PROPERTIES)
+
+# (with_links:["observations", "conditions", "medication_requests"])
+
+ENCOUNTER_QUERY = """
+query ($first: Int!, $offset: Int!) {
+  encounter(first: $first, offset: $offset) {
+    project_id
+    encounter_id: id
+    encounter_type: type_0_coding_0_display
+    encounter_reason: reasonCode_0_coding_0_display
+    encounter_start: period_start
+    patient: subject_patient {
+      id
+      ombCategory: extension_0_extension_0_valueCoding_display
+      ombCategory_detail: extension_1_extension_0_valueCoding_display
+      us_core_birthsex: extension_3_valueCode
+      disability_adjusted_life_years: extension_5_valueDecimal
+      quality_adjusted_life_years: extension_6_valueDecimal
+      gender
+      maritalStatus: maritalStatus_coding_0_display
+      deceasedBoolean
+      deceasedDateTime
+      birthDate
+    }
+    conditions {
+      condition_id: id
+      code_coding_0_display
+      code_coding_0_system
+      code_coding_0_code
+      category_0_coding_0_display
+      onsetDateTime
+      abatementDateTime
+      verificationStatus_coding_0_code
+      clinicalStatus_coding_0_code
+    }
+    observations {
+      observation_id: id
+      category: category_0_coding_0_display
+      bodySite: bodySite_coding_0_code
+      code_display: code_coding_0_display
+      valueTime
+      valueString
+      valueBoolean
+      valueInteger
+      valueDateTime
+      valuePeriod_end
+      valuePeriod_start
+      valueQuantity_code
+      valueQuantity_unit
+      valueQuantity_value
+      valueCodeableConcept_coding_0_system
+      valueCodeableConcept_coding_0_code
+      valueCodeableConcept_coding_0_display
+      component_0_code_coding_0_code
+      component_0_code_coding_0_display
+      component_0_code_coding_0_system
+      component_0_valueTime
+      component_0_valueTime
+      component_0_valueString
+      component_0_valueBoolean
+      component_0_valueInteger
+      component_0_valueDateTime
+      component_0_valuePeriod_end
+      component_0_valuePeriod_start
+      component_0_valueQuantity_code
+      component_0_valueQuantity_unit
+      component_0_valueQuantity_value
+      component_1_code_coding_0_code
+      component_1_code_coding_0_display
+      component_1_code_coding_0_system
+      component_1_valueTime
+      component_1_valueTime
+      component_1_valueString
+      component_1_valueBoolean
+      component_1_valueInteger
+      component_1_valueDateTime
+      component_1_valuePeriod_end
+      component_1_valuePeriod_start
+      component_1_valueQuantity_code
+      component_1_valueQuantity_unit
+      component_1_valueQuantity_value
+    }
+    medication_requests {
+      medication_id: id
+      medicationCodeableConcept_coding_0_code
+      medicationCodeableConcept_coding_0_system
+      medicationCodeableConcept_coding_0_display
+    }
+    procedures {
+      procedure_id: id
+      code_coding_0_code
+      code_coding_0_system
+      code_coding_0_display
+    }
+  }
+}
+
+"""
+
+PATIENT_GRAPHQL = str(ENCOUNTER_QUERY)
+
+
+def key_values(nested, key, normalize=True):
+    """Return all values of a key in nested, cast to None, and scalar if normalize"""
+    jsonpath_expression = parse(f"$..[{key}]")
+    matches = jsonpath_expression.find(nested)
+    if normalize:
+        if len(matches) == 0:
+            return None
+        if len(matches) == 1:
+            return matches[0].value
+    return [match.value for match in matches]
+
+
+def sum_key_values(nested, key):
+    """Return the sum of values for key."""
+    return sum(key_values(nested, key, normalize=False))
+
+
+def create_index_from_source(_source, _index, _type):
+    """Given an ES source dict, create ES index."""
+    mappings = {}
+    for k, v in _source.items():
+        if type(v).__name__ in ['str', 'NoneType']:
+            mappings[k] = {
+                "type": "keyword"
+            }
+        elif isinstance(v, list):
+            mappings[k] = {
+                "type": "text"
+            }
+        else:
+            # naive, there are probably other types
+            mappings[k] = {"type": "float"}
+    return {
+        "mappings": {_type: {"properties": mappings}}
+    }
+
+
+def submission_client(endpoint, refresh_file):
+    """Create authorized client."""
+    auth = Gen3Auth(endpoint, refresh_file=refresh_file)
+    assert auth, 'should return an auth client'
+    submission_client_ = Gen3Submission(endpoint, auth)
+    assert submission_client_, 'should return a submission client'
+    assert 'delete_program' in dir(submission_client_), 'missing delete_program'
+    assert 'create_program' in dir(submission_client_), 'missing create_program'
+    return submission_client_
+
+
+def drop_file_indexes(elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMESPACE):
+    """Drop the es indexes."""
+    return {"method": 'DELETE', "url": f'{elastic}/{name_space}_file_0'}
+
+
+def write_file_array_aliases(elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMESPACE):
+    """Write the array aliases."""
+    # EXPECTED_ALIASES = {
+    #     ".kibana_1": {
+    #         "aliases": {
+    #             ".kibana": {}
+    #         }
+    #     },
+    #     "etl-array-config_0": {
+    #         "aliases": {
+    #             "etl-array-config": {},
+    #             "etl_array-config": {},
+    #             "time_2022-08-25T01:44:47.115494": {}
+    #         }
+    #     },
+    #     "etl_0": {
+    #         "aliases": {
+    #             "etl": {},
+    #             "time_2022-08-25T01:44:47.115494": {}
+    #         }
+    #     },
+    #     "file-array-config_0": {
+    #         "aliases": {
+    #             "file-array-config": {},
+    #             "file_array-config": {},
+    #             "time_2022-08-25T01:44:47.115494": {}
+    #         }
+    #     },
+    #     "file_0": {
+    #         "aliases": {
+    #             "file": {},
+    #             "time_2022-08-25T01:44:47.115494": {}
+    #         }
+    #     }
+    # }
+    return {
+        "method": 'POST',
+        "url": f'{elastic}/_aliases',
+        "json": {
+            "actions": [{"add": {"index": f"{name_space}_file-array-config_0",
+                                 "alias": f"{name_space}_array-config"}},
+                        {"add": {"index": f"{name_space}_file-array-config_0",
+                                 "alias": f"file_array-config"}},
+                        ]}
+    }
+
+
+def write_patient_array_aliases(elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMESPACE):
+    """Write the array aliases."""
+    # EXPECTED_ALIASES = {
+    #     ".kibana_1": {
+    #         "aliases": {
+    #             ".kibana": {}
+    #         }
+    #     },
+    #     "etl-array-config_0": {
+    #         "aliases": {
+    #             "etl-array-config": {},
+    #             "etl_array-config": {},
+    #             "time_2022-08-25T01:44:47.115494": {}
+    #         }
+    #     },
+    #     "etl_0": {
+    #         "aliases": {
+    #             "etl": {},
+    #             "time_2022-08-25T01:44:47.115494": {}
+    #         }
+    #     },
+    #     "file-array-config_0": {
+    #         "aliases": {
+    #             "file-array-config": {},
+    #             "file_array-config": {},
+    #             "time_2022-08-25T01:44:47.115494": {}
+    #         }
+    #     },
+    #     "file_0": {
+    #         "aliases": {
+    #             "file": {},
+    #             "time_2022-08-25T01:44:47.115494": {}
+    #         }
+    #     }
+    # }
+    return {
+        "method": 'POST',
+        "url": f'{elastic}/_aliases',
+        "json": {
+            "actions": [
+                        {"add": {"index": f"{name_space}_case-array-config_0",
+                                 "alias": f"{name_space}_array-config"}},
+                        {"add": {"index": f"{name_space}_case-array-config_0",
+                                 "alias": f"etl_array-config"}}
+                        ]}
+    }
+
+
+def create_file_indexes(_source, elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMESPACE):
+    """Create the es indexes."""
+    _index = f"{name_space}_file_0"
+    _type = "file"
+    return {
+        "method": 'PUT',
+        "url": f'{elastic}/{_index}',
+        "json": create_index_from_source(_source, _index, _type),
+        "index": _index,
+        "type": _type
+    }
+
+
+def write_file_array_config(elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMESPACE):
+    """Write the array config."""
+    return {
+        "method": 'PUT',
+        "url": f'{elastic}/{name_space}_file-array-config_0/_doc/file',
+        "json": {"timestamp": datetime.now().isoformat(), "array": ["project_code", "program_name"]}
+    }
+
+
+# gen3.aced.io_array-config gen3.aced.io_file-array-config_0 - - -
+
+# case                      gen3.aced.io_case_0              - - -
+# etl                       gen3.aced.io_case_0              - - -
+# file                      gen3.aced.io_file_0              - - -
+
+# gen3.aced.io_case         gen3.aced.io_case_0              - - -
+# gen3.aced.io_file         gen3.aced.io_file_0              - - -
+# etl_array-config          gen3.aced.io_case-array-config_0 - - -
+# gen3.aced.io_array-config gen3.aced.io_case-array-config_0 - - -
+# .kibana                   .kibana_1                        - - -
+
+
+def write_file_alias_config(elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMESPACE):
+    """Write the alias config."""
+    return {
+        "method": 'POST',
+        "url": f'{elastic}/_aliases',
+        "json": {"actions": [{"add": {"index": f"{name_space}_file_0", "alias": f"file"}}]}  # {name_space}_
+    }
+
+
+def write_file_data(row, elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMESPACE):
+    """Write data."""
+    return {
+        "method": 'POST',
+        "url": f'{elastic}/{name_space}_file_0/file',
+        "json": row
+    }
+
+
+def drop_patient_indexes(elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMESPACE):
+    """Drop the es indexes."""
+    return {"method": 'DELETE', "url": f'{elastic}/{name_space}_case_0'}
+
+
+def create_patient_indexes(_source, elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMESPACE):
+    """Create the es indexes."""
+    _index = f"{name_space}_case_0"
+    _type = "case"
+    return {
+        "method": 'PUT',
+        "url": f'{elastic}/{_index}',
+        "json": create_index_from_source(_source, _index, _type),
+        "index": _index,
+        "type": _type
+    }
+
+
+def write_patient_array_config(elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMESPACE):
+    """Write the array config."""
+    # { "timestamp": "2021-09-18T17:10:49.107081", "array": [ "_file_id" ] }
+    return {
+        "method": 'PUT',
+        "url": f'{elastic}/{name_space}_case-array-config_0/_doc/etl',
+        "json": {"timestamp": datetime.now().isoformat(), "array": ['data_format', 'data_type', '_file_id', 'medications', 'conditions']}
+    }
+
+
+def write_patient_alias_config(elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMESPACE):
+    """Write the alias config."""
+    return {
+        "method": 'POST',
+        "url": f'{elastic}/_aliases',
+        "json": {"actions": [{"add": {"index": f"{name_space}_case_0", "alias": f"etl"}}]}
+    }
+
+
+def write_patient_data(row, elastic=DEFAULT_ELASTIC, name_space=DEFAULT_NAMESPACE):
+    """Write data."""
+    return {
+        "method": 'POST',
+        "url": f'{elastic}/{name_space}_case_0/case',
+        "json": row
+    }
+
+
+def read_files(sc, batch_size):
+    """Read file records and their ancestors from gen3, map to elastic search."""
+    first = batch_size
+    offset = 0
+    c = 0
+    while True:
+        graphql_variables = {"first": first, "offset": offset}
+        graph_ql_response = sc.query(FILE_GRAPHQL, variables=graphql_variables)
+        c += 1
+        has_data = False
+
+        if 'data' in graph_ql_response:
+            sum_data = 0
+            for k in graph_ql_response['data']:
+                sum_data += len(graph_ql_response['data'][k])
+            has_data = sum_data > 0
+        if not has_data:
+            break
+        offset += batch_size
+
+        # we get patient with array of document_references
+        for patient in graph_ql_response['data']['patient']:
+            assert 'project_id' in patient, (patient, patient.keys())
+            program, project = patient['project_id'].split('-')
+            for document_reference in patient['document_references']:
+                document_reference["auth_resource_path"] = f"/programs/{program}/projects/{project}"
+                for k, v in patient.items():
+                    if k == 'document_references':
+                        continue
+                    document_reference[f"patient_{k}"] = v
+
+                    # map fields hard coded by windmill portal
+                    # data_types & data_format
+                    if document_reference['content_0_attachment_url']:
+                        document_reference['data_type'] = document_reference['content_0_attachment_url'].split('.')[-1]
+                    else:
+                        document_reference['data_type'] = 'txt'
+
+                    if document_reference['data_type'] in ['csv']:
+                        document_reference['data_format'] = 'variants'
+                    if document_reference['data_type'] in ['dcm']:
+                        document_reference['data_format'] = 'imaging'
+                    if document_reference['data_type'] in ['txt']:
+                        document_reference['data_format'] = 'note'
+
+                    document_reference['file_name'] = document_reference['content_0_attachment_url']
+                    document_reference['file_size'] = 0
+                    if document_reference['content_0_attachment_size']:
+                        document_reference['file_size'] = int(document_reference['content_0_attachment_size'])
+
+                yield document_reference
+
+
+def read_patients(sc, batch_size, start):
+    """Read patient records and their descendants from gen3."""
+    first = batch_size
+    offset = 0
+    if start:
+        offset = int(start)
+    c = 0
+    while True:
+        # pagination
+        graphql_variables = {"first": first, "offset": offset}
+        # logger.info((PATIENT_GRAPHQL, graphql_variables))
+        r = sc.query(PATIENT_GRAPHQL, variables=graphql_variables)
+        c += 1
+
+        if 'data' not in r or 'encounter' not in r['data'] or len(r['data']['encounter']) == 0:
+            break
+        offset += batch_size
+        for encounter in r['data']['encounter']:
+            assert 'project_id' in encounter, (encounter, encounter.keys())
+            program, project = encounter['project_id'].split('-')
+            # denormalize by patient
+            patient = dict({'project_id': encounter['project_id']})
+            patient["auth_resource_path"] = f"/programs/{program}/projects/{project}"
+            # get scalars for encounter
+
+            for k, v in encounter.items():
+                if not k.startswith('encounter'):
+                    continue
+                patient[k] = v
+            # get embedded subject
+            # expecting only one subject
+            for k, v in encounter['patient'][0].items():
+                patient[f"patient_{k}"] = v
+            patient["_case_id"] = encounter['patient'][0]['id']  # TODO  why this variable ??? in gitops.json ?
+            # create an array of condition names
+            patient['conditions'] = [c['code_coding_0_display'] for c in encounter['conditions']]
+            # create an array of medication names
+            patient['medications'] = [c['medicationCodeableConcept_coding_0_display'] for c in encounter['medication_requests']]
+            # denormalize by observation
+            for observation in encounter['observations']:
+                patient_observation = dict(patient)
+                for k, v in observation.items():
+                    patient_observation[k] = v
+                yield patient_observation
+
+
+def write_dict(output, d):
+    """Write a dict to the output."""
+    output.write(str(d))
+    output.write("\n")
+
+
+def write_http(session, _params, raise_for_status=True):
+    """Write a dict to the session."""
+    r = session.request(**_params)
+    if raise_for_status:
+        if r.status_code > 300:
+            print("TEXT_PARAMS", _params)
+            print("TEXT", r.text)
+        r.raise_for_status()
+
+
+def write_patient_bulk_http(elastic, index, limit, doc_type, generator):
+    """Use efficient method to write to elastic"""
+    counter = 0
+
+    def _bulker(generator_, counter_=counter):
+        for dict_ in generator_:
+            if limit and counter_ > limit:
+                break  # for testing
+            yield {
+                '_index': index,
+                '_op_type': 'index',
+                '_type': doc_type,
+                '_source': dict_
+            }
+            counter_ += 1
+            if counter_ % 100 == 0:
+                logger.info(counter_)
+
+    logger.info('Fetching first record.')
+    generator = peekable(generator)
+    first_patient = generator.peek()
+    logger.info('Creating patient indices.')
+
+    index_dict = create_patient_indexes(first_patient, "FOO")
+    elastic.indices.create(index=index_dict['index'], body=index_dict['json'])
+
+    logger.info(f'Writing bulk to {index} limit {limit}.')
+    result = bulk(client=elastic,
+                  actions=(d for d in _bulker(generator)),
+                  request_timeout=120)
+
+
+def write_file_bulk_http(elastic, index, limit, doc_type, generator):
+    """Use efficient method to write to elastic"""
+    counter = 0
+
+    def _bulker(generator_, counter_=counter):
+        for dict_ in generator_:
+            if limit and counter_ > limit:
+                break  # for testing
+            yield {
+                '_index': index,
+                '_op_type': 'index',
+                '_type': doc_type,
+                '_source': dict_
+            }
+            counter_ += 1
+            if counter_ % 100 == 0:
+                logger.info(counter_)
+
+    logger.info('Fetching first record.')
+    generator = peekable(generator)
+    first_file = generator.peek()
+    logger.info('Creating file indices.')
+
+    index_dict = create_file_indexes(first_file, "FOO")
+    elastic.indices.create(index=index_dict['index'], body=index_dict['json'])
+
+    logger.info(f'Writing bulk to {index} limit {limit}.')
+    result = bulk(client=elastic,
+                  actions=(d for d in _bulker(generator)),
+                  request_timeout=120)
+
+
+@click.command()
+@click.option('--endpoint', type=str, help='Gen3 host base url.')
+@click.option('--credentials_path', type=str, help='Path to gen3 credentials.')
+@click.option('--batch_size', type=int, default=500, help='Number of records to read from gen3 at a time (500.')
+@click.option('--output_path', type=str, default=None, help='For debugging, write the output to this path')
+@click.option('--elastic', type=str, default=None, help='Write directly to elastic host')
+@click.option('--entity', type=str, default=None, help='One of file | observation')
+@click.option('--limit',
+              default=None,
+              show_default=True,
+              help='Max number of rows per index.')
+@click.option('--start',
+              default=None,
+              show_default=True,
+              help='Max number of rows per index.')
+def etl(credentials_path, endpoint, output_path, batch_size, elastic, limit, entity, start):
+    """Extract file centric index from Gen3, create elastic search index."""
+    # check destination
+    assert output_path or elastic, "Please set either elastic url or output_path file path"
+    assert entity,  "Please specify file | observation"
+    # connect to source (gen3)
+    sc = submission_client(endpoint, credentials_path)
+
+    if limit:
+        limit = int(limit)
+    # create a handy little function that writes to either file or session
+    output_stream = None
+    write_method = None
+    if output_path:
+        output_stream = open(output_path, "w")
+        write_method = write_dict
+    else:
+        output_stream = requests.sessions.Session()
+        write_method = write_http
+
+    def _writer(data):
+        """Write to destination"""
+        write_method(output_stream, data)
+
+    _es = Elasticsearch([elastic], request_timeout=120)
+
+    global logger
+    logger = logging.getLogger(entity)
+
+    #
+    # PATIENT centric index
+    #
+    if entity.lower() == 'observation':
+        logger.info(f'Reading patients. batch_size {batch_size}')
+
+        write_patient_bulk_http(elastic=_es, index=f"{DEFAULT_NAMESPACE}_case_0", doc_type='case', limit=limit,
+                                generator=read_patients(sc, batch_size, start))
+
+        _writer(write_patient_array_config(elastic))
+        _writer(write_patient_alias_config(elastic))
+
+        _writer(write_patient_array_aliases(elastic))
+    #
+    # FILE centric index
+    #
+
+    # assumes guppy-setup dropped ES indices
+    #_writer(drop_file_indexes(elastic))
+
+    # write data
+
+    if entity.lower() == 'file':
+        logger.info(f'Reading files. batch_size {batch_size}')
+        write_file_bulk_http(elastic=_es, index=f"{DEFAULT_NAMESPACE}_file_0", doc_type='file', limit=limit,
+                             generator=read_files(sc, batch_size))
+
+        _writer(write_file_array_config(elastic))
+        _writer(write_file_alias_config(elastic))
+
+        _writer(write_file_array_aliases(elastic))
+
+    # cleanup
+    output_stream.close()
+    logger.info('done')
+
+
+if __name__ == '__main__':
+    etl()
